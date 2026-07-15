@@ -91,14 +91,16 @@ parameter list** (not `props.xxx`) and give `color` a **default value** of `"gra
   at all** (must fall back to `"gray"`).
 
 ```jsx
-export function Badge(/* TODO: destructure text + color with a default */) {
-  return <span className={/* TODO */}>{/* TODO */}</span>;
+export function Badge({text, color="gray"}) {
+  return <span className={color}>{text}</span>;
 }
 
 function App() {
   return (
     <div id="app">
-      {/* TODO: green, red, and one with no color prop */}
+      <Badge color="green" text="some text" />
+      <Badge color="red" text="heres another text" />
+      <Badge text="some text" />
     </div>
   );
 }
@@ -125,10 +127,12 @@ const EMPLOYEES = [
   { id: "e3", name: "Lena", role: "PM", salary: 75000 },
 ];
 
-export function EmployeeRow(/* TODO: destructure name, role, salary */) {
+export function EmployeeRow({name, role, salary}) {
   return (
     <div className="row">
-      {/* TODO: render name, role, formatted salary */}
+      <p>{name}</p>
+      <p>{role}</p>
+      <p>{salary}</p>
     </div>
   );
 }
@@ -137,7 +141,9 @@ function App() {
   return (
     <div id="app">
       <h1>Team</h1>
-      {/* TODO: map over EMPLOYEES, spread each one, remember key */}
+      {EMPLOYEES.map((employee) => (
+        <EmployeeRow key={employee.id} {...employee} />
+      ))}
     </div>
   );
 }
