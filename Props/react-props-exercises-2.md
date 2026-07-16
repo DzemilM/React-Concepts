@@ -132,7 +132,7 @@ export function EmployeeRow({name, role, salary}) {
     <div className="row">
       <p>{name}</p>
       <p>{role}</p>
-      <p>{salary}</p>
+      <p>{salary.toLocaleString()}</p>
     </div>
   );
 }
@@ -165,11 +165,11 @@ placed between its tags shows up inside it. Then use it to wrap other content.
   children slot is truly generic.
 
 ```jsx
-export function Card(/* TODO: destructure title + children */) {
+export function Card({title, children}) {
   return (
     <div className="card">
-      <h2>{/* TODO: title */}</h2>
-      {/* TODO: render children */}
+      <h2>{title}</h2>
+      {children}
     </div>
   );
 }
@@ -177,7 +177,12 @@ export function Card(/* TODO: destructure title + children */) {
 function App() {
   return (
     <div id="app">
-      {/* TODO: at least two Cards with DIFFERENT children inside each */}
+      <Card title="About">
+        <p>I am the Children</p>
+      </Card>
+      <Card title="Sup">
+        <h1>I am the Children</h2>
+      </Card>
     </div>
   );
 }
@@ -213,14 +218,21 @@ like this:
   `0.1` for 10%) with a **default of `0`**, and apply it to the grand total.
 
 ```jsx
-export function OrderSummary(/* TODO: destructure order (+ optional discount default 0) */) {
+export function OrderSummary({ order, discount=0}) {
   return (
     <div className="order">
-      {/* TODO: id + customer name & city */}
+      <p>id={order.id}</p>
+      <p>Name={order.customer.name}</p>
+      <p>City={order.customer.city}</p>
       <ul>
-        {/* TODO: map items -> li with name, qty, line total */}
+        {order.items.map((item) => (
+          <li key={item.name}>
+            {item.name} — qty {item.qty} — total {item.qty * item.price}
+          </li>
+        ))}
       </ul>
-      {/* TODO: grand total (with discount applied if you did the bonus) */}
+      <h2>Total: {order.items.reduce((runningTotal, item) => runningTotal + item.qty * item. price, 0)}
+      </h2>
     </div>
   );
 }
@@ -234,12 +246,20 @@ function App() {
       { name: "Mouse", qty: 2, price: 20 },
     ],
   };
-  // TODO: make a second order object of your own
+  const orderB = {
+    id: "A-230",
+    customer: { name: "Dude", city: "Vegas" },
+    items: [
+      { name: "Mis", qty: 4, price: 25 },
+      { name: "Tastature", qty: 2, price: 20 },
+    ],
+  };
 
   return (
     <div id="app">
       <h1>Orders</h1>
-      {/* TODO: render at least two OrderSummary components */}
+      <OrderSummary order={orderA} />
+      <OrderSummary order={orderB} />
     </div>
   );
 }
