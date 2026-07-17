@@ -181,7 +181,7 @@ function App() {
         <p>I am the Children</p>
       </Card>
       <Card title="Sup">
-        <h1>I am the Children</h2>
+        <h1>I am the Children</h1>
       </Card>
     </div>
   );
