@@ -171,11 +171,11 @@ rep on both before the challenge.
 This proves `children` can be *anything*, including a list you built with `.map()`.
 
 ```jsx
-export function Panel(/* TODO: destructure heading + children */) {
+export function Panel({heading, children}) {
   return (
     <div className="panel">
-      <h2>{/* TODO: heading */}</h2>
-      {/* TODO: render children */}
+      <h2>{heading}</h2>
+      {children}
     </div>
   );
 }
@@ -185,7 +185,19 @@ function App() {
 
   return (
     <div id="app">
-      {/* TODO: first Panel wraps a <p>; second Panel wraps a <ul> built with groceries.map(...) */}
+    <Panel heading="some heading">
+      <p>Plain p</p>
+    </Panel>
+
+    <Panel heading="another heading">
+    <ul>
+      {groceries.map((grocery)=>(
+        <li key={grocery}>
+         Grocery={grocery}
+        </li>
+      ))}
+    </ul>
+    </Panel>
     </div>
   );
 }
@@ -228,14 +240,22 @@ Reminder of the 5-step model: **data → comes in as a prop → dig with dots �
 (work with the single item!) → `.reduce` for the total.**
 
 ```jsx
-export function PlaylistSummary(/* TODO: destructure playlist (+ speed default 1) */) {
+export function PlaylistSummary({playlist, speed=1}) {
+  const totalSeconds = playlist.tracks.reduce((sum, track) => sum + track.seconds, 0);
   return (
     <div className="playlist">
-      {/* TODO: id + owner name & country */}
+     <p>Name={playlist.owner.name}</p>
+     <p>Country={playlist.owner.country}</p>
       <ul>
-        {/* TODO: map tracks -> li with title, artist, seconds */}
+      {playlist.tracks.map((track)=>(
+        <li key={track.title}>
+          {track.title}-title, {track.artist}-artist, {track.seconds}-seconds
+        </li>
+      ))}
       </ul>
-      {/* TODO: total duration (bonus: as M:SS, and divided by speed) */}
+      <h2>
+      TOTAL={Math.floor(totalSeconds/60)}:{totalSeconds % 60}
+      </h2>
     </div>
   );
 }
@@ -249,12 +269,21 @@ function App() {
       { title: "Song B", artist: "Band Y", seconds: 245 },
     ],
   };
-  // TODO: make a second playlist object of your own
+
+  const playlistB = {
+    id: "PL-2",
+    owner: { name: "Milan", country: "Srbija" },
+    tracks: [
+      { title: "Pesma A", artist: "Elektricna jegulja", seconds: 300 },
+      { title: "Pesma B", artist: "Combe", seconds: 545 },
+    ],
+  };
 
   return (
     <div id="app">
       <h1>Playlists</h1>
-      {/* TODO: render at least two PlaylistSummary components */}
+      <PlaylistSummary playlist={playlistA} />
+      <PlaylistSummary playlist={playlistB} />
     </div>
   );
 }
