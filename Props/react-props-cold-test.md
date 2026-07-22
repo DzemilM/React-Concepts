@@ -165,7 +165,28 @@ Build an `InvoiceCard` that takes it as **one prop** and renders:
 Data:
 
 ```js
-{
+export function CourseBox({course, children}){
+  const totalGrade = course.students.reduce((sum, student) => sum + student.grade, 0);
+  return(
+    <div>
+     <p>Code={course.code}</p>
+     <p>Name={course.teacher.name} Department={course.teacher.dept}</p>
+     <ul>
+     {course.students.map((student)=>(
+     <li key={student.name}>
+      Name={student.name}, Grade={student.grade}
+     </li>
+     ))}
+     </ul>
+     <h3>Average grade={Math.round(totalGrade/course.students.length)}</h3>
+     {children}
+    </div>
+  )
+}
+
+
+function App(){
+  const Course1={
   code: "CS-101",
   teacher: { name: "Rob", dept: "Computer Science" },
   students: [
@@ -174,6 +195,32 @@ Data:
     { name: "Cleo", grade: 95 },
   ],
 }
+
+const Course2={
+  code: "CS-321",
+  teacher: { name: "Charles", dept: "Biochemistry" },
+  students: [
+    { name: "Ivan", grade: 78 },
+    { name: "Hafez", grade: 69 },
+    { name: "Omer", grade: 99 },
+  ],
+}
+
+return(
+  <div>
+    <CourseBox course={Course1}>
+      <p>Enrollment closes Friday.</p>
+    </CourseBox>
+
+    <CourseBox course={Course2}>
+      <button>Enrollment closes Friday.</button>
+    </CourseBox>
+  </div>
+)
+}
+
+
+
 ```
 
 Build a `CourseBox` that takes it as **one prop** *and* accepts **`children`**. It renders:
