@@ -98,6 +98,55 @@ Data:
     { description: "Revisions", hours: 3, rate: 80 },
   ],
 }
+
+export function InvoiceCard({card, taxRate=0}){
+  const Sub=card.lines.reduce((runningTotal,line)=>(
+    runningTotal + line.hours * line.rate), 0)
+  return(
+    <div>
+    <p>Invoice Number={card.number}</p>
+    <p>Company={card.client.company}</p>
+    <p>Contact={card.client.contact}</p>
+    <ul>
+    {card.lines.map((line)=>(
+      <li key={line.description}>
+        {line.description}-{line.hours}-{line.hours * line.rate}
+      </li>
+    ))}
+    </ul>
+    <p>Subtotal={Sub}</p>
+    <h2>Final total={(Sub * (1 + taxRate)).toFixed(2)}</h2>
+    </div>
+  )
+}
+
+function App(){
+  const Card1={
+  number: "INV-2024-08",
+  client: { company: "Acme Ltd", contact: "Dana" },
+  lines: [
+    { description: "Design work", hours: 12, rate: 80 },
+    { description: "Revisions", hours: 3, rate: 80 },
+  ],
+}
+
+const Card2={
+  number: "INV-5034-05",
+  client: { company: "Acne", contact: "Dustin" },
+  lines: [
+    { description: "Web design", hours: 8, rate: 40 },
+    { description: "DevOps", hours: 9, rate: 97 },
+  ],
+}
+
+return (
+  <div>
+   <h2>Cards</h2>
+   <InvoiceCard card={Card1} taxRate={0.2} />
+   <InvoiceCard card={Card2} />
+  </div>
+)
+}
 ```
 
 Build an `InvoiceCard` that takes it as **one prop** and renders:
