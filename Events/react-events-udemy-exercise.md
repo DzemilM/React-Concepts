@@ -46,7 +46,7 @@ function App() {
       </p>
 
       <p id="actions">
-        <button>Login</button>
+        <button onClick={clicked}>Login</button>
       </p>
     </div>
   );
@@ -57,12 +57,48 @@ export default App;
 
 ## What I don't understand
 
-<!-- write what's confusing before we start -->
+I dont know what i should change or do exactly? do i take user and change stuff there and then function displays it or i need a function which takes that users and changes its content or what?
 
 ## My attempt
 
 ```jsx
 
+
+export const user = {
+  email: '',
+  password: '',
+  loggedIn: false,
+};
+
+function clicked(){
+  user.email= "brooo@gmail.com";
+  user.password= "so=umpass13414";
+  user.loggedIn= true
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>User Login</h1>
+
+      <p>
+        <label>Email</label>
+        <input type="email" />
+      </p>
+
+      <p>
+        <label>Password</label>
+        <input type="password" />
+      </p>
+      <p>Logged in: {user.loggedIn ? 'true' : 'false'}</p>
+      <p id="actions">
+        <button onClick={clicked}>Login</button>
+      </p>
+    </div>
+  );
+}
+
+export default App;
 ```
 
 ## Notes
