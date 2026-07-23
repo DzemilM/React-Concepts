@@ -24,7 +24,7 @@ function App() {
 }
 ```
 
-What renders?
+What renders? -not what we want, at funciton app u put nome instead of name
 
 ### A2
 
@@ -44,7 +44,7 @@ function App() {
 }
 ```
 
-Three numbers render. Which three?
+Three numbers render. Which three? -10, 0, 25
 
 ### A3
 
@@ -58,7 +58,7 @@ function App() {
 }
 ```
 
-What is `props.children` here — a string, an element, or undefined? What renders?
+What is `props.children` here — a string, an element, or undefined? What renders? its just text,i forgot is it span or? anyways children is anything u write later on
 
 ### A4
 
@@ -70,7 +70,7 @@ function App() {
 }
 ```
 
-What renders, and what (if anything) does React complain about in the console?
+What renders, and what (if anything) does React complain about in the console? -it renders 2,4,6?
 
 ### A5
 
@@ -84,7 +84,7 @@ function App() {
 }
 ```
 
-What renders? (Careful — look at what's missing.)
+What renders? (Careful — look at what's missing.) - is it missing () or a 0 as initial value?
 
 ---
 
@@ -114,18 +114,21 @@ function Cart({ cart }) {
 }
 ```
 
+it should be item.id not cart.id
+
 ### B3
 
 ```jsx
 function Stats({ data }) {
+  const average = {data.scores.reduce((a, b) => a + b, 0) / data.scores.length}
   return (
     <div>
-      const average = data.scores.reduce((a, b) => a + b, 0) / data.scores.length;
       <p>{average}</p>
     </div>
   );
 }
 ```
+u need {}, you cant go without them
 
 ### B4
 
@@ -142,6 +145,7 @@ function List({ team }) {
   );
 }
 ```
+u should map inside ul, not map that too
 
 ### B5
 
@@ -161,6 +165,7 @@ function Order({ order }) {
   );
 }
 ```
+ order.lines.qty should be line.qty
 
 *(This one is subtle. Only one line is wrong.)*
 
@@ -173,19 +178,26 @@ No code. Answer in your own words, a few sentences each.
 ### C1
 A component receives props. Where do props physically come from, and what *shape* does a
 component receive them in (how many arguments does React pass)?
+ 
+
+shape depends on us, we can pass them as one prop then reactpasses all arguments, desctructure and pass its arguments which we want or all of them, and where they come from? when we make components its us who give them values/arguments
 
 ### C2
 Why can you write `const x = 5` above a component's `return`, but **not** inside the JSX?
 State the rule that governs where each kind of code goes.
 
+i never thought abt it, it should be inside of jsx so its not global and messes other code? then its in scope of function when its inside
+
 ### C3
 Inside `array.map((thing) => ...)`, why is `thing.name` different from `outerObject.name`?
 Explain as if to someone who just got it wrong.
 
+because thing is name we have to give to that which we map, its not outerObject nor it can be
+
 ### C4
 You have a list of 5 items and a total computed from all 5. One of those goes inside the
 `.map()` and one goes outside. Which is which, and what's the general rule?
-
+list of 5 items is mapped, total is outside of map
 ---
 
 <details>
@@ -208,10 +220,12 @@ is whatever is nested between the tags — a string, an element, several element
 **A4** — Renders `2`, `4`, `6` as list items. React logs a console **warning** about a missing
 `key` prop on the list items. It still renders — a missing key is a warning, not a crash.
 
-**A5** — It renders `NaN` (or misbehaves). The `reduce` has **no initial value**, so the first
-call sets `a` to the first *object* `{cost: 5}` rather than a number, then does
-`{cost:5} + 10`. Fix: add `, 0` as reduce's second argument. This is why you always seed a sum
-with `0`.
+**A5** — It renders the string `[object Object]10`. The `reduce` has **no initial value**, so
+on the first pass `a` is the first *object* `{cost: 5}` rather than a number, and the body
+computes `{cost: 5} + 10`. Adding an object to a number makes JavaScript convert the object to
+a string first — a plain object stringifies to `"[object Object]"` — so you get string
+concatenation, not arithmetic. Fix: add `, 0` as reduce's second argument. This is why you
+always seed a sum with `0`.
 
 ## Section B
 
