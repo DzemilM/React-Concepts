@@ -24,12 +24,15 @@ Write a function called `handleClick` that logs that message, and attach it to t
 
 ```jsx
 // TODO: write handleClick here
+function handleClick(){
+  console.log(`Button was clicked!`)
+}
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      <button>Click me</button>   {/* TODO: attach the handler */}
+      <button onClick={handleClick}>Click me</button>
     </div>
   );
 }
@@ -54,8 +57,8 @@ function App() {
   return (
     <div id="app">
       <h1>Exercise 2</h1>
-      <button onClick={/* TODO */}>Greet</button>
-      <button onClick={/* TODO */}>Farewell</button>
+      <button onClick={console.log("Hello!")}>Greet</button>
+      <button onClick={()=> console.log("Goodbye!")}>Farewell</button>
     </div>
   );
 }
@@ -84,9 +87,9 @@ function App() {
   return (
     <div id="app">
       <h1>Exercise 3</h1>
-      <button onClick={/* TODO */}>Small</button>
-      <button onClick={/* TODO */}>Medium</button>
-      <button onClick={/* TODO */}>Large</button>
+      <button onClick={() => chooseSize("Small")}>Small</button>
+      <button onClick={() => chooseSize("Medium")}>Medium</button>
+      <button onClick={() => chooseSize("Large")}>Large</button>
     </div>
   );
 }
