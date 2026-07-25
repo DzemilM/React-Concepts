@@ -198,16 +198,21 @@ prop that happens to hold a function? What would break if you renamed it to `ban
 - Also log `mouse is over the form` when the pointer enters the `<form>` element.
 
 ```jsx
-function handleSubmit(/* TODO */) {
-  // TODO: stop the browser's default form behaviour
-  // TODO: log the message
+function handleSubmit(event) {
+  event.preventDefault();
+  console.log("Form submitted");     // what does submitting log?
 }
+
+function handleMouseEnter() {
+  console.log("mouse is over the form");     // what does hovering log?
+}
+
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 6</h1>
-      <form /* TODO: submit handler */ /* TODO: mouse-enter handler */>
+      <form onSubmit={handleSubmit} onMouseEnter={handleMouseEnter}>
         <input type="text" />
         <button>Submit</button>
       </form>
