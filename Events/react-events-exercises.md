@@ -119,20 +119,20 @@ onClick={() => ______}
   by you.
 
 ```jsx
-function handleTyping(/* TODO: what does React pass in? */) {
-  // TODO: log the current text of the input
+function handleTyping(event) {
+  console.log(event.target.value)
 }
 
-function handleClick(/* TODO */) {
-  // TODO: log the text content of the element that was clicked
+function handleClick(event) {
+  console.log(event.target.textContent)
 }
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 4</h1>
-      <input type="text" onChange={/* TODO */} />
-      <button onClick={/* TODO */}>Press me</button>
+      <input type="text" onChange={handleTyping} />
+      <button onClick={handleClick}>Press me</button>
     </div>
   );
 }
@@ -160,9 +160,10 @@ renders a `<button>` with that label, and when clicked, runs whatever function w
 `App` renders two of them: one that logs `Saved!` and one that logs `Deleted!`.
 
 ```jsx
-function Button(/* TODO */) {
+function Button({label, onAction}) {
   return (
-    <button /* TODO */>{/* TODO */}</button>
+    <button onClick={onAction}>{label}</button>
+
   );
 }
 
@@ -170,7 +171,8 @@ function App() {
   return (
     <div id="app">
       <h1>Exercise 5</h1>
-      {/* TODO: two Buttons with different labels and different actions */}
+      <Button label="Save" onAction={()=>console.log("Saved!")} />
+      <Button label="Delete" onAction={()=>console.log("Deleted!")} />
     </div>
   );
 }
