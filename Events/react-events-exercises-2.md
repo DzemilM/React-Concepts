@@ -25,13 +25,15 @@ counting needs State. Just log.)
 Write a named function `add` and attach it.
 
 ```jsx
-// TODO: write add
+function add(){
+  console.log("+1")
+}
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      <button>Add one</button>   {/* TODO: attach add */}
+      <button onClick={add}>Add one</button>   
     </div>
   );
 }
@@ -40,7 +42,7 @@ export default App;
 ```
 
 **Trap check:** did you write `onClick={add}` or `onClick={add()}`? Say out loud why one is right.
-
+i wrote add, not add(), because i want it called when clicked not immediately when loaded, im passing it as a value
 ---
 
 ## Exercise 2: A keypad (passing arguments)
@@ -57,9 +59,9 @@ function App() {
   return (
     <div id="app">
       <h1>Exercise 2</h1>
-      <button onClick={/* TODO */}>1</button>
-      <button onClick={/* TODO */}>2</button>
-      <button onClick={/* TODO */}>3</button>
+      <button onClick={()=> press(1)}>1</button>
+      <button onClick={()=> press(2)}>2</button>
+      <button onClick={()=> press(3)}>3</button>
     </div>
   );
 }
@@ -76,15 +78,15 @@ export default App;
 **Goal:** A text input. On every keystroke, log `Searching for: <whatever is typed>`.
 
 ```jsx
-function handleSearch(/* TODO */) {
-  // TODO: log "Searching for: " followed by the current text
+function handleSearch(event) {
+  console.log(`Searching for: ${event.target.value}`)
 }
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 3</h1>
-      <input type="text" placeholder="Search..." /* TODO: which attribute? */ />
+      <input type="text" placeholder="Search..." onChange={handleSearch} />
     </div>
   );
 }
@@ -111,7 +113,7 @@ happens to your console? Then figure out which line stops it.
 
 ```jsx
 function handleSubmit(event) {
-  // TODO: one line goes here — the thing that stops the browser's default
+  event.preventDefault();
   console.log('Submitted!');
 }
 
@@ -145,15 +147,17 @@ export default App;
 `favourite`, and a bell button that logs `notify`.
 
 ```jsx
-function IconButton(/* TODO */) {
-  return <button /* TODO */>{/* TODO */}</button>;
+function IconButton({icon, onPress}) {
+  return <button onClick={onPress}>{icon}</button>;
 }
 
 function App() {
   return (
     <div id="app">
       <h1>Exercise 5</h1>
-      {/* TODO: three IconButtons, different icons, different actions */}
+      <IconButton icon="trash" onPress={()=>console.log("delete")} />
+      <IconButton icon="star" onPress={()=>console.log("favourite")} />
+      <IconButton icon="bell" onPress={()=>console.log("notify")} />
     </div>
   );
 }
