@@ -192,7 +192,10 @@ function App() {
       <h1>Exercise 6</h1>
       <div
         style={{ width: 200, height: 200, background: 'lightblue' }}
-        /* TODO: four event attributes, each with its own handler */
+        onMouseEnter={()=>console.log("entered")}
+        onMouseLeave={()=>console.log("left")}
+        onClick={()=>console.log("clicked")}
+        onDoubleClick={()=>console.log("double!")}
       >
         Interact with me
       </div>
