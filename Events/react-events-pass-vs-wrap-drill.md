@@ -33,55 +33,55 @@ For each, decide what goes in the blank. Write the whole `onClick={...}` (or `on
 
 **A1.** A handler `save` that logs `"saved"`. No argument needed.
 ```jsx
-<button onClick={______}>Save</button>
+<button onClick={save}>Save</button>
 ```
 
 **A2.** A handler `remove(id)` that deletes item `42`.
 ```jsx
-<button onClick={______}>Delete</button>
+<button onClick={()=>remove(42)>}>Delete</button>
 ```
 
 **A3.** A typing handler `search(event)` that reads `event.target.value`.
 ```jsx
-<input onChange={______} />
+<input onChange={search} />
 ```
 
 **A4.** A handler `pick(colour)` for a red button.
 ```jsx
-<button onClick={______}>Red</button>
+<button onClick={()=>pick("red")}>Red</button>
 ```
 
 **A5.** A submit handler `submit(event)` that calls `event.preventDefault()`.
 ```jsx
-<form onSubmit={______}>
+<form onSubmit={submit}>
 ```
 
 **A6.** A component `Row` that received an `onDelete` prop and wants to forward it straight to a
 real button (no argument added here).
 ```jsx
-<button onClick={______}>x</button>
+<button onClick={onDelete}>x</button>
 ```
 
 **A7.** A handler `greet(name)` for a button that should greet `"Sam"`.
 ```jsx
-<button onClick={______}>Greet Sam</button>
+<button onClick={()=>greet("Sam")}>Greet Sam</button>
 ```
 
 **A8.** A handler `logClick(event)` that logs which element was clicked (`event.target`).
 ```jsx
-<button onClick={______}>Where?</button>
+<button onClick={logClick}>Where?</button>
 ```
 
 **A9.** Inside a `StarButton({ value, onRate })`, the button must call `onRate` with its own
 `value`.
 ```jsx
-<button onClick={______}>{value}</button>
+<button onClick={()=>onRate(value)}>{value}</button>
 ```
 
 **A10.** Inside `App`, you hand `handleRate` down to `StarButton` as its `onRate` prop (you are
 *giving* the function, not calling it here).
 ```jsx
-<StarButton value={3} onRate={______} />
+<StarButton value={3} onRate={handleRate} />
 ```
 
 ---
@@ -95,32 +95,37 @@ goes wrong **and when** (on load? on click? swallowed event?).
 ```jsx
 <button onClick={remove(42)}>Delete</button>
 ```
+B1 need anonymus function which calls remove, this one just gets called on load
 
 **B2.**
 ```jsx
 <form onSubmit={() => handleSubmit()}>   {/* handleSubmit needs event.preventDefault() */}
 ```
+it should just be onSubmit={handleSubmit}
 
 **B3.**
 ```jsx
 <input onChange={() => search()} />      {/* search wants event.target.value */}
 ```
+also just onChange={search}
 
 **B4.**
 ```jsx
 <button onClick={() => save}>Save</button>   {/* save just logs "saved" */}
 ```
+nothing happens, do onClick={save}
 
 **B5.**
 ```jsx
 <StarButton value={2} onRate={handleRate()} />
 ```
+it should be onRate={handleRate}
 
 **B6.**
 ```jsx
 <button onClick={pick}>Red</button>     {/* pick(colour) — should pass "red" */}
 ```
-
+should be onClick={()=>pick("red")}
 ---
 
 ## Part C — Scope check (your other recurring slip)
@@ -137,6 +142,7 @@ function App() {
   return <p>{label}</p>;   // ← does `label` exist here?
 }
 ```
+no its only prop in Button, in App its outside of scope
 
 **C2.**
 ```jsx
@@ -147,6 +153,7 @@ function RatingRow() {
   return <StarButton value={5} onRate={handleRate} />;
 }
 ```
+no, its prop is stars and it should be stars instead, value is StarButtons prop, not this functions
 
 **C3.**
 ```jsx
@@ -154,10 +161,11 @@ function StarButton({ value, onRate }) {
   return <button onClick={() => onRate(value)}>{value}</button>;   // ← does `value` exist here?
 }
 ```
+yes it does
 
 **C4.** Why does `handleRate(stars)` log the right number when you write `${stars}`, but the
 wrong thing (or undefined) when you write `${value}`? Answer in one sentence.
-
+i answered it on C2, value is irrelevant to handleValue coz its argument is stars
 ---
 
 <details>
