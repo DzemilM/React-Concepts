@@ -130,6 +130,34 @@ If you renamed it to `foo` everywhere, would anything break?
 
 ```jsx
 
+function StarButton({value, onRate}){
+  return(
+    <button onClick={()=>onRate(value)}>{value}</button>
+  )
+}
+
+function RatingRow(){
+  function handleRate(stars){
+    console.log(`You rated: ${stars} stars`)
+  }
+  return (
+    <div>
+      <StarButton value={1} onRate={handleRate} />
+      <StarButton value={2} onRate={handleRate} />
+      <StarButton value={3} onRate={handleRate} />
+      <StarButton value={4} onRate={handleRate} />
+      <StarButton value={5} onRate={handleRate} />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <RatingRow />
+  );
+}
+
+export default App;
 ```
 
 ---
