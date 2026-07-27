@@ -28,6 +28,32 @@ Build a `Toolbar` component (no props) with three buttons: **Cut**, **Copy**, **
 **When you're done, ask yourself:** how does your one handler know *which* word to log? Where did
 that word come from, and what had to wrap the call so it didn't fire on load?
 
+**My attempt:**
+
+```jsx
+function Toolbar() {
+  function handleAction(word) {
+    console.log('Action: ' + word)
+    }
+
+  return (
+    <div id="app">
+      <button onClick={()=> handleAction("Cut")}>Cut</button>
+      <button onClick={()=> handleAction("Copy")}>Copy</button>
+      <button onClick={()=> handleAction("Paste")}>Paste</button>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Toolbar />
+  );
+}
+
+export default App;
+```
+
 ---
 
 ## Task 2 — CommentForm
@@ -43,6 +69,12 @@ Build a `CommentForm` component: a text `<input>`, and a `<form>` with a **Post*
 **When you're done, ask yourself:** which element did you put the submit handler on — the button
 or the form? Why does the submit handler need a parameter, but the typing handler's use of its
 parameter is for something completely different?
+
+**My attempt:**
+
+```jsx
+
+```
 
 ---
 
@@ -67,6 +99,12 @@ given.
 
 **When you're done, ask yourself:** is `onRate` a built-in React thing or a name you invented?
 If you renamed it to `foo` everywhere, would anything break?
+
+**My attempt:**
+
+```jsx
+
+```
 
 ---
 
