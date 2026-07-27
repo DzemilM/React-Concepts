@@ -74,6 +74,32 @@ parameter is for something completely different?
 
 ```jsx
 
+function CommentForm(){
+  function submitted(event){
+    event.preventDefault()
+    console.log("Posted!")
+  }
+
+  function typing(event){
+    console.log("Typing: " + event.target.value)
+  }
+
+  return (
+    <form onSubmit={submitted}>
+      <input type="text" onChange={typing} />
+      <button type="submit">Post</button>
+    </form>   
+  )
+}
+
+function App() {
+  return (
+    <CommentForm />
+  );
+}
+
+export default App;
+
 ```
 
 ---
