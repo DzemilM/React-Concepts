@@ -34,7 +34,24 @@ waited for the click instead of firing on load?
 **My attempt:**
 
 ```jsx
+function Menu(){
+  function handler(where){
+    console.log(`Navigating to: ${where}`)
+  }
 
+return(
+  <ul>
+  <li onClick={()=>handler("Home")}>Home</li>
+  <li onClick={()=>handler("About")}>About</li>
+  <li onClick={()=>handler("Contact")}>Contact</li>
+  </ul>)
+}
+
+export default function App(){
+  return(
+    <Menu />
+  )
+}
 ```
 
 ---
@@ -57,6 +74,25 @@ off it. What does each one read? And which element carries the submit handler?
 **My attempt:**
 
 ```jsx
+function LoginForm() {
+  function handleSubmit(event){
+    event.preventDefault();
+    console.log("Signing in...")
+  }
+  return(
+    <form onSubmit={handleSubmit}>
+      <input onChange={(event)=>console.log(`User: ${event.target.value}`)} type="text" />
+      <input onChange={(event)=>console.log(`Pass length: ${event.target.value.length}`)} type="password" />
+      <button>Sign in</button>
+    </form>
+  )
+}
+
+export default function App(){
+  return(
+    <LoginForm />
+  )
+}
 
 ```
 
@@ -85,7 +121,29 @@ why not?
 **My attempt:**
 
 ```jsx
+function Tag({label, onRemove}){
+  return(
+    <button onClick={()=>onRemove(label)}>{label}</button>
+  )}
 
+  function TagList(){
+    function handleRemove(name){
+      console.log(`Removing: ${name}`)
+    }
+    return(
+      <div>
+          <Tag label={"react"} onRemove={handleRemove} />
+          <Tag label={"events"} onRemove={handleRemove} />
+          <Tag label={"props"} onRemove={handleRemove} />
+     </div>
+    )
+  }
+
+  export default function App(){
+    return(
+      <TagList />
+    )
+  }
 ```
 
 ---
