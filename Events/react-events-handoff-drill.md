@@ -27,6 +27,34 @@ Build **two** components.
 
 `App` renders one `ColorPicker`.
 
+**My attempt:**
+
+```jsx
+function Swatch({color, onPick}){
+  return(
+    <button onClick={()=>onPick(color)}>{color}</button>
+  )}
+
+function ColorPicker(){
+  function picked(name){console.log(`Picked: ${name}`)}
+
+  return(
+    <div>
+    <Swatch color="red" onPick={picked} />
+    <Swatch color="green" onPick={picked} />
+    <Swatch color="blue" onPick={picked} />
+    <Swatch color="yellow" onPick={picked} />
+    </div>
+  )}
+
+  export default function App(){
+    return(
+    <ColorPicker />)
+  }
+```
+
+---
+
 **No help until you have a complete attempt.** Before you run it, self-check against these four —
 they're the exact things you slipped on last time:
 
@@ -40,14 +68,6 @@ they're the exact things you slipped on last time:
 And the two you keep forgetting anywhere:
 5. Does **every** component have a `return`?
 6. Do the four `<Swatch>`es sit inside **one wrapper** (`<div>`)?
-
-**My attempt:**
-
-```jsx
-
-```
-
----
 
 ## After
 

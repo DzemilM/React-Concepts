@@ -135,7 +135,7 @@ function Tag({label, onRemove}){
           <Tag label={"react"} onRemove={handleRemove} />
           <Tag label={"events"} onRemove={handleRemove} />
           <Tag label={"props"} onRemove={handleRemove} />
-     </div>
+      </div>
     )
   }
 

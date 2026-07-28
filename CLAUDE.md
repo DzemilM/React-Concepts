@@ -42,6 +42,12 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
 - **Props — done** (2026-07-22). Passing/reading props, destructuring, default values,
   non-string props, `children`, spread, `.map()` with keys, nested objects, and `reduce`.
   Confirmed via cold test + a 14-question exam (5/5 on the debugging section).
+- **Events — done** (2026-07-28). Wiring handlers (`onClick`/`onChange`/`onSubmit`), pass vs
+  call (`{fn}` not `{fn()}`), the arrow wrapper for injecting arguments, the event object
+  (React calls the handler and passes it the event), `event.target.value` / `.textContent`,
+  `preventDefault`, handlers-as-props, and the child→parent hand-off (child wraps to inject its
+  value, parent passes the handler down bare). Confirmed via two cold tests + an 18-question
+  exam. The hand-off pattern and the pass-vs-wrap decision took the most reps to become reliable.
 
 ## My known weak spots
 
@@ -56,8 +62,19 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
   self-closes.
 - **Inside vs. outside the loop.** Things that repeat go inside the `.map()`; things that
   exist once (a `<ul>`, a total) go outside it.
+- **Forgetting the `return`.** A component is a function that returns JSX — no `return`, it
+  renders nothing. Forgot it in three separate components during the Events unit. Habit: type
+  `return ( )` right after `function X()`, before filling anything in.
+- **Answering only half the question.** On predict/explain questions I say what happens but skip
+  the second half (what gets wired to the button, what a call returns, the last hop of a trace).
+  When a question has two parts, answer both.
 
 Call these out when you see them, but name them as syntax slips, not concept failures.
+
+**One more, and it's not a weakness to fix by drilling — it's how to coach me.** My
+understanding usually runs ahead of my words: a vague answer ("event is built in") is normally
+me reaching for wording, not missing the concept. Confirm the idea, hand me the precise sentence,
+have me say it back — don't re-teach from scratch.
 
 ## Two rules I should have memorized
 

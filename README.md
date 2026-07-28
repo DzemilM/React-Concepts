@@ -8,7 +8,7 @@ application — the code here exists to drill a single idea until it sticks, the
 | Folder | Concept | Status |
 | --- | --- | --- |
 | [`Props/`](Props/) | Passing data into components | Done |
-| [`Events/`](Events/) | Reacting to user interaction | Cold test cleared — written exam next |
+| [`Events/`](Events/) | Reacting to user interaction | Done |
 
 ## How each concept gets drilled
 
