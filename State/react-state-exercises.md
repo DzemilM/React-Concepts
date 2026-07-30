@@ -75,17 +75,29 @@ Then call `useState(...)` directly — no `React.` prefix.
 import { useState } from 'react';
 
 function App() {
-  // TODO: declare the state value here
+  const [value, setValue] = useState(0)
 
   function handleIncrement() {
-    // TODO: increase the count by 1
+    setValue(value + 1)
+  }
+
+  function minusIncrement(){
+    if(value > 0) {
+      setValue(value-1)
+    }
+  }
+
+  function resetIncrement(){
+    setValue(0)
   }
 
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      <p>Count: {/* TODO: display the count */}</p>
+      <p>Count: {value}</p>
       <button onClick={handleIncrement}>+1</button>
+      <button onClick={minusIncrement}>-1</button>
+      <button onClick={resetIncrement}>Reset</button>
     </div>
   );
 }
@@ -120,7 +132,8 @@ import { useState } from 'react';
 
 function App() {
   let plainCount = 0;
-  // TODO: declare a state count as well
+  const [count, setCount] = useState(0);
+
 
   function bumpPlain() {
     plainCount = plainCount + 1;
@@ -128,7 +141,7 @@ function App() {
   }
 
   function bumpState() {
-    // TODO: increase the state count by 1
+    setCount(count + 1)
   }
 
   return (
@@ -137,7 +150,7 @@ function App() {
       <p>Plain variable: {plainCount}</p>
       <button onClick={bumpPlain}>Bump plain</button>
 
-      <p>State: {/* TODO: display the state count */}</p>
+      <p>State: {count}</p>
       <button onClick={bumpState}>Bump state</button>
     </div>
   );
@@ -170,20 +183,20 @@ export default App;
 import { useState } from 'react';
 
 function App() {
-  // TODO: declare a boolean state value
+    const [isVisible, setIsVisible] = useState(false);    // true or false to start?
 
-  function handleToggle() {
-    // TODO: flip it
-  }
+    function handleToggle() {
+      setIsVisible(!isVisible);                                 // flip it — one operator, no if
+    }
 
-  return (
-    <div id="app">
-      <h1>Exercise 3</h1>
-      <button onClick={handleToggle}>{/* TODO: the label */}</button>
-      {/* TODO: show this paragraph only when the state is true */}
-      <p>Here are the secret details.</p>
-    </div>
-  );
+    return (
+      <div id="app">
+        <h1>Exercise 3</h1>
+        <button onClick={handleToggle}>{isVisible ? "Hide details" : "Show details"}</button>
+        {isVisible && <p>Here are the secret details.</p>}
+      </div>
+    );
+
 }
 
 export default App;
