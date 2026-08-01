@@ -268,18 +268,18 @@ Then add a second input for a number, and show a computed result.
 import { useState } from 'react';
 
 function App() {
-  // TODO: state for the name text
-  // TODO: state for the quantity number
+  const [ name, setName ] = useState("")
+  const [ quant, setQuant] = useState(0)
 
   function handleNameChange(event) {
-    // TODO
+    setName(event.target.value)
   }
 
   function handleQuantityChange(event) {
-    // TODO
+    setQuant(Number(event.target.value))
   }
 
-  // TODO: compute the total here — quantity * 9.99, rounded to 2 decimals
+  const total=(quant * 9.99).toFixed(2)
 
   return (
     <div id="app">
@@ -287,9 +287,9 @@ function App() {
       <input type="text" onChange={handleNameChange} />
       <input type="number" onChange={handleQuantityChange} />
 
-      <p>Hello, {/* TODO */}!</p>
-      <p>You ordered {/* TODO */} items.</p>
-      <p>Total: ${/* TODO */}</p>
+      <p>Hello, {name}!</p>
+      <p>You ordered {quant} items.</p>
+      <p>Total: ${total}</p>
     </div>
   );
 }
@@ -323,21 +323,28 @@ constantly. Think about what happens to a stored `total` if `quantity` changes.)
 import { useState } from 'react';
 
 function App() {
-  // TODO: state for the list of items (what should it start as?)
-  // TODO: state for the current input text
+   const [list, setList] = useState([]);
+   const [inputText, setInputText] = useState("")
 
   function handleAdd() {
-    // TODO: add the current text to the list
-    // TODO: then clear the input text
+    setList([...list, inputText])
+    setInputText("")
   }
+
+  function handleNameChange(event) {
+  setInputText(event.target.value);
+}
+
 
   return (
     <div id="app">
       <h1>Exercise 6</h1>
-      <input type="text" onChange={/* TODO */} />
+      <input type="text" onChange={handleNameChange} />
       <button onClick={handleAdd}>Add</button>
       <ul>
-        {/* TODO: render one <li> per item */}
+        {list.map((item, index)=>(
+          <li key={index}>{item}</li>
+        ))}
       </ul>
     </div>
   );
