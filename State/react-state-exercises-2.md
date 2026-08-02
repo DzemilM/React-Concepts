@@ -41,24 +41,28 @@ console.
 import { useState } from 'react';
 
 function App() {
-  // TODO: declare the volume state
+  const [volume, setVolume] = useState(50)
 
   function handleUp() {
-    // TODO
+    if(volume < 100) {
+      setVolume(volume + 10)
+    }
   }
 
   function handleDown() {
-    // TODO
+    if(volume > 0) {
+    setVolume(volume - 10)
+    }
   }
 
   function handleMute() {
-    // TODO
+    setVolume(0)
   }
 
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      <p>Volume: {/* TODO: display it */}</p>
+      <p>Volume: {volume}</p>
       <button onClick={handleUp}>+10</button>
       <button onClick={handleDown}>-10</button>
       <button onClick={handleMute}>Mute</button>
@@ -92,19 +96,18 @@ Three things change together on each click:
 import { useState } from 'react';
 
 function App() {
-  // TODO: declare the state — think about how many pieces you need
+  const [isOnline, setIsOnline] = useState(false);
 
   function handleToggle() {
-    // TODO: flip it
+    setIsOnline(!isOnline)
   }
 
   return (
     <div id="app">
       <h1>Exercise 2</h1>
-      <p>Status: {/* TODO */}</p>
-      <button onClick={handleToggle}>{/* TODO: the label */}</button>
-      {/* TODO: show this only when online */}
-      <p>Welcome back!</p>
+      <p>Status: {isOnline ? "online" : "offline"}</p>
+      <button onClick={handleToggle}>{isOnline ? "Go offline" : "Go online"}</button>
+      {isOnline && <p>Welcome back!</p>}
     </div>
   );
 }
@@ -132,29 +135,30 @@ you type. Before anything is typed it must read `Full name: ` — not `undefined
 import { useState } from 'react';
 
 function App() {
-  // TODO: state for the first name
-  // TODO: state for the last name
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
 
   function handleFirstChange(event) {
-    // TODO
+    setFirstName(event.target.value)
   }
 
   function handleLastChange(event) {
-    // TODO
+    setLastName(event.target.value)
   }
 
   function handleClear() {
-    // TODO: empty both
+   setFirstName("");
+   setLastName("")
   }
 
-  // TODO: build the full name here
+  const fullName = firstName + " " + lastName;
 
   return (
     <div id="app">
       <h1>Exercise 3</h1>
-      <input type="text" placeholder="First name" onChange={handleFirstChange} />
-      <input type="text" placeholder="Last name" onChange={handleLastChange} />
-      <p>Full name: {/* TODO */}</p>
+      <input type="text" placeholder="First name" value={firstName} onChange={handleFirstChange} />
+      <input type="text" placeholder="Last name" value={lastName} onChange={handleLastChange} />
+      <p>Full name: {fullName}</p>
       <button onClick={handleClear}>Clear</button>
     </div>
   );
@@ -203,7 +207,9 @@ function App() {
   }
 
   function handleRealBonus() {
-    // TODO: same job, but it must actually add 3
+    setScore((prev) => prev + 1);
+    setScore((prev) => prev + 1);
+    setScore((prev) => prev + 1)
   }
 
   return (
@@ -245,23 +251,25 @@ Money shows to two decimals.
 import { useState } from 'react';
 
 function App() {
-  // TODO: how many pieces of state does this actually need?
+  const [quantity, setQuantity] = useState(0)
 
   function handleQuantityChange(event) {
-    // TODO
+    setQuantity(Number(event.target.value))
   }
-
-  // TODO: the calculations go here
-  // unitPrice, subtotal, shipping, total
+  
+  const unitPrice = 12.5;
+  const subTotal = quantity * unitPrice;
+  const shipping = subTotal > 50 ? 0 : 4.99;
+  const total = subTotal + shipping 
 
   return (
     <div id="app">
       <h1>Exercise 5</h1>
       <input type="number" onChange={handleQuantityChange} />
-      <p>Quantity: {/* TODO */}</p>
-      <p>Subtotal: ${/* TODO */}</p>
-      <p>Shipping: ${/* TODO */}</p>
-      <p>Total: ${/* TODO */}</p>
+      <p>Quantity: {quantity}</p>
+      <p>Subtotal: ${(subTotal).toFixed(2)}</p>
+      <p>Shipping: ${(shipping).toFixed(2)}</p>
+      <p>Total: ${(total).toFixed(2)}</p>
     </div>
   );
 }
@@ -300,30 +308,39 @@ time, not in the state.
 import { useState } from 'react';
 
 function App() {
-  // TODO: state for the guests
-  // TODO: state for the input text
+  const [guests, setGuests] = useState([]);
+  const [input, setInput] = useState("");
 
   function handleNameChange(event) {
-    // TODO
+    setInput(event.target.value)
   }
 
-  function handleAdd() {
-    // TODO: add the current name to the list
-    // TODO: then clear the input
+  function handleAdd(event) {
+    event.preventDefault();
+    if(input.length === 0) {return};
+    setGuests([...guests, input]);
+    setInput("")
   }
 
   function handleRemove(indexToRemove) {
-    // TODO: remove that one guest
-  }
+    setGuests(guests.filter((guest, index)=> index !== indexToRemove))
+}
 
   return (
     <div id="app">
       <h1>Exercise 6</h1>
-      <p>{/* TODO */} guests attending</p>
-      <input type="text" onChange={handleNameChange} />
-      <button onClick={handleAdd}>Add guest</button>
+      <p>{guests.length} guests attending</p>
+    <form onSubmit={handleAdd}>
+      <input type="text" value={input} onChange={handleNameChange} />
+      <button>Add guest</button>
+    </form>
       <ul>
-        {/* TODO: one <li> per guest, each with a Remove button */}
+        {guests.map((guest, index)=>(
+          <li key={index}>
+            {guest}
+            <button onClick={()=>handleRemove(index)}>Remove</button>
+          </li>
+        ))}
       </ul>
     </div>
   );
