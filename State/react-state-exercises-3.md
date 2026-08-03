@@ -78,12 +78,30 @@ Start with a bill of `0` and 15% selected.
 import { useState } from 'react';
 
 function App() {
-  // TODO
+  const [bill, setBill] = useState(0);
+  const [tip, setTip] = useState(15);
+
+  const tipAmount = bill * (tip * 0.01);
+  const total = bill + tipAmount;
+
+  function handleBill(event){
+    setBill(Number(event.target.value))
+  }
+
+  function handleTip(number){
+    setTip(number)
+  }
 
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      {/* TODO */}
+      <input type="number" value={bill} placeholder="Bill" onChange={handleBill} />
+      <button onClick={()=>handleTip(10)}>10%</button>
+      <button onClick={()=>handleTip(15)}>15%</button>
+      <button onClick={()=>handleTip(20)}>20%</button>
+      <p>Tip:{tip}%</p>
+      <p>Tip amount:${(tipAmount).toFixed(2)}</p>
+      <p>Total:${(total).toFixed(2)}</p>
     </div>
   );
 }
@@ -117,12 +135,25 @@ Start hidden, with an empty password.
 import { useState } from 'react';
 
 function App() {
-  // TODO
+  const [password, setPassword] = useState("");
+  const [isHidden, setIsHidden] = useState(true);
+
+  const passLength=password.length;
+
+  function handlePass(event){
+    setPassword(event.target.value)
+  }
+
+  function handleHidden(){
+    setIsHidden(!isHidden)
+  }
 
   return (
     <div id="app">
       <h1>Exercise 2</h1>
-      {/* TODO */}
+      <input type={isHidden ? "password" : "text"} placeholder="Password" value={password} onChange={handlePass} />
+      <button onClick={handleHidden}>{isHidden ? 'Show' : 'Hide'}</button>
+      <p>Password length:{passLength}</p>
     </div>
   );
 }
