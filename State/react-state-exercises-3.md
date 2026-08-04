@@ -186,12 +186,25 @@ label in its own `useState` instead of deriving it?
 import { useState } from 'react';
 
 function App() {
-  // TODO
+  const [characters, setCharacters] = useState("");
+
+  function handleChars(event){
+    setCharacters(event.target.value)
+  }
+
+const used=characters.length;
+const remaining= 100 - used;
+const isTooLong= used > 100;
 
   return (
     <div id="app">
       <h1>Exercise 3</h1>
-      {/* TODO */}
+      <textarea onChange={handleChars} value={characters}>
+      </textarea>
+      <p>{used}/100 characters</p>
+      <p>{remaining} characters remaining</p>
+      {isTooLong && <p>Too long!</p>}
+      <button disabled={isTooLong}>Submit</button>
     </div>
   );
 }
