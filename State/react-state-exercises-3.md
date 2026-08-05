@@ -235,7 +235,7 @@ function App() {
   const [score, setScore] = useState(0);
 
   function addPoint() {
-    // TODO: add exactly one point
+    setScore((prev)=> prev + 1)
   }
 
   function handleHatTrick() {
@@ -244,12 +244,20 @@ function App() {
     addPoint();
   }
 
+  function delayed(){
+    setTimeout(() => {
+      // Functional update handles rapid clicks correctly
+      setScore(prev => prev + 1);
+    }, 3000);
+  }
+
   return (
     <div id="app">
       <h1>Exercise 4</h1>
       <p>Score: {score}</p>
       <button onClick={handleHatTrick}>Score a hat-trick</button>
       <button onClick={addPoint}>Score once</button>
+      <button onClick={delayed}>Delayed point</button>
     </div>
   );
 }
@@ -293,12 +301,52 @@ those three clicks capture, and when?
 import { useState } from 'react';
 
 function App() {
-  // TODO
+  const [guests, setGuests] = useState([]);
+  const [input, setInput] = useState("");
+  const [query, setQuery] = useState("");
+
+  const guestNumber = guests.length;
+  const visibleGuests = guests.filter((guest)=>guest.toLowerCase().includes(query.toLowerCase()))
+
+ function handleInputChange(event){
+  setInput(event.target.value)
+ }
+
+ function addGuest(event){
+  event.preventDefault();
+  if (input === '') {
+    return;                   
+  }
+  setGuests([...guests, input]);       
+  setInput('');           
+ }
+
+ function handleQuery(event){
+  setQuery(event.target.value)
+ }
+
+function handleRemove(name) {
+  setGuests(guests.filter((guest)=>guest !== name));        
+}
+ 
 
   return (
     <div id="app">
       <h1>Exercise 5</h1>
-      {/* TODO */}
+      <form onSubmit={addGuest}>
+      <input type="text" value={input} onChange={handleInputChange} />
+      <button>Add</button>
+      </form>
+      <p>Showing {visibleGuests.length} of {guestNumber} guests</p>
+      <input type="text" value={query} onChange={handleQuery} />
+      <ul>
+       {visibleGuests.map((guest)=>
+        <li key={guest}>
+          {guest}
+          <button onClick={()=>handleRemove(guest)}>Remove</button>
+        </li>
+       )}
+      </ul>
     </div>
   );
 }
@@ -342,12 +390,62 @@ breaks if you store it.
 import { useState } from 'react';
 
 function App() {
-  // TODO
+  const [items, setItems] = useState([]);
+  const [input, setInput] = useState("");
+  const [quantity, setQuantity] = useState(0);
+
+  const price = 4.25;
+  const itemCount = items.length;
+  const subtotal= itemCount * quantity * price;
+  const shipping = subtotal > 40 ? 0 : 5.99
+  const total =  subtotal + shipping
+
+  function handleInput(event){
+    setInput(event.target.value)
+  }
+
+  function handleAdd(event){
+    event.preventDefault();
+    if (input === '') {
+    return;                   
+    }
+    setItems([...items, input]);       
+    setInput('');
+  }
+
+  function handleRemove(name){
+    setItems(items.filter((item)=>item !== name));
+  }
+
+  function handleQuantity(event){
+    setQuantity(Number(event.target.value))
+  }
+
+ function handleEmpty(){
+  setItems([])
+ }
 
   return (
     <div id="app">
       <h1>Exercise 6</h1>
-      {/* TODO */}
+      <form onSubmit={handleAdd}>
+        <input type="text" value={input} onChange={handleInput} />
+        <button>Add item</button>
+      </form>
+      <input placeholder="Quantity:" value={quantity} type="number" onChange={handleQuantity} />
+        <p>Item count:{itemCount}</p>
+        <p>Subtotal:${(subtotal).toFixed(2)}</p>
+        <p>Shipping:${(shipping).toFixed(2)}</p>
+        <p>Total:${(total).toFixed(2)}</p>
+        <ul>
+         {items.map((item)=>
+          <li key={item}>
+            {item}
+            <button onClick={()=>handleRemove(item)}>Remove</button>
+          </li>
+         )}
+        </ul>
+        <button onClick={handleEmpty}>Empty Cart</button>
     </div>
   );
 }
