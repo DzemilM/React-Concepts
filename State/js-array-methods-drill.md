@@ -71,6 +71,10 @@ Use this array for exercises 1–4:
 
 ```js
 const numbers = [1, 2, 3, 4, 5];
+console.log(numbers.map((number)=> number * 2));
+console.log(numbers.map((number)=> number + "!"));
+console.log(numbers.map((number,index)=>number * index));
+console.log(numbers)
 ```
 
 **1.** Produce `[2, 4, 6, 8, 10]` — every number doubled.
@@ -85,6 +89,8 @@ Now use this one:
 
 ```js
 const names = ["alice", "bob", "carl"];
+console.log(names.map((name)=>name.toUpperCase()));
+console.log(names.map((name,index)=>`${index+1}. ${name}`))
 ```
 
 **5.** Produce `["ALICE", "BOB", "CARL"]`. (`.toUpperCase()`)
@@ -97,6 +103,10 @@ const names = ["alice", "bob", "carl"];
 
 ```js
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+console.log(numbers.filter((number)=> number > 5));
+console.log(numbers.filter((number)=> number % 2 === 0));
+console.log(numbers.filter((number)=>number !== 7));
+console.log(numbers.filter((number, index)=>index !== 3))
 ```
 
 **7.** Keep only the numbers above 5.
@@ -109,6 +119,8 @@ const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 ```js
 const guests = ["Alice", "Bob", "Carl", "Anna"];
+console.log(guests.filter((guest)=>guest.toLowerCase().includes('a')));
+console.log(guests.filter((guest)=>guest !== "Bob"))
 ```
 
 **11.** Keep only the names containing the letter `a` — **case-insensitively**, so all four match.
@@ -122,6 +134,11 @@ const guests = ["Alice", "Bob", "Carl", "Anna"];
 
 ```js
 const items = ["apple", "bread"];
+const added = [...items, "milk"];
+const start = ["milk", ...items];
+console.log(items);
+console.log(added);
+console.log(start)
 ```
 
 **13.** Produce a new array with `"milk"` added on the end — **without** using `.push()`.
@@ -150,6 +167,12 @@ what you see. This is exactly what React sees when you mutate state.
 ```js
 const guests = ["Alice", "Bob", "Carl", "Anna", "Dave"];
 const query = "a";
+const hasQuery = guests.filter((guest)=>guest.toLowerCase().includes(query.toLowerCase()));
+console.log(hasQuery);
+console.log(hasQuery.map((guest)=>guest.toUpperCase()));
+console.log(hasQuery.length);
+const index = 2;
+const noCarl = guests.filter((guest, i)=> i !== index)
 ```
 
 **17.** In one expression: keep the names containing `query` (case-insensitive), then uppercase
@@ -166,6 +189,8 @@ than the name.
 ```js
 const guests   = ["Alice", "Bob", "Carl"];
 const visible  = guests.filter((g) => g.toLowerCase().includes("c"));   // ["Carl"]
+console.log(guests);
+console.log(visible)
 ```
 
 The user clicks Remove on the **first item of `visible`** — index `0`.
@@ -268,5 +293,4 @@ Answer these three from memory, no scrolling back:
 1. In `guests.map((guest) => ...)`, which part is the array and which part did you invent?
 2. `.filter()` keeps the items your test returns **what** for?
 3. Why does `.push()` break React when `[...arr, x]` doesn't?
-
 If those three are instant, the bottleneck's gone and you're ready for the cold test.
