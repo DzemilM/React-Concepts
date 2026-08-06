@@ -98,6 +98,41 @@ click the button. Are either of them state? What is the *one* thing the button a
 **My attempt:**
 
 ```jsx
+import { useState } from 'react';
+
+export function TempConverter(){
+
+const [temp, setTemp] = useState(0);
+const [showFahrenheit, setShowFahrenheit] = useState(true);
+const fahrenheit = temp * 9 / 5 +32;
+const kelvin = temp + 273.15;
+const converted = showFahrenheit ? fahrenheit : kelvin;
+const unit = showFahrenheit ? '°F' : 'K';
+
+
+function handleTemp(event){
+  setTemp(Number(event.target.value))
+}
+
+function handleShow(){
+  setShowFahrenheit(!showFahrenheit)
+}
+
+  return(
+    <div>
+     <input type="number" value={temp} onChange={handleTemp}  />
+     <button onClick={handleShow}>{showFahrenheit ? "Switch to Kelvin" : "Switch to Fahrenheit"}</button>
+     <p>{converted.toFixed(1)} {unit}</p>
+     {temp <= 0 && <p>Freezing!</p>}
+    </div>
+  )
+}
+
+export default function App(){
+  return(
+    <TempConverter />
+  )
+}
 
 ```
 
