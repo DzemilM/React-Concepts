@@ -164,7 +164,68 @@ duplicate check — which array did you look in, and why couldn't it be the filt
 
 **My attempt:**
 
-```jsx
+``` jsx
+import { useState } from 'react';
+
+export function Playlist(){
+  const [input, setInput] = useState("");
+  const [playList, setPlayList] = useState([]);
+  const [search, setSearch] = useState("");
+  const lowerCasePlayList = playList.map((song)=>song.toLowerCase());
+  const playListLength = playList.length;
+  const visibleSongs = playList.filter((song)=>
+   song.toLowerCase().includes(search.toLowerCase())
+  );
+
+  function handleInput(event){
+    setInput(event.target.value)
+  }
+
+  function addToPlaylist(event){
+    event.preventDefault();
+    if(input === '') {return};
+    if(lowerCasePlayList.includes(input.toLowerCase())){return};
+    setPlayList([...playList, input]);
+    setInput('')
+  }
+
+  function handleRemove(name){
+    setPlayList(playList.filter((item)=> item !== name))
+  }
+
+  function emptyPlaylist(){
+    setPlayList([])
+  }
+
+  function handleSearch(event){
+    setSearch(event.target.value);
+  }
+
+  return(
+    <div>
+      <form onSubmit={addToPlaylist}>
+      <input type="text" value={input} onChange={handleInput} />
+      <button>Add</button>
+      </form>
+      <p>Showing {visibleSongs.length} of {playListLength} songs</p>
+      <button onClick={emptyPlaylist}>Empty Playlist</button>
+      <ul>
+      {visibleSongs.map((title)=>
+        <li key={title}>
+        {title}
+        <button onClick={()=>handleRemove(title)}>Remove</button>
+        </li>
+      )}
+      </ul>
+      <input type="search" placeholder="search" value={search} onChange={handleSearch} />
+    </div>
+  )
+}
+
+export default function App(){
+  return(
+  <Playlist />)
+}
 
 ```
 
