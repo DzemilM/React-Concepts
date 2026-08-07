@@ -48,6 +48,15 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   `preventDefault`, handlers-as-props, and the child→parent hand-off (child wraps to inject its
   value, parent passes the handler down bare). Confirmed via two cold tests + an 18-question
   exam. The hand-off pattern and the pass-vs-wrap decision took the most reps to become reliable.
+- **State (single component) — done** (2026-08-07). `useState` returning `[value, setter]`, the
+  render loop (setter → re-render → `useState` returns the new value), initial value used once
+  only, never assigning to state, the stale-value trap and `setX(prev => ...)`, controlled inputs
+  (`value` + `onChange` are a pair), array state and the never-mutate rule, and — the big one —
+  telling **state** from **derived** from **constant**. Confirmed via three exercise sets, a
+  plain-JS array-methods drill, a three-task cold test, and a 20-question exam (5/5 on the
+  classify section, which was the weakest thing at the start).
+  **Not yet covered:** state shared between components (lifting state up), and objects / arrays of
+  objects in state. Waiting for the Udemy course's deep-dive section rather than pre-drilling them.
 
 ## My known weak spots
 
@@ -67,7 +76,15 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
   `return ( )` right after `function X()`, before filling anything in.
 - **Answering only half the question.** On predict/explain questions I say what happens but skip
   the second half (what gets wired to the button, what a call returns, the last hop of a trace).
-  When a question has two parts, answer both.
+  When a question has two parts, answer both. **Habit: count the verbs in the question before
+  answering — the word "and" is where the second half hides.**
+- **Fixing only half the list.** The same pattern applied to code review, and during State it was
+  my single biggest time cost — given four numbered fixes I'd apply two or three and paste back.
+  One typo survived three rounds that way. **Habit: reply against the numbers and tick each one
+  off.**
+- **Renames leave orphans.** Every rename during State left the old name somewhere — `celsius`
+  after switching to `temp`, `playList` vs `playlist` vs `setPlaylist`. **Habit: after renaming
+  anything, search the file for the old name.**
 
 Call these out when you see them, but name them as syntax slips, not concept failures.
 

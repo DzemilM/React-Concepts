@@ -9,13 +9,19 @@ application — the code here exists to drill a single idea until it sticks, the
 | --- | --- | --- |
 | [`Props/`](Props/) | Passing data into components | Done |
 | [`Events/`](Events/) | Reacting to user interaction | Done |
+| [`State/`](State/) | Data that changes and redraws the screen | Done (single component) |
+
+`State/` covers state inside one component. Sharing state between components (lifting state up)
+and holding objects or arrays of objects in state are still to come.
 
 ## How each concept gets drilled
 
 Three passes, in order. Each one tests something the previous one doesn't:
 
 1. **Exercise file** — six exercises escalating in difficulty, with the logic blanked out as
-   `TODO` and solutions collapsed at the bottom. Tests recall with scaffolding.
+   `TODO` and solutions collapsed at the bottom. Tests recall with scaffolding. Repeated as
+   numbered sets (`-2`, `-3`) with fresh problems until I can do a set without help, thinning
+   the starter code each round.
 2. **Cold test** — no starter code. Just a data shape and a list of requirements. Tests
    whether I can generate the structure myself instead of adapting a template.
 3. **Written exam** — predict-the-output, spot-the-bug, and explain-it questions. Tests
@@ -24,6 +30,10 @@ Three passes, in order. Each one tests something the previous one doesn't:
 
 A concept is "done" when I clear the cold test and the exam without help — not when the
 exercises run.
+
+If the same mistake keeps costing rounds and it isn't really the concept's fault, it gets its
+own targeted drill instead of another exercise set — `State/js-array-methods-drill.md` is one,
+twenty plain-JS problems on `.map()`/`.filter()`/spread with no React in the way.
 
 ## Running the code
 
