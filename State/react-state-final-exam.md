@@ -36,7 +36,7 @@ function App() {
 
 You click **once**. What number is on screen? Explain what `count` is during that function run.
 
-Answer:
+Answer: output is 1, count is given a value of zero, setCount doesnt see eachother so its always count(0) plus 1
 
 ### A2
 
@@ -50,7 +50,7 @@ function handleClick() {
 Same component, this handler instead. You click once. What number now, and why is it different
 from A1?
 
-Answer:
+Answer: now its 2 coz output is saved as prev so second counts prev is state plus 1 and that is added to 1
 
 ### A3
 
@@ -74,7 +74,7 @@ function App() {
 
 You click five times. What does the **console** say, and what does the **screen** say? Both halves.
 
-Answer:
+Answer: console says 5 but screen says 1?
 
 ### A4
 
@@ -85,7 +85,7 @@ const [count, setCount] = useState(0);
 The count is currently 7. React re-renders. That line runs again, with `0` written right there in
 it. Why doesn't the count go back to 0?
 
-Answer:
+Answer: its ran few other times elsewhere and got saved there so thats updatet state when re rendered
 
 ### A5
 
@@ -98,7 +98,7 @@ function handleClick() {
 
 Count is 0. You click once. What does the console log — 0 or 1? Why?
 
-Answer:
+Answer:console logs 0 coz it logs previous value
 
 ### A6
 
@@ -112,7 +112,7 @@ function handleAdd() {
 `items` is `["apple"]`. You click Add. What's in the array afterwards, and what appears on screen?
 Both halves — they don't match.
 
-Answer:
+Answer: on screen it shows only apple? kn array there are apple and milk but i think screen shows apple, i dont know why tho
 
 ### A7
 
@@ -127,7 +127,7 @@ function handleDelayed() {
 Score is 0. You click three times within one second, then wait. What's the score after three
 seconds? What value did each callback capture, and when?
 
-Answer:
+Answer: its still 1, score is 0 so its just plus 1 no matter how much u click it in one second
 
 ---
 
@@ -143,7 +143,7 @@ function handleReset() {
 }
 ```
 
-Answer:
+Answer: it should just be 0, fixed value when its given to initial value u just write that value, no equal or adding or reducing etc
 
 ### B2
 
@@ -151,7 +151,7 @@ Answer:
 <button onClick={handleClick()}>Save</button>
 ```
 
-Answer:
+Answer: handleclick without () should be there, this one gets called immediately when it renders
 
 ### B3
 
@@ -161,7 +161,7 @@ function handleIncrement() {
 }
 ```
 
-Answer:
+Answer:useState? it should be setCount or however its called you dont call useState there
 
 ### B4
 
@@ -169,7 +169,7 @@ Answer:
 {isLoggedIn ? <p>Welcome back!</p>}
 ```
 
-Answer:
+Answer: shouldnt be question mark, should be '&&' instead, then when both is true <p> gets printed
 
 ### B5
 
@@ -179,7 +179,7 @@ Answer:
 
 The user can't type in this box. Why?
 
-Answer:
+Answer: it needs onChange
 
 ### B6
 
@@ -189,7 +189,7 @@ function handleRemove(nameToRemove) {
 }
 ```
 
-Answer:
+Answer: this one removes EVERYTHING else except that what we should remove
 
 ### B7
 
@@ -200,7 +200,7 @@ const total = subtotal + shipping;
 
 Quantity 4, price 10, shipping 5. What does `total` end up as, and why?
 
-Answer:
+Answer: i dont know but i assume toFixed ruins it? or it should be Number() there
 
 ### B8
 
@@ -219,7 +219,7 @@ const visible = guests.filter((g) => g.toLowerCase().includes(query.toLowerCase(
 `guests` is `["Alice", "Bob", "Carl"]` and the user has typed `"c"` in the search box. They click
 Remove next to Carl. Who actually gets removed, and why?
 
-Answer:
+Answer: alice also gets removed because its going by index so it gets to alice which includes c
 
 ---
 
@@ -232,35 +232,35 @@ In your own words. One or two sentences each — but answer **both halves** wher
 Why can't a normal `let` variable inside a component be used to update the screen? Name the two
 things `useState` does that a `let` can't.
 
-Answer:
+Answer: useState gets noticed by react when re rendering, let is rendered once in react only
 
 ### C2
 
 Where does the value in `useState` actually live? What happens to it when the component is removed
 from the screen?
 
-Answer:
+Answer: it lives in react, when component is removed its thrown away and gets reseted when we load component again
 
 ### C3
 
 After `setCount(5)` runs, the variable `count` is still the old value for the rest of that
 function. Why? When does the new value become visible?
 
-Answer:
+Answer: when it gets re rendered it becomes visible, it stays same between runs of 2 functions, after whole function runs new value is visible
 
 ### C4
 
 When must you use `setX((prev) => ...)` instead of `setX(value)`? Give the rule, and one situation
 where the plain form genuinely breaks.
 
-Answer:
+Answer: i use prev when i want previous calculations of state to be saved, and value directly gets declared when its fixed number we want it to change to. 
 
 ### C5
 
 Why does `items.push(x)` fail to update the screen when `setItems([...items, x])` works? Your
 answer must say what React does with the value you hand it.
 
-Answer:
+Answer: push is still same array and react doesnt notice difference when its pointing to same array, ...item,s x makes a new array which react notices. React compares values, if we do push, react just sees same 2 arrays its pointing to, but destructuring makes new array and react notices when ocmparing
 
 ---
 
@@ -274,27 +274,27 @@ Unit price is fixed at £9.99. VAT is 20%.
 ### D1
 The quantity typed by the user.
 
-Answer:
+Answer: state, we setQuantity with what user types and thats quantity then
 
 ### D2
-The unit price, £9.99.
+The unit price, £9.99. its fixed,a constant 
 
-Answer:
+Answer: constant
 
 ### D3
 The subtotal (quantity × unit price).
 
-Answer:
+Answer: derived, we calculate from state and fixed price
 
 ### D4
 The selected size.
 
-Answer:
+Answer: state which we pick in buttons, setSize which setz size state to what we pick
 
 ### D5
 Whether the "Add to basket" button is disabled because the quantity is 0.
 
-Answer:
+Answer: its derived, we see what is state value and based on that its true or false
 
 ---
 
