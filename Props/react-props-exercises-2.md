@@ -279,6 +279,28 @@ export default App;
 5. When you write `function Badge({ color = "gray" })`, when does the default `"gray"`
    actually kick in — is it when `color` is missing, or when it's `null`, or both?
 
+<details>
+<summary>Self-check answers</summary>
+
+1. **Quotes make a string; braces mean "this is JavaScript."** `name="Ada"` is already the string
+   you want. `9.99` is a number and `true` is a boolean, so they need braces to arrive as those
+   types — `price="9.99"` would hand over the *text* `"9.99"`, which breaks arithmetic.
+2. **Whatever sits between the opening and closing tags.** `<Box>Hello</Box>` gives
+   `children === "Hello"`. React fills it in automatically — you never write `children=` as an
+   attribute.
+3. React logs *"Each child in a list should have a unique key prop."* It's a warning, not an
+   error, so it still renders. React uses keys to tell **which item is which** between renders; without
+   them it can reuse the wrong DOM node when the list is reordered or something is removed from
+   the middle.
+4. `{...user}` spreads the object's own properties into separate props. If `user` is
+   `{ name: "Ada", age: 36 }`, then `<Card {...user} />` is identical to
+   `<Card name="Ada" age={36} />`.
+5. **Only when the prop is `undefined`** — either not passed at all, or passed as literal
+   `undefined`. It does **not** kick in for `null`, `0`, `""` or `false`; those are real values, so
+   they're used as-is. That's why `<Price amount={0} />` renders `0`, not the default.
+
+</details>
+
 ---
 
 <details>

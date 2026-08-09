@@ -24,7 +24,9 @@ function App() {
 }
 ```
 
-What renders? -not what we want, at funciton app u put nome instead of name
+What renders? — `<p>Hi </p>`, with nothing after "Hi". The prop is spelled `nome` in App but read
+as `name` in Hello, so `name` is undefined, and React renders nothing for undefined. No error, no
+warning — just a silently missing word. This is why prop names have to match exactly on both sides.
 
 ### A2
 
@@ -58,7 +60,10 @@ function App() {
 }
 ```
 
-What is `props.children` here — a string, an element, or undefined? What renders? its just text,i forgot is it span or? anyways children is anything u write later on
+What is `props.children` here — a string, an element, or undefined? What renders? — it's the
+**string** `"Hello"`, and `<div>Hello</div>` renders. `children` is whatever you put between the
+opening and closing tags of a component; here that's plain text, so it arrives as a string. No
+wrapper element is added.
 
 ### A4
 
@@ -70,7 +75,10 @@ function App() {
 }
 ```
 
-What renders, and what (if anything) does React complain about in the console? -it renders 2,4,6?
+What renders, and what (if anything) does React complain about in the console? — a list showing
+2, 4, 6. And React warns in the console: *"Each child in a list should have a unique key prop."*
+The `<li>`s are produced by `.map()` and none has a `key`, so React can't tell which item is which
+between renders. It still renders — a warning, not an error.
 
 ### A5
 
@@ -84,7 +92,10 @@ function App() {
 }
 ```
 
-What renders? (Careful — look at what's missing.) - is it missing () or a 0 as initial value?
+What renders? (Careful — look at what's missing.) — the missing `0` initial value. Without it,
+`reduce` uses the **first element** as the starting accumulator, so `a` is the object `{cost: 5}`,
+not a number. `{cost: 5} + 10` converts the object to a string, and `"[object Object]10"` renders.
+With `, 0)` added, `a` starts as a number and you get 15.
 
 ---
 
@@ -99,6 +110,10 @@ function User(name, age) {
   return <p>{name} is {age}</p>;
 }
 ```
+
+React passes a component exactly ONE argument — the props object. So `name` holds that whole
+object and `age` is undefined. It renders "[object Object] is " and nothing else. The fix is to
+destructure the one object it does receive: `function User({ name, age })`.
 
 ### B2
 
@@ -128,7 +143,11 @@ function Stats({ data }) {
   );
 }
 ```
-u need {}, you cant go without them
+backwards — the braces are the bug. That line is above the `return`, so it's plain JavaScript, and
+plain JS doesn't use braces to mean "here comes a value". Written as `const average = {expr}` the
+braces read as an object literal and it won't compile. Drop them:
+`const average = data.scores.reduce((a, b) => a + b, 0) / data.scores.length;`
+Braces only mean "evaluate this" inside JSX.
 
 ### B4
 
@@ -145,7 +164,9 @@ function List({ team }) {
   );
 }
 ```
-u should map inside ul, not map that too
+the `<ul>` is inside the `.map()`, so you get one whole list per player — five separate one-item
+lists instead of one list with five items. The `<ul>` exists once, so it goes outside the map;
+only the `<li>` repeats, so only it goes inside. The `<li>` also needs a `key`.
 
 ### B5
 
@@ -180,24 +201,39 @@ A component receives props. Where do props physically come from, and what *shape
 component receive them in (how many arguments does React pass)?
  
 
-shape depends on us, we can pass them as one prop then reactpasses all arguments, desctructure and pass its arguments which we want or all of them, and where they come from? when we make components its us who give them values/arguments
+They come from the parent — whatever attributes you write on the tag, `<User name="Sara" age={30} />`,
+become props. React collects them into a single object, `{ name: "Sara", age: 30 }`, and passes
+**exactly one argument**: that object. Never two, never one per attribute. That's why
+`function User(name, age)` fails and `function User({ name, age })` works — the second one isn't
+taking two arguments, it's destructuring the one object it receives.
 
 ### C2
 Why can you write `const x = 5` above a component's `return`, but **not** inside the JSX?
 State the rule that governs where each kind of code goes.
 
-i never thought abt it, it should be inside of jsx so its not global and messes other code? then its in scope of function when its inside
+Nothing to do with scope. JSX braces hold an **expression** — something that produces a value React
+can render. `const x = 5` is a **statement**, a declaration; it doesn't produce a value, so there's
+nothing to render and it won't parse.
+
+The rule: **compute above the `return` in plain JavaScript, display inside it in JSX braces.**
+Declarations, `if` blocks and function definitions go above; values, variables, ternaries and
+`.map()` calls go inside the braces.
 
 ### C3
 Inside `array.map((thing) => ...)`, why is `thing.name` different from `outerObject.name`?
 Explain as if to someone who just got it wrong.
 
-because thing is name we have to give to that which we map, its not outerObject nor it can be
+`thing` is a name I invent for **one item at a time** — `.map()` calls the function once per element
+and hands it that element. So `thing.name` is that single item's name, and it's different on every
+pass. `outerObject.name` is the name on the whole collection sitting outside the loop — one fixed
+value, the same on every pass. Inside the map you almost always want the item, not the container.
 
 ### C4
 You have a list of 5 items and a total computed from all 5. One of those goes inside the
 `.map()` and one goes outside. Which is which, and what's the general rule?
-list of 5 items is mapped, total is outside of map
+The 5 items go inside the `.map()`; the total goes outside it. The general rule: **things that
+repeat go inside the loop, things that exist once go outside it.** There are five list items but
+only one total, and only one `<ul>` to hold them — so the `<ul>` is outside too.
 ---
 
 <details>

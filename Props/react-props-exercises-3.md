@@ -306,6 +306,29 @@ export default App;
 5. `speed = 1` as a default: when exactly does the `1` get used, and why is `1` a "safe"
    default for a divisor (what would `0` do)?
 
+<details>
+<summary>Self-check answers</summary>
+
+1. **Quotes make a string; braces mean "this is JavaScript."** `18.7` must arrive as a number and
+   `true` as a boolean, so both need braces. `"Paris"` is already the string you want, so quotes
+   are enough.
+2. Every row would render the **same** value — the playlist owner's title, not each track's — 
+   because `playlist.owner` is one fixed object outside the loop. If `owner` or `title` doesn't
+   exist you'd get `undefined` (renders nothing) or a crash on reading a property of undefined.
+   Inside a `.map()` you want the item, not the container.
+3. `.reduce()` takes a **callback** and an **initial value**. The lonely `0` is that initial value —
+   the accumulator's starting point. Leave it out and `reduce` uses the **first element** as the
+   accumulator, which is why `reduce((a, b) => a + b.cost)` over objects produces
+   `"[object Object]..."` instead of a number.
+4. **By nesting** — `<Panel><ul>…</ul></Panel>`. Anything between the tags arrives as `children`.
+   Passing it as an attribute works but reads badly and is not idiomatic.
+5. The `1` is used only when `speed` is **`undefined`** — the prop omitted entirely. It's safe for
+   a divisor because dividing by 1 leaves the value unchanged, so a missing prop degrades quietly.
+   A default of `0` would give `Infinity` (or `NaN` for `0 / 0`) and poison every calculation
+   downstream.
+
+</details>
+
 ---
 
 <details>

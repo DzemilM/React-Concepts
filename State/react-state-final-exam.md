@@ -74,7 +74,9 @@ function App() {
 
 You click five times. What does the **console** say, and what does the **screen** say? Both halves.
 
-Answer: console says 5 but screen says 1?
+Answer: console logs 1, 2, 3, 4, 5 — one line per click, because the variable really does go up.
+Screen says 0 and never changes. Nothing tells React to re-run App(), so the paragraph is still
+the output of the first render with 0 baked into it.
 
 ### A4
 
@@ -85,7 +87,9 @@ const [count, setCount] = useState(0);
 The count is currently 7. React re-renders. That line runs again, with `0` written right there in
 it. Why doesn't the count go back to 0?
 
-Answer: its ran few other times elsewhere and got saved there so thats updatet state when re rendered
+Answer: because the 0 is the INITIAL value, not the value. React uses it once, on the first
+render, to fill the slot. Every render after that it ignores it and hands back whatever is in the
+slot now — so from render two onwards the 0 does nothing.
 
 ### A5
 
@@ -98,7 +102,9 @@ function handleClick() {
 
 Count is 0. You click once. What does the console log — 0 or 1? Why?
 
-Answer:console logs 0 coz it logs previous value
+Answer: 0. Not because it logs an old value — because count never changed. It's a const belonging
+to this one run of the function, and setCount doesn't touch it. It stores the new value in React
+and asks for a re-render, so 1 only appears on the next render.
 
 ### A6
 
@@ -112,7 +118,9 @@ function handleAdd() {
 `items` is `["apple"]`. You click Add. What's in the array afterwards, and what appears on screen?
 Both halves — they don't match.
 
-Answer: on screen it shows only apple? kn array there are apple and milk but i think screen shows apple, i dont know why tho
+Answer: the array is ["apple", "milk"] — push really did add it. The screen still shows only
+"apple". push changes the array in place and hands back the SAME array, so when React compares
+what it was given against what it already holds, it sees no difference and skips the re-render.
 
 ### A7
 
@@ -143,7 +151,9 @@ function handleReset() {
 }
 ```
 
-Answer: it should just be 0, fixed value when its given to initial value u just write that value, no equal or adding or reducing etc
+Answer: assigning to a state variable. count is a const, so `count = 0` throws
+"TypeError: Assignment to constant variable" — the user clicks Reset and the app crashes.
+The setter takes a value, so just pass it: setCount(0). Never put an `=` inside a setter call.
 
 ### B2
 
@@ -200,7 +210,10 @@ const total = subtotal + shipping;
 
 Quantity 4, price 10, shipping 5. What does `total` end up as, and why?
 
-Answer: i dont know but i assume toFixed ruins it? or it should be Number() there
+Answer: total is the string "40.005". toFixed(2) returns a STRING, so subtotal is "40.00", and
+"40.00" + 5 is concatenation, not addition — the 5 gets glued on the end. The fix isn't Number(),
+it's not formatting until display: keep subtotal and total as numbers and put .toFixed(2) in the
+JSX where it's shown.
 
 ### B8
 
@@ -219,7 +232,11 @@ const visible = guests.filter((g) => g.toLowerCase().includes(query.toLowerCase(
 `guests` is `["Alice", "Bob", "Carl"]` and the user has typed `"c"` in the search box. They click
 Remove next to Carl. Who actually gets removed, and why?
 
-Answer: alice also gets removed because its going by index so it gets to alice which includes c
+Answer: Alice gets removed INSTEAD of Carl — Carl stays. Nothing to do with Alice containing "c".
+Carl is index 0 in `visible` but index 2 in `guests`. The button reports his position in the
+filtered list (0), and handleRemove applies that number to the full list, where index 0 is Alice.
+A position only means something relative to the list it came from; a name means the same thing in
+every list. That's why you remove by name.
 
 ---
 
@@ -232,7 +249,9 @@ In your own words. One or two sentences each — but answer **both halves** wher
 Why can't a normal `let` variable inside a component be used to update the screen? Name the two
 things `useState` does that a `let` can't.
 
-Answer: useState gets noticed by react when re rendering, let is rendered once in react only
+Answer: a let is recreated every time the component function runs, so it can't remember anything
+between renders, and changing it doesn't tell React anything. useState does the two things a let
+can't: the value SURVIVES the re-render, and the setter TRIGGERS one.
 
 ### C2
 
@@ -246,14 +265,20 @@ Answer: it lives in react, when component is removed its thrown away and gets re
 After `setCount(5)` runs, the variable `count` is still the old value for the rest of that
 function. Why? When does the new value become visible?
 
-Answer: when it gets re rendered it becomes visible, it stays same between runs of 2 functions, after whole function runs new value is visible
+Answer: because count is a const belonging to that one run of the function, and setCount can't
+reassign it — all it does is put the value in React's slot and ask for a re-render. The new value
+becomes visible on the NEXT render, when useState is called again and returns it fresh.
 
 ### C4
 
 When must you use `setX((prev) => ...)` instead of `setX(value)`? Give the rule, and one situation
 where the plain form genuinely breaks.
 
-Answer: i use prev when i want previous calculations of state to be saved, and value directly gets declared when its fixed number we want it to change to. 
+Answer: the rule is use prev whenever the new value is calculated FROM the old one. If it doesn't
+depend on the old value (reset, mute, clear), pass a plain value. The plain form genuinely breaks
+when there's a gap between reading the value and using it — e.g. calling the setter several times
+in one handler: setCount(count + 1) twice adds 1, not 2, because both lines read the same stale
+count. Same in a setTimeout, or when the user clicks faster than the screen updates.
 
 ### C5
 
@@ -277,9 +302,10 @@ The quantity typed by the user.
 Answer: state, we setQuantity with what user types and thats quantity then
 
 ### D2
-The unit price, £9.99. its fixed,a constant 
+The unit price, £9.99.
 
-Answer: constant
+Answer: constant — it's fixed by us, calculated from nothing, and the user can never change it.
+A plain const above the return.
 
 ### D3
 The subtotal (quantity × unit price).

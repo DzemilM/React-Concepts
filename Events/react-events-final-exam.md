@@ -29,7 +29,8 @@ function App() {
 
 When does `hi` log — on load, on click, both, or never? What ends up wired to the button?
 
-Answer: logs on load
+Answer: logs on load, once, and never on click. greet() runs during render and its return value —
+undefined — is what gets wired to the button. So the button has nothing attached to it.
 
 ### A2
 
@@ -75,8 +76,9 @@ function App() {
 You type `hi` (two keystrokes). What logs, and how many lines appear? Where did `event` come from
 — you never passed it?
 
-Answer:it logs whetever i type, event is built in so to say, u dont need to pass arguments
-i call handleType and hand it whatevers in input
+Answer: two lines — "h" then "hi", one per keystroke, because onChange fires on every keystroke and
+logs the input's full current text each time. And I never call handleType at all: React calls it
+and passes the event in. I only write the parameter name; React fills the argument.
 ### A5
 
 ```jsx
@@ -112,7 +114,9 @@ function App() {
   return <button onClick={pick}>Red</button>;   // meant to log "red"
 }
 ```
-pick is wrong, it should be onClick={()=>pick("red")}, its wrong because pick needs an argument
+pick is passed bare, so React calls it with the event — colour ends up holding the event object and
+it logs that instead of "red". It needs the arrow wrapper so I can supply the argument myself:
+onClick={() => pick("red")}. The arrow also delays the call until the click.
 ### B2
 
 ```jsx
@@ -128,7 +132,10 @@ function App() {
   );
 }
 ```
-it should just be handleSubmit without () next to it and without anonymous function because event is passed by React
+the arrow calls handleSubmit() with no arguments, so event is undefined and
+event.preventDefault() crashes — the page reloads and nothing logs. The wrapper isn't needed here
+because there's no argument to inject: pass it bare as onSubmit={handleSubmit} and React hands the
+event over itself.
 
 ### B3
 
@@ -152,7 +159,8 @@ function App() {
   return <button onClick={handleClick}>Where</button>;   // wants the button's text
 }
 ```
-if u want text it should be event.target.value.text
+a button has no .value, so event.target.value is undefined. The text between an element's tags is
+event.target.textContent — .value is for inputs, .textContent is for elements that contain text.
 
 ### B5
 
@@ -181,7 +189,9 @@ Short answers, your own words.
 
 ### C1
 Why does `onClick={fn}` work but `onClick={fn()}` doesn't? Say what each one hands to the button.
-fn hands function to the button as a value, fn() calls it immediately when loaded
+fn hands the function itself over, so React can call it later when the click happens. fn() calls it
+immediately during render and hands the button whatever it RETURNS — usually undefined. So the
+button ends up with nothing attached and clicking does nothing.
 ### C2
 When do you write `onClick={() => fn(x)}` (with the arrow) instead of `onClick={fn}` (bare)?
 Give the one-line rule.
@@ -193,7 +203,11 @@ React puts it when i do something (click, hover, whatever, thats the event)
 ### C4
 `onClick` is built-in but `onRate` (in the StarButton exercise) is not. What's the difference
 between the two, and which kinds of tags get built-in event props?
-onClick is builting used to build button on StarRate, and as onClick we put the onRate function, so in other prop i type onRate becuase thats onClick
+onClick is built into React for lowercase HTML tags — button, input, form, div. React knows what it
+means and wires it to a real DOM event. onRate is a prop I invented; React has no idea what it
+does, it just hands it to my component like any other prop, and inside StarButton I choose to plug
+it into the real onClick. Rename it to anything on both sides and nothing breaks. Only lowercase
+built-in tags get built-in event props; my own capitalised components get only the props I define.
 ### C5
 What does `event.preventDefault()` stop, and why does a form need it in React?
 it stops page from reloading and thats why form needs it, so if i submit i dont load and lose everything
@@ -211,7 +225,16 @@ In the `StarButton` / `RatingRow` pattern:
 - The number the user clicked has to get from the button to the parent's handler. Trace the path
   in one or two sentences — where does the value start, and how does it arrive at the handler's
   parameter?
-StarButton wraps its handler in an arrow and RatingRow passes it bare, StarButton does it like  that coz we are building the function and giving it our value, RatingRow i just handle it bare function coz its on the StarButton prop WHICH Wraps that in itself, i dont know how to explain
+StarButton wraps, RatingRow passes bare. StarButton wraps because it needs to inject an argument —
+its own value — and calling onRate(value) directly would fire during render. RatingRow passes bare
+because it has no argument to inject; it doesn't know which star will be clicked, so it just hands
+the function over and waits.
+
+The path: the number starts as the value prop on one StarButton. When that button is clicked,
+React runs the arrow, which calls onRate(value) — and onRate IS handleRate, passed down from
+RatingRow. So value lands in handleRate's stars parameter. The child knows its own number, the
+parent knows what to do with it, and the value travels up when the child calls the function it was
+given.
 ---
 
 <details>

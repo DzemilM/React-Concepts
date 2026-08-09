@@ -293,4 +293,19 @@ Answer these three from memory, no scrolling back:
 1. In `guests.map((guest) => ...)`, which part is the array and which part did you invent?
 2. `.filter()` keeps the items your test returns **what** for?
 3. Why does `.push()` break React when `[...arr, x]` doesn't?
+
+<details>
+<summary>Answers</summary>
+
+1. `guests` — before the dot — is the array. `guest` is the parameter name I invented for one item
+   at a time. Array before the dot, item name inside the brackets. Plural outside, singular inside.
+2. **`true`.** Filter always describes what you **keep** — so "remove X" has to be written as
+   "keep everything that isn't X", with `!==`.
+3. `push` changes the array in place and hands back the **same array**. React decides whether to
+   re-render by comparing the value you gave the setter against the one it already holds — same
+   array, no difference, no re-render. It never looks *inside* at the contents. `[...arr, x]` builds
+   a brand-new array, so the comparison finds a difference and React re-renders.
+
+</details>
+
 If those three are instant, the bottleneck's gone and you're ready for the cold test.
