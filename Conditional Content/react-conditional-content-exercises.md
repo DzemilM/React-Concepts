@@ -80,6 +80,11 @@ import { useState } from 'react';
 
 function App() {
   // TODO: one boolean state — what's its starting value?
+  const [isLogged, setIsLogged] = useState(false);
+
+  function handleLogin(){
+    setIsLogged(!isLogged)
+  }
 
   // TODO: one handler. This is the one case where flipping the current value is right.
   //       Why is it right here but wrong for the Delete button in the Udemy exercise?
@@ -87,8 +92,8 @@ function App() {
   return (
     <div id="app">
       <h1>Exercise 1</h1>
-      {/* TODO: the welcome paragraph, using && */}
-      <button>Toggle login</button>
+      {isLogged && <p>Welcome back!</p>}
+      <button onClick={handleLogin}>Toggle login</button>
     </div>
   );
 }
@@ -119,15 +124,19 @@ only the *contents* and the *attribute* change.
 import { useState } from 'react';
 
 function App() {
-  // TODO: state + handler
+  const [following, setFollowing] = useState(false);
+
+  function handleFollowing(){
+    setFollowing(!following)
+  }
 
   return (
     <div id="app">
       <h1>Exercise 2</h1>
-      <button className={/* TODO */} onClick={/* TODO */}>
-        {/* TODO: "Following" or "Follow" */}
+      <button className={following ? "active" : ""} onClick={handleFollowing}>
+        {following  ? "Following" : "Follow"}
       </button>
-      <p>{/* TODO: the two sentences */}</p>
+      <p>{following ? "You follow this user." : "You are not following."}</p>
     </div>
   );
 }
