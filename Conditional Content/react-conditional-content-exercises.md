@@ -248,21 +248,34 @@ Start with an empty list and an empty input.
 import { useState } from 'react';
 
 function App() {
-  // TODO: two pieces of state — the list, and the input's text
+  const [list, setList] = useState([]);
+  const [input,setInput] = useState('');
+  const listLength = list.length;
 
-  // TODO: handleChange for the input
+  function handleChange(event){
+    setInput(event.target.value)
+  }
 
-  // TODO: handleAdd — remember the never-mutate rule, and clear the input afterwards
+  function handleAdd(){
+    setList([...list, input]);
+    setInput('')
+  }
 
   return (
     <div id="app">
       <h1>Exercise 4</h1>
-      <input value={/* TODO */} onChange={/* TODO */} placeholder="Item" />
-      <button onClick={/* TODO */}>Add</button>
+      <input value={input} onChange={handleChange} placeholder="Item" />
+      <button onClick={handleAdd}>Add</button>
 
-      {/* TODO: the empty message OR the <ul> — never both */}
+      {listLength === 0 ?  <p>No items yet.</p> :
+        <ul>
+         {list.map((item)=>(
+          <li key={item}>{item}</li>
+         ))}
+        </ul>
+      }
 
-      {/* TODO: the count line, using && */}
+      {listLength >= 1 && <p>You have {listLength} item(s).</p>}
     </div>
   );
 }
