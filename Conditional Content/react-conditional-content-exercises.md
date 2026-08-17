@@ -310,26 +310,31 @@ needs a `key`.
 import { useState } from 'react';
 
 function App() {
-  // TODO: two pieces of state — what did they type, and have they submitted?
+  const [input, setInput] = useState('');
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  // TODO: derived values above the return. Two of them:
-  //       one for "is this a valid email", one for "should the error show".
-  //       They are NOT the same condition — an empty input is invalid but shows no error.
+  const isValid = input.length > 0 && input.includes('@');
+  const showError = input.length > 0 && !isValid;
 
-  // TODO: handleChange
 
-  // TODO: handleSubmit — the form's onSubmit. What's the one line you must never forget
-  //       in a submit handler?
+  function handleChange(event){
+    setInput(event.target.value)
+  }
+
+  function handleSubmit(event){
+    event.preventDefault();
+    setIsSubmit(true);
+  }
 
   return (
     <div id="app">
       <h1>Exercise 5</h1>
-      {/* TODO: if submitted, the thank-you paragraph INSTEAD of everything below */}
-      <form onSubmit={/* TODO */}>
-        <input value={/* TODO */} onChange={/* TODO */} placeholder="Email" />
-        {/* TODO: the error paragraph */}
-        <button disabled={/* TODO */}>Submit</button>
-      </form>
+      {isSubmit ? <p>Thanks, {input}!</p> :
+            <form onSubmit={handleSubmit}>
+              <input value={input} onChange={handleChange} placeholder="Email" />
+              {showError && <p>Please enter a valid email.</p>}
+              <button disabled={!isValid}>Submit</button>
+            </form>}
     </div>
   );
 }
