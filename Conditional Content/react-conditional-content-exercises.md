@@ -177,20 +177,46 @@ Start on idle.
 import { useState } from 'react';
 
 function App() {
-  // TODO: state holding one of 'idle' | 'loading' | 'success'
-  //       (a string, not three booleans — three booleans would let you be loading AND successful
-  //        at the same time, which is nonsense)
+
+  const [status, setStatus] = useState('idle')
 
   // TODO: declare a variable for the content, then if / else if / else to assign JSX to it.
   //       Think: does it need `let` or `const`? Why?
+  let show;
+  
+  if(status === 'idle'){
+    show = <p>Nothing happening yet.</p>
+  }else if(status==='loading'){
+    show = <p>Loading…</p>
+  } else {
+  show = (
+    <div>
+      <h2>Done!</h2>
+      <p>Your data has arrived.</p>
+    </div>
+  )
+}
+
+
+function handleIdle(){
+  setStatus('idle')
+}
+
+function handleLoading(){
+  setStatus('loading')
+}
+
+function handleSuccess(){
+  setStatus('success')
+}
 
   return (
     <div id="app">
       <h1>Exercise 3</h1>
-      <button onClick={/* TODO */}>Idle</button>
-      <button onClick={/* TODO */}>Loading</button>
-      <button onClick={/* TODO */}>Success</button>
-      {/* TODO: render the variable */}
+      <button onClick={handleIdle}>Idle</button>
+      <button onClick={handleLoading}>Loading</button>
+      <button onClick={handleSuccess}>Success</button>
+      {show}
     </div>
   );
 }
