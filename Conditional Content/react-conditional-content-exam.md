@@ -23,6 +23,11 @@ function App() {
   return <div>{items.length && <p>You have items</p>}</div>;
 }
 ```
+0 is falsy value so 'you have items' wont appear, 0 appears
+
+> ✅ **Correct.** `items.length` is `0`. `&&` hands back its **left** operand when that operand is
+> falsy, so the whole expression evaluates to `0` — and React paints `0` as text. The paragraph
+> doesn't render, but a stray zero does.
 
 ### A2
 
@@ -32,6 +37,11 @@ function App() {
   return <div>{name && <p>Hello</p>}</div>;
 }
 ```
+nothing will appear
+
+> ✅ **Correct.** `''` is falsy, so `&&` returns `''`, and React draws nothing for an empty string.
+> Same mechanism as A1 — the only difference is what React does with the returned value. That's
+> why "falsy means invisible" is not a safe rule.
 
 ### A3
 
@@ -43,6 +53,11 @@ false && <p>Hi</p>
 ''    && <p>Hi</p>
 'abc' && <p>Hi</p>
 ```
+false,0,'',<p>Hi</p>
+
+> ✅ **Correct.** The rule behind all four: **falsy left → return the left operand unchanged;
+> truthy left → return the right operand.** `&&` never manufactures `true`/`false` — it always
+> hands back one of the two things you gave it.
 
 ### A4
 
@@ -52,6 +67,20 @@ console.log(!count === 0);
 ```
 
 What prints? Explain the order the engine evaluates it in.
+
+>
+> `!` only grabs the thing directly next to it — like the minus in `-5 + 3` belongs to the `5`, not
+> to the whole sum. So JavaScript reads the line as `(!count) === 0`, then works through it in two
+> steps:
+>
+> 1. `!5` → **`false`** (5 is truthy, `!` flips it)
+> 2. `false === 0` → **`false`**
+>
+> Step 2 is `false` because `===` checks the **type** as well as the value. `false` is a boolean,
+> `0` is a number — different types, so it says no without ever comparing the values.
+>
+> The common misreading is to see this as *"count is not 0."* That would be written `count !== 0`,
+> and it would be `true`.
 
 ### A5
 
@@ -67,8 +96,13 @@ function App() {
   );
 }
 ```
+on first render it shows zero, after one click it doesnt show zero but positive instead
 
 What's on screen **on first render**, and what's on screen **after one click**? Both halves.
+
+> ✅ **Correct, both halves.** First render: `n` is `0`, so `n > 0` is false → `null` → nothing,
+> and `n === 0` is true → `Zero` shows. After one click: `Positive` shows, `Zero` is gone. The
+> `+` button is on screen the whole time — it lives outside both conditionals.
 
 ### A6
 
@@ -89,6 +123,12 @@ function App() {
 
 What appears? Why?
 
+nothing, we didnt put loading in conditions, not just else at end
+
+> ✅ **Correct, right reason.** `status` is `'loading'`, which matches neither branch, and there's
+> no final bare `else` — so `content` is never assigned and stays `undefined`. React draws nothing
+> for `undefined`. This is the argument for always ending the chain with a plain `else`.
+
 ### A7
 
 ```jsx
@@ -105,6 +145,23 @@ function App() {
 ```
 
 What does the **first** click log? (This one is State, not conditionals — it's here on purpose.)
+
+>
+> ```js
+> setIsOpen(true);      // changes it for the NEXT run of the component
+> console.log(isOpen);  // still reading THIS run
+> ```
+>
+> `isOpen` was `false` when this function started, and it stays `false` until the function
+> finishes. The setter doesn't reach back and edit the variable you're currently holding — it
+> schedules a re-render, and the new value only arrives when React calls your component again.
+>
+> Think of `isOpen` as a photograph React handed you when it ran the component. `setIsOpen(true)`
+> doesn't edit the photo; it asks for a new one to be printed for next time. Line 2 is still
+> looking at the old photo.
+>
+> Watch the wording too: "logs nothing" would mean the line never ran. It ran — `console.log`
+> always prints something. The question is *what*.
 
 ---
 
@@ -280,9 +337,19 @@ The rule: **falsy left → return the left operand unchanged. Truthy left → re
 operand.** `&&` never manufactures `true`/`false`.
 
 **A4.** Prints **`false`**.
-1. `!` binds tighter than `===`, so it's `(!count) === 0`
-2. `!5` → `false`; then `false === 0` → `false`, because `===` compares type as well as value, and
-   a boolean is not a number.
+
+`!` only grabs the thing directly next to it — like the minus in `-5 + 3` belongs to the `5`, not
+to the whole sum. So JavaScript reads the line as `(!count) === 0` and works through it in two
+steps:
+
+1. `!5` → **`false`** (5 is truthy, `!` flips it)
+2. `false === 0` → **`false`**
+
+Step 2 is `false` because `===` checks the **type** as well as the value. `false` is a boolean,
+`0` is a number — different types, so it says no without ever comparing the values.
+
+The common misreading is to see this as *"count is not 0."* That would be written `count !== 0`,
+and it would be `true`.
 
 **A5.** Both halves:
 - **First render:** `Zero` and the `+` button. (`n` is `0`, so `n > 0` is false → `null` → nothing;
@@ -293,8 +360,23 @@ operand.** `&&` never manufactures `true`/`false`.
 branch, and there's no final `else` — so `content` is never assigned and stays `undefined`. React
 draws nothing for `undefined`. This is the argument for ending with a bare `else`.
 
-**A7.** Logs **`false`**. The setter doesn't change the variable mid-run — `isOpen` stays the old
-value for the rest of that function call. The new value only appears on the *next* render.
+**A7.** Logs **`false`**.
+
+```js
+setIsOpen(true);      // changes it for the NEXT run of the component
+console.log(isOpen);  // still reading THIS run
+```
+
+`isOpen` was `false` when this function started, and it stays `false` until the function finishes.
+The setter doesn't reach back and edit the variable you're currently holding — it schedules a
+re-render, and the new value only arrives when React calls your component again.
+
+Think of `isOpen` as a photograph React handed you when it ran the component. `setIsOpen(true)`
+doesn't edit the photo; it asks for a new one to be printed for next time. Line 2 is still looking
+at the old photo.
+
+Note the wording trap: "logs nothing" would mean the line never ran. It ran — `console.log` always
+prints something. The question is *what*.
 
 ## Section B
 
