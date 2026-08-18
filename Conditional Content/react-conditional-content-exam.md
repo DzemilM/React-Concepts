@@ -175,6 +175,8 @@ Each has exactly one main bug. Name the line, say what goes wrong on screen, and
 const [isOpen, setIsOpen] = useState(false);
 return <div>{setIsOpen ? <p>Open</p> : null}</div>;
 ```
+its the second line, screen always shows open,
+its checking the function instead of value so it will always be truthy.
 
 ### B2
 
@@ -185,6 +187,7 @@ return (
   </div>
 );
 ```
+
 
 ### B3
 
