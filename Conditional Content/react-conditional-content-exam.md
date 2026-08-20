@@ -187,7 +187,7 @@ return (
   </div>
 );
 ```
-
+when the list is empty, items.length is 0 and && returns 0 which renders on the page
 
 ### B3
 
@@ -202,6 +202,7 @@ if (score > 50) {
 
 return <div>{message}</div>;
 ```
+Pass isnt assigned, so message stays undefined if score is > 50 and we get nothing, only fail can be displayed
 
 ### B4
 
@@ -212,6 +213,8 @@ return (
   </div>
 );
 ```
+if is inside jsx braces, braces need an expression which produce a value, not just a statement like if, it doesnt compile, it should either be done as ternary or with &&
+
 
 ### B5
 
@@ -219,6 +222,7 @@ return (
 const isValid = email.includes('@');
 return <button disabled={isValid}>Send</button>;
 ```
+Should be disabled={!isValid} — greyed out when the email is invalid, clickable when it's valid. As written it's the reverse.
 
 ### B6
 
@@ -233,6 +237,8 @@ function handleAdd() {
 
 With an empty list and `text` set to `"eggs"`, what is `items` after one click?
 
+items is [],e,g,g,s because we spread text out with ..., while items werent spread out so they go inside as whole element
+
 ### B7
 
 ```jsx
@@ -241,6 +247,7 @@ const showError = input.lenght > 0 && !isValid;
 
 Why does the error message never appear, and why is there no error in the console?
 
+logic bug, it says lenght isntead of length, javascript gives back undefined and it evaluates to false
 ---
 
 ## Section C — Explain it
@@ -251,6 +258,8 @@ Full sentences. These are the ones you'll be asked in an interview.
 Why can you use `if` above the `return` but not inside `{ }` in JSX? Use the words *expression*
 and *statement*.
 
+JSX braces require expressions which evaluate to a value React can render. if is a statement which directs control flow and produces no value, so there's nothing to hand over. Above the return you're in ordinary JavaScript, where statements are exactly where they belong — you run the if and assign the result to a variable, then render that variable.
+
 ### C2
 ```js
 let content;
@@ -258,18 +267,39 @@ if (...) { content = <p>A</p>; }
 ```
 Why `let` and not `const`? Give the precise reason, not "because it changes."
 
+const requires a value on the same line it's declared, and forbids assigning to it afterwards. let content; has no value on its line, and content = <p>A</p> assigns to it later — const breaks both rules. Note that's the first assignment, not a re-assignment; const forbids it either way.
+
 ### C3
 In the email form, `isValid` and `showError` are two separate variables. What exactly breaks if
 you collapse them into one and use `isValid` for both jobs?
+
+Collapse them and the error appears the instant the page loads. An empty input is invalid, so !isValid is true before the user has typed a single character — you're telling them they got it wrong before they started.
 
 ### C4
 When would you pick `{cond && <A />}` over `{cond ? <A /> : null}`? And when is `&&` the **wrong**
 choice? Both halves.
 
+&& and ? : null do the same job when the condition is a real boolean, so picking between them
+is mostly about brevity: && is shorter and reads directly as "if this, show that", with no
+: null hanging off the end.
+
+&& is the wrong choice when the left side is a NUMBER. 0 is falsy, so && hands back 0 — and
+React paints 0 as visible text. (NaN behaves the same way.) false, null, undefined and ''
+are all falsy too, but React draws nothing for those, so they're safe.
+
+Rule: never put a raw number on the left of && in JSX. Compare it into a boolean first —
+items.length > 0, not items.length.
+
+Because of that trap, some teams ban && in JSX entirely and always write ? ... : null. You
+lose four characters and you can never hit the 0 bug.
+
+
 ### C5
 `{cond ? <A /> : null}` versus rendering `<A />` always and hiding it with CSS. What's the
 difference in what ends up on the page?
 
+when the condition is false, the element isn't in the DOM at all. It doesn't exist.
+CSS hiding — the element is in the DOM, fully built, just not painted.`
 ---
 
 ## Section D — Plain JavaScript (no React)
