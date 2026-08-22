@@ -180,28 +180,42 @@ its checking the function instead of value so it will always be truthy.
 
 ### B2
 
+The page has just loaded and nothing has been added yet.
+
 ```jsx
-return (
-  <div>
-    {items.length && <p>{items.length} items</p>}
-  </div>
-);
+function ItemList() {
+  const [items, setItems] = useState([]);
+
+  return (
+    <div>
+      {items.length && <p>{items.length} items</p>}
+    </div>
+  );
+}
 ```
+
+What does the user see, and why?
+
 when the list is empty, items.length is 0 and && returns 0 which renders on the page
 
 ### B3
 
 ```jsx
-let message;
+function Result() {
+  const score = 80;
 
-if (score > 50) {
-  <p>Pass</p>
-} else {
-  message = <p>Fail</p>
+  let message;
+
+  if (score > 50) {
+    <p>Pass</p>
+  } else {
+    message = <p>Fail</p>
+  }
+
+  return <div>{message}</div>;
 }
-
-return <div>{message}</div>;
 ```
+
 Pass isnt assigned, so message stays undefined if score is > 50 and we get nothing, only fail can be displayed
 
 ### B4
@@ -219,9 +233,22 @@ if is inside jsx braces, braces need an expression which produce a value, not ju
 ### B5
 
 ```jsx
-const isValid = email.includes('@');
-return <button disabled={isValid}>Send</button>;
+function SendButton() {
+  const [email, setEmail] = useState('');
+
+  const isValid = email.includes('@');
+
+  return (
+    <form>
+      <input value={email} onChange={(e) => setEmail(e.target.value)} />
+      <button disabled={isValid}>Send</button>
+    </form>
+  );
+}
 ```
+
+Try it with an empty box, then with `me@example.com`. What's wrong?
+
 Should be disabled={!isValid} — greyed out when the email is invalid, clickable when it's valid. As written it's the reverse.
 
 ### B6
@@ -242,10 +269,23 @@ items is [],e,g,g,s because we spread text out with ..., while items werent spre
 ### B7
 
 ```jsx
-const showError = input.lenght > 0 && !isValid;
+function EmailForm() {
+  const [input, setInput] = useState('');
+
+  const isValid   = input.length > 0 && input.includes('@');
+  const showError = input.lenght > 0 && !isValid;
+
+  return (
+    <form>
+      <input value={input} onChange={(e) => setInput(e.target.value)} />
+      {showError && <p>Please enter a valid email.</p>}
+    </form>
+  );
+}
 ```
 
-Why does the error message never appear, and why is there no error in the console?
+The user types `abc` — no `@`, so the error should appear. It doesn't, and the console is clean.
+Why on both counts?
 
 logic bug, it says lenght isntead of length, javascript gives back undefined and it evaluates to false
 ---
@@ -270,8 +310,20 @@ Why `let` and not `const`? Give the precise reason, not "because it changes."
 const requires a value on the same line it's declared, and forbids assigning to it afterwards. let content; has no value on its line, and content = <p>A</p> assigns to it later — const breaks both rules. Note that's the first assignment, not a re-assignment; const forbids it either way.
 
 ### C3
-In the email form, `isValid` and `showError` are two separate variables. What exactly breaks if
-you collapse them into one and use `isValid` for both jobs?
+
+An email form computes two booleans:
+
+```js
+const isValid   = email.length > 0 && email.includes('@');
+const showError = email.length > 0 && !isValid;
+
+// ...later, in the JSX:
+{showError && <p>Please enter a valid email.</p>}
+<button disabled={!isValid}>Submit</button>
+```
+
+They look almost identical. What exactly breaks if you delete `showError` and use `!isValid` for
+both jobs? Name the moment it goes wrong.
 
 Collapse them and the error appears the instant the page loads. An empty input is invalid, so !isValid is true before the user has typed a single character — you're telling them they got it wrong before they started.
 
@@ -313,12 +365,17 @@ What does each expression evaluate to?
 ''    && 'hello'
 'hi'  && 0
 ```
+0, hello, '', 0
 
 ### D2
 Why is `!5 === 0` false? Walk the two steps.
 
+it first checks !, not ===, and it becomes false === 0, false and zero arent same type so it also gives us false
+
 ### D3
 Write, as a single expression: *"age is at least 18 **and** country is `'DE'`"*.
+
+age >= 18 && country === "DE"
 
 ### D4
 ```js
@@ -333,6 +390,10 @@ What is each of these?
 [...arr, ...word]
 ```
 
+[a, hi];
+[[a], h, i];
+[a, h, i];
+
 ### D5
 ```js
 const isBig = size > 10 ? true : false;
@@ -340,9 +401,15 @@ const isBig = size > 10 ? true : false;
 Rewrite this in fewer characters without changing behaviour, and say why the original is
 redundant.
 
+const isBig = size > 10;
+
+no need for true false, the > evaluates that already
+
 ### D6
 You have `const isValid = ...`. Write the expression meaning *"the button should be disabled when
 the input is not valid."*
+
+<button disabled={!isValid}>Disable</button>
 
 ---
 
@@ -482,6 +549,8 @@ for conditional rendering, not a `display: none`.
 'hi'  && 0         →  0
 ```
 Same single rule every time: falsy left → the left operand; truthy left → the right operand.
+
+false,0,'',<p>Hi</p> is what we get
 
 **D2.** Two steps:
 1. `!` has higher precedence than `===`, so it parses as `(!5) === 0`
