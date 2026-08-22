@@ -57,6 +57,18 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   classify section, which was the weakest thing at the start).
   **Not yet covered:** state shared between components (lifting state up), and objects / arrays of
   objects in state. Waiting for the Udemy course's deep-dive section rather than pre-drilling them.
+- **Conditional content — done** (2026-08-22). The four forms and when each fits:
+  `{cond ? <A/> : <B/>}`, `{cond ? <A/> : null}`, `{cond && <A/>}`, and a variable built with
+  `if`/`else if`/`else` above the `return` for three or more outcomes. The idea underneath all of
+  them: **JSX is a value**, so choosing between two pieces of JSX is plain JavaScript, not a React
+  feature. What React draws for each value — nothing for `null`, `undefined`, `false` or `''`, but
+  a visible `0` for zero — and the `&&` rule that explains it: **`&&` returns an operand, never a
+  boolean** (falsy left → the left operand unchanged, truthy left → the right one), which is why a
+  raw number on the left of `&&` paints a stray `0`. Also conditional **attributes**
+  (`className`, `disabled`) as well as conditional elements, Fragments (`<>...</>`) to group two
+  elements into one value, and the fact that conditional rendering **removes the element from the
+  DOM** rather than hiding it. Confirmed via the Udemy warning-box exercise, a five-exercise set,
+  and a 22-question exam.
 
 ## My known weak spots
 
