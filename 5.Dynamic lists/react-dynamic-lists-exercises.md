@@ -120,8 +120,9 @@ function App() {
   return (
     <div id="app">
       <h2>Shopping list</h2>
-      {/* TODO: one <ul>. How many <ul> elements does this page have — one, or four? */}
-      {/* TODO: the .map() goes inside it */}
+      <ul>
+       {ITEMS.map((item)=><li key={item}>{item}</li>)}
+      </ul>
     </div>
   );
 }
@@ -154,7 +155,8 @@ function App() {
     <div id="app">
       <h2>Products</h2>
       <ul>
-        {/* TODO: map. Each item is now an object, not a string — so what do you display? */}
+        {PRODUCTS.map((product)=>
+        <li key={product.id}>{product.name}-${product.price}</li>)}
       </ul>
     </div>
   );
@@ -184,14 +186,18 @@ const PRODUCTS = [
   { id: 'p3', name: 'Monitor', price: 189 },
 ];
 
-// TODO: function Product(...) — remember rule #1: React passes exactly one argument.
+function Product(product){
+  return(
+    <li>{product.name}-${product.price}</li>
+  )}
 
 function App() {
   return (
     <div id="app">
       <h2>Products</h2>
       <ul>
-        {/* TODO: map to <Product /> elements. Where does the key go now? */}
+        {PRODUCTS.map((product)=>
+        <Product key={product.id} name={product.name} price={product.price} />)}
       </ul>
     </div>
   );
@@ -224,13 +230,15 @@ const TASKS = [
 ];
 
 function App() {
-  // TODO: build the filtered array here, above the return. What does .filter() return?
-  // TODO: where does the count come from? It is not a new thing to compute.
-
+  const filtered = TASKS.filter((task) => task.done === false);
+  const count = filtered.length 
   return (
     <div id="app">
-      {/* TODO: the heading with the count */}
-      {/* TODO: the list — but only when there's something in it */}
+      <h2>{count} tasks left</h2>
+      {count <= 0 ? <p>All done!</p> : 
+      <ul>
+       {filtered.map((task)=><li key={task.id}>{task.title}</li>)}
+      </ul>}
     </div>
   );
 }
@@ -268,15 +276,18 @@ const PLAYERS = [
 ];
 
 function App() {
-  // TODO: the total. One value, computed once, from the whole array.
+  const totalScore = PLAYERS.reduce((accumulator, currentPlayer) => {
+  return accumulator + currentPlayer.score;
+}, 0);
 
   return (
     <div id="app">
       <h2>Leaderboard</h2>
       <ol>
-        {/* TODO: map — the callback needs its second parameter here */}
+        {PLAYERS.map((player, index)=>
+        <li key={player.id}>{index + 1}. {player.name} - {player.score} pts</li>)}
       </ol>
-      {/* TODO: the total paragraph. Inside the <ol> or outside it? */}
+      <p>Total: {totalScore} pts</p>
     </div>
   );
 }
