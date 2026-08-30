@@ -34,6 +34,29 @@ const BOOKS = [
   { id: 'b2', title: 'Neuromancer', author: 'Gibson', year: 1984 },
   { id: 'b3', title: 'Snow Crash', author: 'Stephenson', year: 1992 },
 ];
+
+function BookRow({title, author, year}){
+  return(
+    <li>{title} - {author} ({year})</li>
+  )
+}
+
+function App(){
+  const booksNr = BOOKS.length;
+
+  return(
+    <div>
+      <h2>{booksNr} books</h2>
+      <ul>
+      {BOOKS.map((book)=>
+        <BookRow key={book.id} title={book.title} author={book.author} year={book.year} />
+      )}
+      </ul>
+    </div>
+  )
+}
+
+export default App
 ```
 
 Build it so that:
