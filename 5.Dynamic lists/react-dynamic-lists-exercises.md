@@ -337,9 +337,22 @@ function App() {
   return (
     <div id="app">
       <h2>Menu</h2>
-      {/* TODO: map over the categories.
-                Inside that callback, you'll need a second map over that category's dishes.
-                Two maps means two keys — on which elements? */}
+      {MENU.map((cat)=>{
+        const sortedDishes=[...cat.dishes].sort((a,b)=> a.price - b.price)
+        return(
+          <section key={cat.id}>
+           <h3>{cat.category}</h3>
+           <ul>
+            {sortedDishes.map((dish)=>
+             <li key={dish.id}>
+              {dish.name} - {dish.price}
+             </li>
+            )}
+           </ul>
+          </section>
+        )
+      }
+      )}
     </div>
   );
 }
