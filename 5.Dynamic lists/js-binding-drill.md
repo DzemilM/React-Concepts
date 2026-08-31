@@ -58,22 +58,23 @@ For each line, write the value. If it's `undefined`, `NaN`, or a crash, say whic
 the answers that matter, because they're what your bugs actually produced.
 
 ```js
-A1.  LIBRARY.length
-A2.  LIBRARY.shelves.length
-A3.  LIBRARY.shelves.label
-A4.  LIBRARY.shelves[0].label
-A5.  LIBRARY.shelves[0].books.title
-A6.  LIBRARY.shelves[0].books[1].title
-A7.  LIBRARY.shelves.books
-A8.  LIBRARY.shelves[1].books[0].pages
-A9.  [...LIBRARY]
-A10. [...LIBRARY.shelves].length
-A11. LIBRARY.shelves[0].books[0] - LIBRARY.shelves[0].books[1]
-A12. LIBRARY.shelves[0].books[0].pages - LIBRARY.shelves[0].books[1].pages
+A1.  LIBRARY.length = undefined
+A2.  LIBRARY.shelves.length = 2
+A3.  LIBRARY.shelves.label = undefined
+A4.  LIBRARY.shelves[0].label = 'Fiction'
+A5.  LIBRARY.shelves[0].books.title = undefined
+A6.  LIBRARY.shelves[0].books[1].title 'Ubik'
+A7.  LIBRARY.shelves.books = undefined
+A8.  LIBRARY.shelves[1].books[0].pages = 365
+A9.  [...LIBRARY] = error
+A10. [...LIBRARY.shelves].length = 2
+A11. LIBRARY.shelves[0].books[0] - LIBRARY.shelves[0].books[1] - = NaN
+A12. LIBRARY.shelves[0].books[0].pages - LIBRARY.shelves[0].books[1].pages = 188
 ```
 
 **Then answer in one sentence:** what do A1, A3, A5 and A7 have in common?
 
+They are one level too early in asking and therefore produce undefined
 ---
 
 ## Section B — What is the parameter bound to?
@@ -82,11 +83,11 @@ For each call, say what **each** parameter holds. Not what the callback should d
 the box.
 
 ```js
-B1.  LIBRARY.shelves.map((x) => …)
-B2.  LIBRARY.shelves[0].books.filter((x) => …)
-B3.  LIBRARY.shelves.map((x, y) => …)
-B4.  [...LIBRARY.shelves[0].books].sort((x, y) => …)
-B5.  LIBRARY.shelves[0].books.reduce((x, y) => …, 0)
+B1.  LIBRARY.shelves.map((x) => …) = 'holds object with id,label,books'
+B2.  LIBRARY.shelves[0].books.filter((x) => …) = 'holds book from first shelf(dune,ubik)'
+B3.  LIBRARY.shelves.map((x, y) => …) = 'holds object of a shelf and index'
+B4.  [...LIBRARY.shelves[0].books].sort((x, y) => …) = 'holds book objects, with id,title,pages,out'
+B5.  LIBRARY.shelves[0].books.reduce((x, y) => …, 0) = 'x is accumulator, y is current value'
 ```
 
 B5 is the one to slow down on. Its two parameters are **not** the same kind of thing as each other,
@@ -107,13 +108,13 @@ instead of from me.
 const shelf = LIBRARY.shelves[0];
 const books = shelf.books;
 
-C1.  books.filter((book) => book === false)
-C2.  books.filter(book.out === false)
-C3.  books.sort((a, b) => a - b)
-C4.  books.map((book, index) => book.index + 1)
-C5.  [...shelf].sort((a, b) => a.pages - b.pages)
-C6.  books.reduce((sum, book) => sum + book, 0)
-C7.  LIBRARY.shelves.map((shelf) => shelf.title)
+C1.  books.filter((book) => book === false) = 'pruduces [] empty array, it should be book.out === false'
+C2.  books.filter(book.out === false) = 'crashes, it should be (book)=> book.out == false'
+C3.  books.sort((a, b) => a - b) = 'u get books but unsorted, it should be a.pages - b.pages'
+C4.  books.map((book, index) => book.index + 1) = '[NaN, NaN], it should just be index +1'
+C5.  [...shelf].sort((a, b) => a.pages - b.pages) 'error, one level too high, it should do sort on books'
+C6.  books.reduce((sum, book) => sum + book, 0) '0[object Object][object Object], should be sum + book.pages'
+C7.  LIBRARY.shelves.map((shelf) => shelf.title) '[undefined, undefined], should be shelf.label'
 ```
 
 C6 is nastier than it looks — it doesn't crash and it doesn't give `NaN`. Predict the actual output
@@ -126,13 +127,44 @@ before you run it.
 English on the left, you write the JavaScript. One expression each, no loops, no `forEach`.
 
 ```
-D1. How many shelves are there?
+D1. How many shelves are there? 
+
+ LIBRARY.shelves.length
+
 D2. An array of every book title on the Fiction shelf.
+
+ books.map((book)=>book.title)
+
 D3. The books on the Fiction shelf that are currently checked out.
-D4. Total pages on the Fiction shelf.
+
+ shelf.books.filter(book=>book.out)
+
+D4. Total pages on the Fiction shelf. 
+
+ shelf.books.reduce((acc,cur)=> acc + cur.pages, 0)
+
 D5. The Fiction shelf's books, longest first — without modifying LIBRARY.
+
+// ARRAY:   shelf.books
+// ITEM:    one book — { id, title, pages, out }
+// RESULT:  new array
+
+
+ const longest = [...shelf.books].sort((a,b)=> b.pages - a.pages)
+
 D6. Total pages across the entire library, every shelf included.
+
+// ARRAY:   shelves 
+// ITEM:    shelf object 
+// ITEM:    book object
+// RESULT:  number
+
+ LIBRARY.shelves.reduce((sum, sh) => sum + sh.books.reduce(
+  (acc,currentVal)=> acc + currentVal.pages,0), 0)
+
 D7. An array of the shelf labels, in the form 'Fiction (2 books)'.
+
+LIBRARY.shelves.map((shelf)=> `${shelf.label} (${shelf.books.length} books) .`)
 ```
 
 D6 is the cold-test total again. D7 is a `map` whose callback reads a field *and* a nested length —
@@ -152,6 +184,8 @@ Take your D5 and D6 answers and, above each, write the comment you skipped on th
 
 Then one sentence: in D6, the outer `reduce`'s second parameter and the inner `reduce`'s second
 parameter hold different things. What is each one?
+
+-first is shelf object, second is book object
 
 ---
 
