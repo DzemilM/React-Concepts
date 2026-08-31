@@ -81,6 +81,26 @@ const MESSAGES = [
   { id: 'm3', from: 'Luis', subject: 'Re: tickets', read: false },
   { id: 'm4', from: 'Newsletter', subject: 'Weekly digest', read: true },
 ];
+
+
+function App(){
+  const unread = MESSAGES.filter((message)=>message.read === false);
+
+  return(
+    <div>
+      <h2>{unread.length} unread</h2>
+      {unread.length === 0 ? 
+        <p>Inbox zero.</p> :
+        <ul>
+         {unread.map((msg)=>
+          <li key={msg.id}>{msg.from} - {msg.subject}</li>
+         )}
+        </ul>
+      }
+    </div>
+  )}
+
+export default App;
 ```
 
 Build it so that:
@@ -121,6 +141,34 @@ const SCHEDULE = [
     ],
   },
 ];
+
+function App(){
+
+const totalMinutes = SCHEDULE.reduce((sum, day) => sum + day.talks.reduce(
+  (acc,currentVal)=> acc + currentVal.minutes,0), 0);
+
+
+  return(
+    <div>
+     {SCHEDULE.map((day)=>{
+      const ordered = [...day.talks].sort((a,b)=> b.minutes - a.minutes);
+      return(
+          <section key={day.id}>
+            <h3>{day.day}</h3>
+            <ul>
+            {ordered.map((talk, index)=>
+              <li key={talk.id}>
+               {index+1}. {talk.title} ({talk.minutes} min)
+              </li>
+            )}
+            </ul>
+          </section>
+    )})}
+      <p>Total: {totalMinutes} min</p>
+    </div>
+  )}
+
+export default App;
 ```
 
 Build it so that:
