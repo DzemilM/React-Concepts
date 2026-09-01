@@ -39,6 +39,15 @@ sitting uncorrected would poison the next rep.
 
 ```js
 const COLORS = ['red', 'green', 'blue'];
+
+function App(){
+  return(
+    <ul>
+     {COLORS.map((color)=><li key={color}>{color}</li>)}
+    </ul>
+  )
+}
+export default App
 ```
 
 A `<ul>` with one `<li>` per colour.
@@ -50,6 +59,16 @@ const CITIES = [
   { id: 'c1', name: 'Oslo', country: 'Norway' },
   { id: 'c2', name: 'Lima', country: 'Peru' },
 ];
+
+function App(){
+  return(
+    <ul>
+     {CITIES.map((city)=><li key={city.id}>{city.name}, {city.country}</li>)}
+    </ul>
+  )
+}
+
+export default App
 ```
 
 A `<ul>` where each row reads `Oslo, Norway`.
@@ -62,6 +81,19 @@ const PLANTS = [
   { id: 'p2', name: 'Cactus', height: 45 },
   { id: 'p3', name: 'Ivy', height: 12 },
 ];
+
+function App(){
+  return(
+    <div>
+     <h2>{PLANTS.length} plants</h2>
+     <ul>
+      {PLANTS.map((plant)=><li key={plant.id}>{plant.name}-{plant.height}</li>)}
+     </ul>
+    </div>
+  )
+}
+
+export default App
 ```
 
 The list, plus an `<h2>` above it reading `3 plants` — the number coming from the data.
@@ -71,6 +103,32 @@ The list, plus an `<h2>` above it reading `3 plants` — the number coming from 
 Same `PLANTS` data. Each row is its own `PlantRow` component that receives `name` and `height` and
 renders `Fern — 30cm`.
 
+```js
+const PLANTS = [
+  { id: 'p1', name: 'Fern', height: 30 },
+  { id: 'p2', name: 'Cactus', height: 45 },
+  { id: 'p3', name: 'Ivy', height: 12 },
+];
+
+function PlantRow({name,height}){
+  return(
+  <li>{name} - {height}cm</li>
+  )}
+
+function App(){
+  return(
+    <div>
+     <h2>{PLANTS.length} plants</h2>
+     <ul>
+      {PLANTS.map((plant)=><PlantRow key={plant.id} name={plant.name} height={plant.height} />)}
+     </ul>
+    </div>
+  )
+}
+
+export default App
+```
+
 ## Rep 5
 
 ```js
@@ -79,6 +137,18 @@ const STUDENTS = [
   { id: 's2', name: 'Bo', passed: false },
   { id: 's3', name: 'Cy', passed: true },
 ];
+
+
+function App(){
+  const passed = [...STUDENTS].filter(student=>student.passed);
+
+return(
+  <ul>
+   {passed.map((student)=><li key={student.id}>{student.name}</li>)}
+  </ul>
+)}
+
+export default App
 ```
 
 Only the students who passed.
@@ -90,6 +160,30 @@ with no list element on the page at all.
 
 Then flip `Bo` to `passed: true` and confirm.
 
+```js
+const STUDENTS = [
+  { id: 's1', name: 'Ana', passed: true },
+  { id: 's2', name: 'Bo', passed: false },
+  { id: 's3', name: 'Cy', passed: true },
+];
+
+
+function App(){
+  const failed = [...STUDENTS].filter(student=>!student.passed);
+
+return(
+  <div>
+   {failed.length === 0 ? <p>Everyone passed.</p> :
+    <ul>
+     {failed.map((student)=><li key={student.id}>{student.name}</li>)}
+    </ul>
+   }
+  </div>
+)}
+
+export default App
+```
+
 ## Rep 7
 
 ```js
@@ -98,6 +192,18 @@ const TRACKS = [
   { id: 't2', title: 'Verse', seconds: 140 },
   { id: 't3', title: 'Outro', seconds: 60 },
 ];
+
+function App(){
+  return(
+    <ul>
+     {TRACKS.map((track,index)=>
+      <li key={track.id}>{index+1}. {track.title} ({track.seconds}s)</li>
+     )}
+    </ul>
+  )
+}
+
+export default App
 ```
 
 Rows reading `1. Intro (95s)`, numbered from the array order.
@@ -106,9 +212,62 @@ Rows reading `1. Intro (95s)`, numbered from the array order.
 
 Same `TRACKS` data. The list, plus a `<p>` below it reading `Total: 295s`.
 
+```js
+const TRACKS = [
+  { id: 't1', title: 'Intro', seconds: 95 },
+  { id: 't2', title: 'Verse', seconds: 140 },
+  { id: 't3', title: 'Outro', seconds: 60 },
+];
+
+function App(){
+  
+  const total = TRACKS.reduce((acc, track)=>acc + track.seconds, 0)
+
+  return(
+    <div>
+      <ul>
+      {TRACKS.map((track,index)=>
+        <li key={track.id}>{index+1}. {track.title} ({track.seconds}s)</li>
+      )}
+      </ul>
+      <p>Total: {total}s</p>
+    </div>
+  )
+}
+
+export default App
+```
+
 ## Rep 9
 
 Same `TRACKS` data. The list, **longest first**, without modifying `TRACKS`.
+
+```js
+const TRACKS = [
+  { id: 't1', title: 'Intro', seconds: 95 },
+  { id: 't2', title: 'Verse', seconds: 140 },
+  { id: 't3', title: 'Outro', seconds: 60 },
+];
+
+function App(){
+  
+  const total = TRACKS.reduce((acc, track)=>acc + track.seconds, 0);
+  const longest = [...TRACKS].sort((a,b)=>b.seconds - a.seconds)
+
+  return(
+    <div>
+      <ul>
+      {longest.map((track,index)=>
+        <li key={track.id}>{index+1}. {track.title} ({track.seconds}s)</li>
+      )}
+      </ul>
+      <p>Total: {total}s</p>
+    </div>
+  )
+}
+
+export default App
+```
 
 ## Rep 10
 
@@ -128,6 +287,25 @@ const TEAMS = [
     players: [{ id: 'x3', name: 'Cy', goals: 5 }],
   },
 ];
+
+function App(){
+  return(
+    <div>
+     {TEAMS.map((team)=>
+      <section key={team.id}>
+       <h3>{team.group}</h3>
+       <ul>
+        {team.players.map((player)=>
+         <li key={player.id}>{player.name} - {player.goals} goals</li>
+        )}
+       </ul>
+      </section>
+     )}
+    </div>
+  )
+}
+
+export default App
 ```
 
 Each group as a `<section>` with an `<h3>` and a `<ul>` of its players, each row reading
