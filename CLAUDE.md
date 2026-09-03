@@ -69,6 +69,28 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   elements into one value, and the fact that conditional rendering **removes the element from the
   DOM** rather than hiding it. Confirmed via the Udemy warning-box exercise, a five-exercise set,
   and a 22-question exam.
+- **Dynamic lists — done** (2026-09-03). `.map()` turning an array of data into an array of JSX,
+  and the idea underneath it: **React renders an array of values**, so this is plain JavaScript
+  again — `map` returns an array whatever the callback returns, numbers or elements alike. Keys:
+  what React does with them (matches elements from the previous render against the current ones),
+  the three rules (unique among siblings, stable, from the data), where they go (on whatever the
+  callback **returns** — `<Todo />` in the parent, not the `<li>` inside it), and the fact that
+  `key` is **not a prop** — React consumes it, so `props.key` is `undefined`. Index for *position*
+  versus id for *identity*. `filter` then `map`, an empty state that removes the `<ul>` instead of
+  leaving it empty, `reduce` for a total computed outside the loop, nested maps with a key at each
+  level, and `.sort()` — the only one of these that **mutates**, so it needs `[...arr]` first while
+  `map` and `filter` never do. Confirmed via the Udemy todo exercise, a six-exercise set, a
+  three-task cold test, a plain-JS binding drill, and ten blank-file reps (10/10 first try, one bug
+  found and fixed unaided).
+  **The format lesson, which matters more than the unit:** scaffolded exercises were flattering me.
+  With the data, parameter names and surrounding JSX already on screen I scored near-perfect; the
+  moment the scaffold came off I dropped to 1/7 at writing expressions from English. Ten small
+  blank-file reps closed that in one sitting. Next unit: fewer scaffolded exercises, more blank-file
+  tasks, earlier.
+  **Loose end:** the exam's explain-it section was done tired (3½/8) and never re-run rested. The
+  code is the evidence, so I left it. The exam itself was badly weighted — 13 of 22 questions were
+  about what specific error messages JavaScript produces, which is a different subject from dynamic
+  lists. Exams should test the unit.
 
 ## My known weak spots
 
@@ -97,6 +119,13 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
 - **Renames leave orphans.** Every rename during State left the old name somewhere — `celsius`
   after switching to `temp`, `playList` vs `playlist` vs `setPlaylist`. **Habit: after renaming
   anything, search the file for the old name.**
+- **Array vs. item vs. field.** The biggest one from Dynamic lists — seven instances in a day:
+  `task === false` (the object, not its field), `TASKS.done` (the array, not an item),
+  `player.index` (a standalone parameter, not a property), `[...cat]` (the object, not the array
+  inside it). Three checks before typing a `.`: is this the array or one item? the object or the
+  field? a parameter or a property? Underneath it was one wrong belief, now fixed: I thought an
+  array *forwarded* field access to its contents — that `shelves.label` collects the labels. It
+  doesn't. An array owns `length`, `map`, `filter`, `sort` and nothing else.
 
 Call these out when you see them, but name them as syntax slips, not concept failures.
 
