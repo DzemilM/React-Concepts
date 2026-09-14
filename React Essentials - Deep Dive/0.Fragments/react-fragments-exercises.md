@@ -96,24 +96,14 @@ JavaScript accept it?
 
 ### My answer
 
-**What happens:** a **syntax error**, something like *"Adjacent JSX elements must be wrapped in an
-enclosing tag."* It happens at the build step, **before React runs anything**, so the whole app
-fails to show up, not even the `<article>`. The page doesn't render with something wrong in it; it
-doesn't render at all.
+**What happens:** a **syntax error** (*"Adjacent JSX elements must be wrapped in an enclosing
+tag"*) before React runs anything, so nothing renders.
 
-**Why JavaScript can't accept it:**
+**Why:** each JSX tag compiles to a function call, which produces one value. Two tags side by side
+are two values with nothing joining them, and `return` can only hand back one.
 
-1. Each JSX tag compiles to a function call (`<h1>` becomes roughly `createElement('h1', ...)`),
-   and a function call produces **one value**.
-2. Two tags side by side are therefore **two values with nothing joining them**.
-3. `return` can only hand back **one** value, so two unjoined values are not valid JavaScript.
-
-**What the Fragment does:** it wraps the two tags so JavaScript sees a **single value**, and it
-does this **without adding any element to the DOM**. DevTools proves it: `<h1>` and `<p>` sit
-directly inside `<article>` with nothing in between.
-
-> Watch the wording: a Fragment is a **wrapper**, not a *parent element*. A `<div>` is a parent
-> element because it shows up in the DOM. A Fragment never does.
+**The fix:** a Fragment wraps them into a single value **without adding an element to the DOM**.
+It's a wrapper, not a parent element.
 
 ---
 
