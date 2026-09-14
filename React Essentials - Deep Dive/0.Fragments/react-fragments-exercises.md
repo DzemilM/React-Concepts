@@ -48,7 +48,7 @@ though:
 
 - `<tr>` may only contain `<td>` / `<th>`
 - `<ul>` / `<ol>` may only contain `<li>`
-- `<dl>` may only contain `<dt>` / `<dd>`
+- `<table>` needs `<tbody>` / `<thead>` / `<tfoot>` between it and its `<tr>`s
 
 Put a `<div>` in between and you get invalid HTML. React warns about it in the console, and the
 browser may even move your elements somewhere else. That's where Fragments stop being tidiness and
@@ -174,11 +174,26 @@ cells, so nothing can sit between them. The Fragment fixes it because it adds no
 ## Exercise 3 — Fragments inside a `.map()`
 
 ```js
+import { Fragment } from 'react';
+
 const GLOSSARY = [
   { id: 'g1', term: 'Prop', definition: 'Data passed from parent to child.' },
   { id: 'g2', term: 'State', definition: 'Data a component remembers between renders.' },
   { id: 'g3', term: 'Key', definition: "An item's identity inside a list." },
 ];
+
+export default function App(){
+  return(
+    <dl>
+      {GLOSSARY.map((glos)=>
+      <Fragment key={glos.id}>
+       <dt>{glos.term}</dt>
+       <dd>{glos.definition}</dd>
+      </Fragment>
+      )}
+    </dl>
+  )
+}
 ```
 
 **Build:** an `App` that renders one `<dl>`. For **each** glossary entry, the `<dl>` gets a `<dt>`
@@ -194,8 +209,8 @@ const GLOSSARY = [
 </dl>
 ```
 
-No `<div>` around each pair, since `<dl>` doesn't allow one. The console must be **free of the key
-warning**.
+**No extra element around each pair.** The `<dt>`s and `<dd>`s must sit directly inside the `<dl>`,
+exactly as shown. The console must be **free of the key warning**.
 
 Before you type anything, write these three lines as comments:
 
@@ -215,6 +230,15 @@ what does the callback return here, and can that thing take attributes in the fo
 
 **Then answer (two parts):** why does `<>` fail here, **and** what does the `key` end up attached
 to in the real DOM?
+
+### My answer
+
+**Why `<>` fails:** the short form accepts **no attributes**, so there's nowhere to put the `key`.
+React warns *"Each child in a list should have a unique key prop."* The long form
+`<Fragment key={...}>` is the only fragment that takes one.
+
+**Where the key ends up:** **nowhere** in the DOM. The Fragment isn't an element, and `key` isn't a
+prop. React uses it between renders to match each `<dt>`/`<dd>` pair, then throws it away.
 
 ---
 
@@ -325,7 +349,7 @@ export default App;
 **Plan lines:**
 ```
 // ARRAY:   GLOSSARY
-// RESULT:  two elements, so they need one wrapper, and it can't be a <div>
+// RESULT:  two elements, so they need one wrapper that adds nothing to the DOM
 // KEY:     on the Fragment, because that's what the callback returns
 ```
 
