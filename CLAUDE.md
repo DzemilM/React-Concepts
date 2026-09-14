@@ -91,6 +91,13 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   code is the evidence, so I left it. The exam itself was badly weighted — 13 of 22 questions were
   about what specific error messages JavaScript produces, which is a different subject from dynamic
   lists. Exams should test the unit.
+- **Fragments — done** (2026-09-14, short unit: 3 exercises, no cold test or exam). Why a component
+  returns one value (each tag compiles to a function call), `<>` vs `<Fragment>`, invalid nesting
+  (`<div>` inside `<tr>`) as the case where a Fragment is required rather than tidier, and
+  `<Fragment key>` inside `.map()` because `<>` takes no attributes. The key ends up nowhere in the
+  DOM. Concepts were clean; the slips were the usual ones: a forgotten `return`, `<table>` for
+  `</table>`, `Fragments` for `Fragment`, and skipping a step. This is the first folder under
+  `React Essentials - Deep Dive/`.
 
 ## My known weak spots
 

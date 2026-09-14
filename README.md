@@ -5,14 +5,26 @@ application — the code here exists to drill a single idea until it sticks, the
 
 ## Structure
 
+The folders follow the two parts of the Udemy course I'm working through.
+
+### React Essentials
+
 | Folder | Concept | Status |
 | --- | --- | --- |
-| [`Props/`](Props/) | Passing data into components | Done |
-| [`Events/`](Events/) | Reacting to user interaction | Done |
-| [`State/`](State/) | Data that changes and redraws the screen | Done (single component) |
+| [`1.Props/`](React%20Essentials/1.Props/) | Passing data into components | Done |
+| [`2.Events/`](React%20Essentials/2.Events/) | Reacting to user interaction | Done |
+| [`3.State/`](React%20Essentials/3.State/) | Data that changes and redraws the screen | Done (single component) |
+| [`4.Conditional Content/`](React%20Essentials/4.Conditional%20Content/) | Showing different JSX depending on a condition | Done |
+| [`5.Dynamic lists/`](React%20Essentials/5.Dynamic%20lists/) | Turning arrays of data into arrays of JSX with `.map()` and keys | Done |
 
-`State/` covers state inside one component. Sharing state between components (lifting state up)
-and holding objects or arrays of objects in state are still to come.
+`3.State/` covers state inside one component. Sharing state between components (lifting state
+up) and holding objects or arrays of objects in state are still to come.
+
+### React Essentials — Deep Dive
+
+| Folder | Concept | Status |
+| --- | --- | --- |
+| [`0.Fragments/`](React%20Essentials%20-%20Deep%20Dive/0.Fragments/) | Returning several elements without adding a wrapper to the DOM | Done (short: 3 exercises) |
 
 ## How each concept gets drilled
 
@@ -31,8 +43,19 @@ Three passes, in order. Each one tests something the previous one doesn't:
 A concept is "done" when I clear the cold test and the exam without help — not when the
 exercises run.
 
+**Small concepts get less.** Fragments is one idea, so it got three unscaffolded exercises with
+an explain-it question under each instead of the full loop. My answers are written under each
+question for anyone reading.
+
+**Scaffolding flatters.** During Dynamic lists I scored near-perfect on exercises that had the
+data, names and surrounding JSX already on screen, then dropped to 1 of 7 writing the same
+expressions from a blank file. Ten small blank-file reps
+([`react-dynamic-lists-reps.md`](React%20Essentials/5.Dynamic%20lists/react-dynamic-lists-reps.md))
+closed the gap. Since then: fewer scaffolded exercises, more blank-file tasks, earlier.
+
 If the same mistake keeps costing rounds and it isn't really the concept's fault, it gets its
-own targeted drill instead of another exercise set — `State/js-array-methods-drill.md` is one,
+own targeted drill instead of another exercise set —
+[`js-array-methods-drill.md`](React%20Essentials/3.State/js-array-methods-drill.md) is one,
 twenty plain-JS problems on `.map()`/`.filter()`/spread with no React in the way.
 
 ## Running the code
