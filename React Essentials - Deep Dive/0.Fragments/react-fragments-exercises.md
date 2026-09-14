@@ -121,6 +121,28 @@ directly inside `<article>` with nothing in between.
 
 ```js
 const PERSON = { name: 'Grace', role: 'Engineer', city: 'New York' };
+
+function Cells({person}){
+  return(
+        <>
+          <td>{person.name}</td>
+          <td>{person.role}</td>
+          <td>{person.city}</td>
+        </>  
+  )
+}
+
+export default function App(){
+  return(
+    <table>
+      <tbody>
+        <tr>
+          <Cells person={PERSON} />
+        </tr>
+      </tbody>
+    </table>
+  )
+}
 ```
 
 **Build:**
@@ -145,6 +167,17 @@ const PERSON = { name: 'Grace', role: 'Engineer', city: 'New York' };
 
 **Then answer:** in one sentence, what was actually wrong with the `<div>` version? "It's
 unnecessary" is not the answer.
+
+### My answer
+
+**Warning:** *"`<td>` cannot appear as a child of `<div>`."* In Elements, a `<div>` sat between the
+`<tr>` and the `<td>`s.
+
+**What was wrong:** the `<div>` produced **invalid HTML**. A `<tr>` may only contain `<td>`/`<th>`
+cells, so nothing can sit between them. The Fragment fixes it because it adds nothing to the DOM.
+
+> The page still *looked* fine. Invalid HTML often does, and React doesn't correct it; it builds
+> what you wrote and warns in the console. "It looks OK" isn't proof.
 
 ---
 
