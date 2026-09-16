@@ -186,10 +186,10 @@ export default function App(){
   return(
     <dl>
       {GLOSSARY.map((glos)=>
-      <Fragment key={glos.id}>
-       <dt>{glos.term}</dt>
-       <dd>{glos.definition}</dd>
-      </Fragment>
+        <Fragment key={glos.id}>
+        <dt>{glos.term}</dt>
+        <dd>{glos.definition}</dd>
+        </Fragment>
       )}
     </dl>
   )
