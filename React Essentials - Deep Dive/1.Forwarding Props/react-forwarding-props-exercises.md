@@ -97,6 +97,11 @@ const config = {
   type: 'submit',
   disabled: true,
 };
+
+const {variant, ...rest} = config;
+const {id, variant : variable, ... rest2} = config;
+const withSize = {size:'large', ...config};
+const overridden = {...config, disabled:false}
 ```
 
 **Build:**
@@ -119,6 +124,20 @@ rather than guess?
 
 ### My answer
 
+**Part 1:** `{...config, disabled: false}` is the one that works — the override has to come
+**after** the spread. A spread only collides when the **same key exists on both sides**, and then
+the later one wins. That's why the ordering got away with it in step 3: `size` isn't a key in
+`config`, so there was nothing to overwrite. `disabled` is, so order decides it.
+
+**Part 2:** No — `config` is unchanged. Destructuring only **reads**; it never removes keys from
+the source. Checked rather than guessed: log `config` after the destructuring — all four keys are
+still there, and `rest2` is a separate new object holding only what wasn't named.
+
+**Also learned here:** the two names in `{ variant, ...rest }` are not the same kind of thing.
+`variant` must spell an actual key — it's how the value is looked up, so `varianttt` gives
+`undefined` and leaves `variant` sitting in the rest object. `rest` is just a bucket, so its name
+is free. To keep the key but change the variable name: `{ variant: variant2, ...rest2 }`.
+
 ---
 
 ## Exercise 2 — Make the props arrive
@@ -126,9 +145,17 @@ rather than guess?
 A component that exists in every codebase: a styled button wrapper.
 
 ```jsx
-function Button({ children }) {
-  return <button className="btn">{children}</button>;
+function Button({ children, ...props }) {
+  return <button className="btn" {...props}>{children}</button>;
 }
+ export default function App(){
+   return(
+      <>
+        <Button type="submit" disabled>Send</Button>
+        <Button type="button" onClick={() => console.log('hi')}>Log</Button>
+      </>
+   )
+ }
 ```
 
 Used like this, in `App`:
@@ -149,13 +176,39 @@ values go?
 
 ### My answer
 
+**What `props` contained:** nothing — there was no `props` variable before the fix. React always
+hands a component **one object holding every prop**, so `Button` received
+`{ children, type, disabled }`. The old parameter list `{ children }` named a single key and
+ignored the rest.
+
+**Where the values went:** nowhere. They arrived fine; they were simply never read, so they were
+dropped. Props don't fall through to the elements a component renders — forwarding them is
+something you do, not something React does.
+
 ---
 
 ## Exercise 3 — Consume one, forward the rest
 
 ```jsx
-<Avatar rounded src="https://i.pravatar.cc/80" alt="Tara" width="80" />
-<Avatar src="https://i.pravatar.cc/80" alt="Amar" width="80" />
+
+function Avatar({rounded, ...rest}){
+
+  if (rounded) {
+    return <img className="avatar avatar-round" {...rest} />;
+  }
+
+  return <img className="avatar" {...rest} />;
+}
+
+export default function App(){
+return(
+  <>
+  <Avatar rounded src="https://i.pravatar.cc/80" alt="Tara" width="80" />
+  <Avatar src="https://i.pravatar.cc/80" alt="Amar" width="80" />
+  </>
+)
+}
+
 ```
 
 **Build:** an `Avatar` component that renders an `<img>`.
@@ -177,6 +230,30 @@ wrong.
 the component, and what would `rounded="false"` do instead? Be careful with the second one.
 
 ### My answer
+
+**Part 1 — what stops `rounded` reaching the DOM:** **naming it in the destructuring.** Once
+`rounded` is named in `{ rounded, ...rest }` it is pulled out of the rest bucket, and only the
+bucket gets spread onto the `<img>`.
+
+It is *not* the `if`, and it is *not* the fact that the prop was invented. Proof — write the same
+component without destructuring:
+
+```jsx
+function Avatar(props)   // props = { rounded, src, alt, width }  ← rounded still in there
+```
+
+Spread that and `rounded` lands on the `<img>`, and React warns about an unknown attribute. Being
+invented is *why* it has to be stopped; destructuring is *what* stops it.
+
+**Part 2 — what `rounded` holds:** `true`. An attribute written with no `=` is shorthand for
+`={true}`.
+
+`rounded="false"` would **not** turn it off. Quotes make it the **string** `"false"`, and a
+non-empty string is truthy, so `if (rounded)` passes and the image comes out rounded — the
+opposite of what was intended. The only way to pass a real `false` is `rounded={false}`.
+
+General rule: **in JSX, quotes mean string, braces mean JavaScript value.** `width="80"` is the
+string `"80"`, not the number.
 
 ---
 
