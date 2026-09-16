@@ -260,9 +260,18 @@ string `"80"`, not the number.
 ## Exercise 4 — The collision
 
 ```jsx
-<Card className="highlighted">
-  <p>Standard card</p>
-</Card>
+function Card({className, ...props}) {
+  return <div className={`card ${className}`} {...props}></div>;
+}
+
+export default function App() {
+  return (
+    <Card className="highlighted">
+      <p>Standard card</p>
+    </Card>
+  );
+}
+
 ```
 
 `Card` renders a `<div>` that must **always** carry the class `card`, and must **also** carry
@@ -283,6 +292,30 @@ that's used with no `className` at all — what does the `<div>` end up with, ex
 don't assume.
 
 ### My answer
+
+**Part 1 — the two naive orderings.** Both need the plain `props` parameter; with
+`{ className, ...props }` there's nothing left in `props` to collide with, so both look identical.
+
+- `<div className="card" {...props}>` → `class="highlighted"`. The spread comes last and overwrites.
+- `<div {...props} className="card">` → `class="card"`. The literal comes last and overwrites.
+
+The rule is the one from Exercise 1 step 4: **last one wins.** So ordering can't fix this — either
+way one class is destroyed. The fix is to pull `className` out by name so the two can't collide,
+then join them yourself:
+
+```jsx
+function Card({ className, ...props }) {
+  return <div className={`card ${className}`} {...props}></div>;
+}
+```
+
+**Part 2 — a `<Card>` with no className:** the div comes out as `class="card undefined"`. The prop
+is `undefined`, and a template literal turns whatever it's given into **text**, so the word
+`undefined` is printed straight into the class string — a real CSS class named `undefined`.
+
+Two fixes: `` `card ${className || ''}` ``, or a default in the parameter list —
+`{ className = '', ...props }`. The second is **Default Prop Values**, which the course covers
+later; this exercise runs into the problem it exists to solve.
 
 ---
 
