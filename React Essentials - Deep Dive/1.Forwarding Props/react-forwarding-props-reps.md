@@ -33,46 +33,150 @@ the sentence describing where you stalled.
 ## Rep 1
 
 ```jsx
-<Tag label="React" id="tag-react" onClick={() => console.log('tag')} />
+function Tag({label, ...passed}){
+  return(
+    <span className="tag" {...passed}>{label}</span>
+  )
+}
+
+export default function App(){
+  return(
+    <Tag label="React" id="tag-react" onClick={() => console.log('tag')} />
+  )
+}
+
 ```
 
 Renders a `<span>` with class `tag` and the text `React` inside it. Clicking it logs.
+
+### My answer
+
+```js
+// MINE:     label
+// FIXED:    "tag"
+// PASS ON:  id, onClick → the <span>
+```
+
+`label` is text the user sees, so it goes **between** the tags as `{label}`, not as an attribute.
+`"tag"` never appears where `<Tag>` is used, so it's fixed. Anything written on that line comes from
+the caller, including `onClick`.
 
 ---
 
 ## Rep 2
 
 ```jsx
-<SearchBox buttonText="Go" placeholder="Search..." name="q" />
+function SearchBox({ buttonText, ...other }) {
+  return (
+    <div className="search">
+      <input {...other} />
+      <button>{buttonText}</button>
+    </div>
+  );
+}
+
+export default function App() {
+  return <SearchBox buttonText="Go" placeholder="Search..." name="q" />;
+}
+
 ```
 
 Renders a `<div>` with class `search`, containing an `<input>` and a `<button>` that says `Go`. The
 `<div>` carries no extra attributes.
+
+### My answer
+
+```js
+// MINE:     buttonText
+// FIXED:    "search"
+// PASS ON:  placeholder, name → the <input>, not the <div>
+```
+
+The spread goes on the element the props belong to. `placeholder` and `name` are form-field
+attributes, so they go on the `<input>`, even though the component returns the `<div>`.
 
 ---
 
 ## Rep 3
 
 ```jsx
-<Alert kind="error" id="payment-alert" role="alert">
-  Payment failed.
-</Alert>
+function Alert({kind, children, ...other}){
+  return(
+    <div className={`alert alert-${kind}`} {...other} >
+    {children}
+    </div>
+  )
+}
+
+export default function App(){
+  return(
+    <Alert kind="error" id="payment-alert" role="alert">
+      Payment failed.
+    </Alert>
+  )
+}
+
 ```
 
 Renders a `<div>` with class `alert alert-error`. For `kind="success"` it would be
 `alert alert-success`. The text between the tags shows inside it.
+
+### My answer
+
+```js
+// MINE:     kind, children
+// FIXED:    "alert"
+// PASS ON:  id, role → the <div>
+```
+
+A MINE prop gets **used**, not put back on the element. `kind` only builds the class name; writing
+`kind={kind}` on the div would put an attribute the browser doesn't understand into the DOM.
+`children` needs naming even when it seems to work without it — unnamed, it only survives by
+accident inside the spread. The rest bucket `...other` must come **last** in the parameter list.
 
 ---
 
 ## Rep 4
 
 ```jsx
-<LinkButton primary href="/signup" target="_blank">Sign up</LinkButton>
-<LinkButton href="/login">Log in</LinkButton>
+function LinkButton({ primary, children, ...other }) {
+  const myClass = primary ? 'btn btn-primary' : 'btn';
+
+  return (
+    <a className={myClass} {...other}>
+      {children}
+    </a>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <LinkButton primary href="/signup" target="_blank">
+        Sign up
+      </LinkButton>
+      <LinkButton href="/login">Log in</LinkButton>
+    </>
+  );
+}
+
 ```
 
 Renders an `<a>`. Class is `btn btn-primary` when `primary` is set, just `btn` when it isn't.
 `primary` must not appear on the `<a>` in devtools.
+
+### My answer
+
+```js
+// MINE:     primary, children
+// FIXED:    "btn"
+// PASS ON:  href, target → the <a>
+```
+
+The class is worked out **above** the `return` with a ternary, and only the variable goes in the
+braces. Tried first: `${if (primary) 'btn-primary'}` — doesn't compile, because `${}` and JSX
+braces take a **value**, and `if` is a statement. A ternary is a value; an `if` belongs above the
+`return`. `children` named and placed, not left to ride along in the spread.
 
 ---
 

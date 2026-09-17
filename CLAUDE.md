@@ -98,6 +98,19 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   DOM. Concepts were clean; the slips were the usual ones: a forgotten `return`, `<table>` for
   `</table>`, `Fragments` for `Fragment`, and skipping a step. This is the first folder under
   `React Essentials - Deep Dive/`.
+- **Forwarding Props — done** (2026-09-17). Udemy lectures 63–66 + Coding Exercise 14, six
+  unscaffolded exercises, four blank-file reps. Object rest in destructuring (`{ a, ...rest }`) and
+  spread onto an element (`<input {...rest} />`) — gather on the left, unpack on the right. The
+  decision the whole unit is about: which props the component **uses itself** (invented ones like
+  `richText`, `rounded`, `label` — named, used, never put on the DOM), which values are **fixed**
+  (a class like `"field"` that nobody passes — not a prop at all), and which get **passed on**, and
+  onto *which* element (not always the one the component returns). What actually keeps a prop off
+  the DOM is **naming it in the destructuring** — not the `if`, not the fact it was invented; that
+  took three tries to land. Also: last one wins when a spread and an attribute collide (so
+  `className` is pulled out and joined, not reordered); `children` must be named or it only
+  survives by accident; `rounded="false"` is a truthy string; a template literal prints
+  `undefined` as text. The reps' `MINE / FIXED / PASS ON` plan lines were right from Rep 2 on — the
+  remaining slips were JS↔JSX mechanics, not forwarding.
 
 ## My known weak spots
 
@@ -105,6 +118,9 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
 
 - **The JS ↔ JSX boundary.** Compute above the `return` in plain JavaScript (no braces around
   values); display inside the `return` in JSX braces. Braces take values, not declarations.
+  Still live in Forwarding Props: `${if (x) ...}` inside a template literal, `className={...obj}`,
+  and a spread between tags — none of those are values. `{...x}` goes on its own in a tag's
+  attribute list; `{x}` goes between tags; an `if` goes above the `return`.
 - **Name discipline.** Prop names must match exactly on both sides — `taxRate` vs `taxrate`
   silently falls back to the default and produces wrong numbers with no error. Also variable
   casing (`Sub` vs `sub`) and `Math.round` vs `Math.Round`.

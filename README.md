@@ -25,6 +25,7 @@ up) and holding objects or arrays of objects in state are still to come.
 | Folder | Concept | Status |
 | --- | --- | --- |
 | [`0.Fragments/`](React%20Essentials%20-%20Deep%20Dive/0.Fragments/) | Returning several elements without adding a wrapper to the DOM | Done (short: 3 exercises) |
+| [`1.Forwarding Props/`](React%20Essentials%20-%20Deep%20Dive/1.Forwarding%20Props/) | A wrapper component using its own props and passing the rest on to the element inside | Done (6 exercises + 4 reps) |
 
 ## How each concept gets drilled
 
