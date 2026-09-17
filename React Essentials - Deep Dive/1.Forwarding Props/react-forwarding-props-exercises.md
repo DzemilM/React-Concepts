@@ -322,10 +322,25 @@ later; this exercise runs into the problem it exists to solve.
 ## Exercise 5 — Three categories at once
 
 ```jsx
-<Section title="Billing" id="billing" data-testid="billing-section">
-  <p>Your next invoice is on 1 October.</p>
-  <p>Card ending 4471.</p>
-</Section>
+
+function Section({title, children, ...props}){
+  return(
+    <section {...props}>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  )
+}
+
+export default function App(){
+  return(
+    <Section title="Billing" id="billing" data-testid="billing-section">
+      <p>Your next invoice is on 1 October.</p>
+      <p>Card ending 4471.</p>
+    </Section>
+  )
+}
+
 ```
 
 **Build:** a `Section` component that renders a `<section>` containing an `<h2>` with the title,
@@ -347,12 +362,36 @@ first, then try it.
 
 ### My answer
 
+**The three categories:** `title` is consumed (read into the `<h2>`, never forwarded). `children`
+is the content between the tags, placed explicitly. `id` and `data-testid` are forwarded to the
+`<section>`.
+
+**If `children` isn't named:** it stays in `props` and gets spread onto the `<section>`, which
+already has an `<h2>` written between its tags. Two sources for the content — and **the content
+between the tags wins.** The `<h2>` renders; both `<p>`s disappear.
+
 ---
 
 ## Exercise 6 — Two levels deep
 
 ```jsx
-<Field label="Email" type="email" placeholder="you@example.com" required />
+
+function Field({ label, ...input }) {
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <input {...input} />
+    </div>
+  );
+}
+
+
+export default function App(){
+  return(
+    <Field label="Email" type="email" placeholder="you@example.com" required />
+  )
+}
+
 ```
 
 **Build:** a `Field` component that renders
@@ -380,6 +419,18 @@ React, or is it you?
 is forwarded. Why?
 
 ### My answer
+
+**Part 1:** I decide. A spread lands on whichever tag I type it on — React doesn't care whether
+that's the outer element or one inside it. Here the props belong to the `<input>`, so that's where
+`{...input}` goes.
+
+**Part 2:** `placeholder` is a real HTML attribute the `<input>` already understands, so it just
+needs passing on. No HTML element reads a `label` attribute — it's an invented prop, so `Field`
+has to take it and place the text inside `<label>` itself.
+
+**What tripped me up:** `field` is a **fixed** class, the same for every `Field` — it doesn't come
+from the caller, so it's a plain string, not a prop. And `{...x}` only works on its own inside a
+tag's attribute list; `className={...x}` or `<label>{...x}</label>` are invalid.
 
 ---
 
@@ -515,9 +566,9 @@ function Section({ title, children, ...props }) {
 ```
 
 **Answer:** `children` is a prop like any other, so leaving it in `props` spreads it onto the
-`<section>` as an attribute — React treats `children` passed that way as the element's content,
-so your two `<p>` tags render, but you've lost control of where they sit relative to the `<h2>`,
-and anything you *did* put between the tags in JSX gets overwritten. Name it, use it explicitly.
+`<section>` — and the `<section>` already has content written between its tags (the `<h2>`). When
+an element gets both, **the content between the tags wins.** So the `<h2>` renders and both `<p>`s
+disappear. Name `children` and place it yourself.
 
 `title` is consumed (it's yours, and `title` on a real element means a tooltip — forwarding it
 would put a hover tooltip on the section). `id` and `data-testid` are forwarded.
