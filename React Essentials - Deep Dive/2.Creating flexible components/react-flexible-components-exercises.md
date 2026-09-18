@@ -168,6 +168,30 @@ function greet() {
 function shout() {
   return 'HELLO';
 }
+
+ const actions={
+  greet : greet,
+  shout : shout
+}
+
+actions.greet();
+
+const Chosen = actions.greet;
+Chosen();
+
+console.log(actions.greet);
+console.log(actions.greet());
+
+function run(fn){
+  return fn()
+};
+
+run(greet);
+run(greet());
+
+const functions = [greet, shout];
+functions[1]();
+
 ```
 
 **Build:**
@@ -194,6 +218,20 @@ holding it. Three different things, one `.` apart.
 
 **Part 2:** In step 4, `run(greet)` works and `run(greet())` doesn't. Explain what value each call
 actually hands to `run`, and why only one of them can be called inside.
+
+### My answer
+
+**Part 1:** `actions.greet` **is the function itself** — a value I can store and pass around.
+`actions.greet()` **is the string `'hello'`** the function returned. The parentheses are the call;
+without them nothing has run yet.
+
+**Part 2:** `run(greet)` hands over the **function**, so `fn()` inside runs it. `run(greet())` runs
+it first and hands over the **string `'hello'`**, so `fn()` becomes `'hello'()` — a **TypeError**,
+because a string isn't callable. It doesn't quietly do nothing; it crashes.
+
+**What tripped me up:** the parentheses, in both directions. First I wrote `greet : greet()` and
+stored the result instead of the function; then I left the `()` off where I needed a call. One
+question fixes both: **am I handing this over, or running it?**
 
 ---
 
