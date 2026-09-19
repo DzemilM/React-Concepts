@@ -240,9 +240,30 @@ question fixes both: **am I handing this over, or running it?**
 **Build:** a component `SplitPanel`, used like this:
 
 ```jsx
-<SplitPanel sidebar={<Nav />}>
-  <Article />
-</SplitPanel>
+function Nav() {
+  return <h3>Broo</h3>;
+}
+
+function Article() {
+  return <p>djestee</p>;
+}
+function SplitPanel({ sidebar, children }) {
+  return (
+    <>
+      <aside>{sidebar}</aside>
+      <main>{children}</main>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <SplitPanel sidebar={<Nav />}>
+      <Article />
+    </SplitPanel>
+  );
+}
+
 ```
 
 - Renders an `<aside>` containing whatever came in through `sidebar`.
@@ -266,6 +287,25 @@ them?
 **Part 2:** What happens if the caller writes `<SplitPanel sidebar={<Nav />} />` with nothing
 between the tags? What does `children` hold, and what does React draw for that value?
 
+### My answer
+
+**Part 1:** Only **how they're filled**. React fills `children` from whatever sits between the tags;
+I fill `sidebar` explicitly, as an attribute. That difference lives at the **call site** — inside
+the component they're identical: two props holding a value, both placed in braces between tags.
+`children` isn't a special kind of thing, just a slot with its name already chosen.
+
+**Part 2:** `children` is **`undefined`** — nothing was passed, so the key is absent. React draws
+nothing for `undefined`. But the `<main>` itself still renders, empty, and sits in the DOM.
+
+**What tripped me up:** I put the slot in the attribute list — `<aside sidebar={Sidebar}>`, then
+`<aside sidebar>` — so the aside had nothing between its tags and came out empty. And I capitalised
+`Sidebar`, so the destructuring looked for a key that didn't exist and got `undefined`.
+
+Both were rules from the last two units applied where they don't belong: props go **onto** elements
+in Forwarding Props, and capitals are load-bearing in Lecture 68. The test that sorts it out, one
+question per prop: **is this used as a tag, or placed as content?** As a tag → capitalised variable
+in the tag position (`<Icon />`). As content → ordinary name, in braces between tags (`{sidebar}`).
+
 ---
 
 ## Exercise 3 — Two slots, and a caller who passes several elements
@@ -274,6 +314,32 @@ between the tags? What does `children` hold, and what does React draw for that v
 
 1. a `<div className="toolbar-left">` holding the `left` slot
 2. a `<div className="toolbar-right">` holding the `right` slot
+
+```jsx
+function Toolbar({ left, right }) {
+  return (
+    <header>
+      <div className="toolbar-left">{left}</div>
+      <div className="toolbar-right">{right}</div>
+    </header>
+  );
+}
+
+export default function App() {
+  return (
+    <Toolbar
+      left={
+        <>
+          <button>1</button>
+          <button>2</button>
+          <button>3</button>
+        </>
+      }
+      right={<button>4</button>}
+    />
+  );
+}
+```
 
 Use it with **three** buttons on the left and **one** on the right.
 
@@ -284,6 +350,18 @@ lines and you already know them. Three buttons in one prop is where this exercis
 
 **Then answer:** the `left` slot needs three buttons. You can't write three elements as one prop
 value. What did you wrap them in, and what's the one-sentence reason a prop forces that?
+
+### My answer
+
+A Fragment. **A prop holds exactly one value** — three elements are three values, so they need a
+Fragment to become one, and `<>` does it without putting anything in the DOM.
+
+`right` gets a single `<button>`, so it needs no wrapper. One element is already one value.
+
+**What tripped me up:** my first version had one slot and a `side` string, used twice — two
+`<header>`s instead of one, and everything routed through `children`. That dodged the exercise:
+`children` takes several elements for free, so the collision a named prop forces never came up.
+Two named slots in **one** component is the point.
 
 ---
 
