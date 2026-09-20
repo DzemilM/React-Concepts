@@ -683,6 +683,33 @@ Then, on your own work:
    if the prop were named `buttonsContainer` instead of `ButtonsContainer`, and what would appear
    in the DOM?
 
+### My answers
+
+**Questions 1–6, answered cold: one clean partial out of six.** The two that collapsed hardest were
+3 and 4 — the string-vs-function rule, which is the centre of the unit, and which I'd had right two
+days earlier on the day I ran the error myself. I'd inverted it into "object and string." Object is
+what React **refuses**; string and function are what it accepts.
+
+That result is why `react-flexible-components-exercises-2.md` exists. The exercises can be finished
+with help while the facts stay loose, and loose facts evaporate. The correct answers to all six are
+in the collapsed block below.
+
+**7. Right first try, without running it: one of six** — Exercise 5. Exercise 3's component was
+clean after one structural nudge, but the first version solved a different problem, so it doesn't
+count.
+
+**8. Longest stalls, two roughly equal:**
+
+- *Exercise 4* — "which side of the colon is the key and which is the new variable." Took three
+  different explanations before it stuck.
+- *Exercise 2* — "a slot is content that goes **between** the tags, not an attribute you put **on**
+  the tag."
+
+**9.** Lowercase, so React reads `buttonsContainer` as a literal tag name and creates a
+`<buttonscontainer>` element in the DOM — HTML tag names are case-insensitive, so the capital is
+lost anyway. The `'menu'` default is never consulted. Nothing throws and nothing looks broken: the
+buttons still render inside it, because it's a real if meaningless element.
+
 ---
 
 ## Solutions
