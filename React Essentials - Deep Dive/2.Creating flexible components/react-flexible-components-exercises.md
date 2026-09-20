@@ -627,6 +627,34 @@ general rule it violated?
 collision by reordering the attributes on the `<button>` tag? (You worked this out in Forwarding
 Props Exercise 4 — say the rule from memory.)
 
+### My answer
+
+**Part 1:** *"Every button carries the class `button`, always"* — plus the mode class alongside the
+icon class. The rule broken: **the classes accumulate, they don't compete.** A chained ternary is
+one expression producing one value, so it can only ever yield a single class name. Build the string
+up instead of picking from it.
+
+**Part 2: last one wins.** Whichever of the two is written second overwrites the other, so the order
+just changes *which* one is destroyed:
+
+```jsx
+<button className={classes} {...rest}>   // caller's "extra" wins, my classes are gone
+<button {...rest} className={classes}>   // my classes win, caller's "extra" is gone
+```
+
+Reordering can never fix it. Pull `className` out of `rest` by name so there's nothing to collide
+with, then join the two myself.
+
+**What tripped me up, in order:** `const classes` then `classes +=` (needs `let`); `mode = 'filled'`
+inside an `if`, which is an **assignment**, always truthy, so all three mode classes fired on every
+button; `mode` left on the `<button>` as a bare attribute; and `className` destructured out but then
+never used, so the caller's class silently vanished — pulling it out and joining it back are two
+steps and I did one.
+
+I also skipped the four category lines the exercise asks for first, and three of those failures were
+category errors: `mode` is MINE and I put it on the DOM, `className` is MINE and I left it in the
+rest bucket, `rest` is PASS ON and I never passed it on.
+
 ---
 
 ## When you're done
