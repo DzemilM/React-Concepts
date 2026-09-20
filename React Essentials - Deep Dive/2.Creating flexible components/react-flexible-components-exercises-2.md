@@ -233,10 +233,15 @@ those two not be written as one ternary?
 
 ## Exercise 7 — Everything at once
 
-**Build:** a component `Notice`, used like this:
+The capstone, same scale as the Udemy Button — bigger, in fact. Blank file, and write the four
+category lines before any JSX.
+
+**Build:** a component `Notice`, used all five of these ways:
 
 ```jsx
 <Notice>Plain notice</Notice>
+
+<Notice level="warning">Careful.</Notice>
 
 <Notice
   as="section"
@@ -247,25 +252,59 @@ those two not be written as one ternary?
 >
   Your card was declined.
 </Notice>
+
+<Notice Icon={InfoIcon} dismissible className="pinned">
+  Heads up.
+</Notice>
+
+<Notice as="aside" onClick={() => console.log('hi')}>Clickable</Notice>
 ```
 
-Requirements:
+Requirements, all at once:
 
-- Outer tag comes from `as`, defaulting to `div`.
-- Always the class `notice`, plus `notice-${level}`, with `level` defaulting to `info`.
-- If `Icon` is passed, it renders first inside a `<span className="notice-icon">`. If not, that span
-  must **not** exist in the DOM.
-- If `title` is passed, it renders next. It holds finished JSX, not a component.
-- Then the children.
-- `id` and other standard props reach the outer element.
-- `as`, `Icon`, `level` and `title` must not appear as attributes.
+1. The outer tag comes from `as`, defaulting to `div`.
+2. Every notice carries the class `notice`, **always**.
+3. Plus a level class: `notice-${level}`, with `level` defaulting to `info`.
+4. If `Icon` is passed, **also** the class `notice-with-icon`.
+5. If `dismissible` is set, **also** the class `notice-dismissible`.
+6. A `className` from the caller is **added** to all of that, not replacing it.
+7. If `Icon` is passed, it renders first inside a `<span className="notice-icon">`. If not, that
+   span must **not** exist in the DOM — not an empty one.
+8. If `title` is passed, it renders next. It holds **finished JSX**, not a component.
+9. Then the children.
+10. `id`, `onClick` and any other standard prop reach the outer element.
+11. `as`, `Icon`, `level`, `title`, `dismissible` and `className` must **not** appear as attributes
+    in devtools.
 
-**Check it:** inspect both. The first is `<div class="notice notice-info">` with no icon span and no
-title. The second is `<section class="notice notice-danger" id="pay-notice">` with three things
-inside it.
+Write `WarnIcon` and `InfoIcon` yourself — one line each.
 
-**Then answer:** `Icon` and `title` both arrive holding something renderable, and you treated them
+**Before writing the component,** fill these in:
+
+```js
+// MINE:     props this component reads and consumes
+// FIXED:    values that are the same every time
+// PASS ON:  forwarded — onto which element?
+// SLOTS:    values placed as JSX, or used as a tag
+```
+
+**Check it:** inspect the fourth notice. Its class attribute must have **five** names. Count them in
+devtools. Then inspect the first — it must have exactly two, and no `<span class="notice-icon">`
+anywhere inside it.
+
+**Watch for:** eleven requirements. Tick them off one at a time against the finished component. In
+set 1 you passed four of eight on the first attempt and called it done.
+
+**Watch for:** `let` not `const` for the class string, `===` not `=` if you compare anything, and a
+prop pulled out by name still has to be *used* — destructuring `className` only stops it colliding,
+it doesn't join it on.
+
+**Then answer (two parts):**
+
+**Part 1:** `Icon` and `title` both arrive holding something renderable, and you treated them
 differently — `<Icon />` for one, `{title}` for the other. Why?
+
+**Part 2:** three of the class rules (3, 4, 5) are separate conditions. Could any pair of them be
+written as a single ternary? Say why or why not, using the word *alternatives*.
 
 ---
 
@@ -448,13 +487,42 @@ only ever give you one of them. Choosing → ternary. Accumulating → build up.
 <summary><strong>Exercise 7</strong></summary>
 
 ```jsx
-// MINE:     as, level
+// MINE:     as, level, dismissible, className
 // FIXED:    "notice", "notice-icon"
-// PASS ON:  id… → the outer element
-// SLOTS:    Icon (a tag), title (content), children
+// PASS ON:  id, onClick… → the outer element
+// SLOTS:    Icon (used as a tag), title (placed as content), children
 
-function Notice({ as: Tag = 'div', Icon, level = 'info', title, children, ...props }) {
-  const classes = `notice notice-${level}`;
+function WarnIcon() {
+  return <span>⚠</span>;
+}
+
+function InfoIcon() {
+  return <span>ℹ</span>;
+}
+
+function Notice({
+  as: Tag = 'div',
+  Icon,
+  level = 'info',
+  title,
+  dismissible,
+  className,
+  children,
+  ...props
+}) {
+  let classes = `notice notice-${level}`;
+
+  if (Icon) {
+    classes += ' notice-with-icon';
+  }
+
+  if (dismissible) {
+    classes += ' notice-dismissible';
+  }
+
+  if (className) {
+    classes += ` ${className}`;
+  }
 
   return (
     <Tag className={classes} {...props}>
@@ -470,14 +538,22 @@ function Notice({ as: Tag = 'div', Icon, level = 'info', title, children, ...pro
 }
 ```
 
-**Why `Icon` and `title` are treated differently:** `title` holds a **finished element** — the
-caller already wrote `<h3>Payment failed</h3>`, so there's nothing left to do but place it between
-tags. `Icon` holds a **function that hasn't been called yet**, so `<Icon />` is what calls it.
+The fourth notice: `notice notice-info notice-with-icon notice-dismissible pinned` — five names.
+The first: `notice notice-info` — two, and no icon span.
+
+**Part 1 — why `Icon` and `title` differ:** `title` holds a **finished element**. The caller already
+wrote `<h3>Payment failed</h3>`, so there's nothing left to do but place it between tags. `Icon`
+holds a **function that hasn't been called yet**, so `<Icon />` is what calls it.
 
 `{Icon}` alone would try to render a function, and `<title />` would ask React for an HTML element
 called `title`. Same slot idea, two kinds of value, two ways of using them.
 
-Note `const` is fine here — nothing is appended, so no `let` needed. Exercise 6 needed `let` because
-the string grew.
+**Part 2 — no pair can be a ternary.** A ternary picks between **alternatives**: one wins, the other
+can't also happen. Here all three conditions are independent — a notice can be `danger` **and** have
+an icon **and** be dismissible, and all three classes have to appear together. A ternary produces
+one value, so it structurally cannot. This is the same rule the Button in set 1 broke.
+
+**Note `let`, not `const`**, because the string grows. Exercise 5's `Wrapper` needed no `let` —
+nothing was appended there.
 
 </details>
