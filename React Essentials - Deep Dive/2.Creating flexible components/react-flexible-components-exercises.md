@@ -370,9 +370,24 @@ Two named slots in **one** component is the point.
 **Build:** a component `List`, used all three of these ways:
 
 ```jsx
-<List>              <Item /> <Item /> </List>
-<List as="ol">      <Item /> <Item /> </List>
-<List as="menu">    <Item /> <Item /> </List>
+function List({ as : As = 'ul', children }) {            
+  return <As>{children}</As>;
+}
+
+function Item(){
+  return(<li>ayoo</li>)
+}
+
+export default function App(){
+  return(
+    <>
+      <List>              <Item /> <Item /> </List>
+      <List as="ol">      <Item /> <Item /> </List>
+      <List as="menu">    <Item /> <Item /> </List>
+    </>
+  )
+}
+
 ```
 
 - The children are rendered inside an element whose **tag name comes from the `as` prop**.
@@ -395,6 +410,37 @@ do with that.
 **Part 2:** The prop is written lowercase at the call site (`as="ol"`) but must be capitalised
 inside the component. Where does the rename happen, and what is one way to write it?
 
+### My answer
+
+**Part 1:** Lowercase is always read as a literal HTML tag name, so React doesn't look at my `as`
+prop at all — it **creates an `<as>` element**. The browser accepts unknown elements without
+complaint, so there's no error and nothing in the console. It silently isn't what I meant, which is
+why this one has to be checked in devtools.
+
+**Part 2:** In the destructuring, inside `List`. Two ways, both fine:
+
+```jsx
+function List({ as: As = 'ul', children }) { ... }   // rename in the parameter list
+
+function List({ as = 'ul', children }) {             // or a plain line above the return
+  const As = as;
+  ...
+}
+```
+
+**What tripped me up:** which side of the colon is which. Destructuring is **flipped** from normal
+assignment — `const As = props.as` puts the variable first, `{ as: As }` puts the **key** first.
+Everything inside the `{ }` describes the object being unpacked, so the object's own key leads, and
+`:` means "…and call it this." Read it as **"take `as`, call it `As`."** I had it as `As: as`, which
+says "take `As`" — a key that doesn't exist, so the `'ul'` default would fire every time and all
+three lists would come out as `<ul>`.
+
+Same syntax as `{ variant: variable, ...rest2 }` in Forwarding Props Exercise 1.
+
+I also first wrote `Tag={as}` in the parameter list — JSX braces where there's no JSX. In a
+destructuring pattern `={...}` is a **default value**, so that made `Tag` an object, and React threw
+on being handed an object as an element type.
+
 ---
 
 ## Exercise 5 — The tag is a component, not a string
@@ -402,9 +448,36 @@ inside the component. Where does the rename happen, and what is one way to write
 **Build:** a component `Badge`, used like this:
 
 ```jsx
-<Badge Icon={StarIcon}>Featured</Badge>
-<Badge Icon={BoltIcon}>Fast</Badge>
-<Badge>Plain</Badge>
+function Badge({ Icon, children }) {
+  return (
+    <span className="badge">
+      {Icon && (
+        <span className="badge-icon">
+          <Icon />
+        </span>
+      )}
+      {children}
+    </span>
+  );
+}
+
+function StarIcon() {
+  return <p>superstaaaar</p>;
+}
+
+function BoltIcon() {
+  return <h2>Boltttt</h2>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Badge Icon={StarIcon}>Featured</Badge>
+      <Badge Icon={BoltIcon}>Fast</Badge>
+      <Badge>Plain</Badge>
+    </>
+  );
+}
 ```
 
 - Renders a `<span className="badge">`.
@@ -432,6 +505,29 @@ different about the two **values**, and how does React tell which kind it's been
 **Part 2:** What renders if you write `Icon={StarIcon()}` at the call site instead? Predict first,
 then try it, then explain the gap if you got it wrong.
 
+### My answer
+
+**Part 1:** The **type of the value**. `"ol"` is a **string**, `StarIcon` is a **function**. React
+checks which it got: a string means "create that built-in HTML element", a function means "call it
+and render what it returns."
+
+**Part 2:** It throws:
+
+> *expected a string (for built-in components) or a class/function (for composite components) but
+> got: object*
+
+`StarIcon()` calls the component and passes the **element object** it returned. That's a finished
+element, not a type — objects go between tags (`{header}`), never in the tag position. The error
+message is literally Part 1's answer: React accepts a string or a function, and it got neither.
+
+Exercise 1 again in a React costume — `run(greet())` passed a string instead of a function and threw
+for the same reason.
+
+**What tripped me up:** I first said the difference was "one is HTML, one is a component we made."
+Close, but the word React actually cares about is **string vs function**. And I thought the braces
+told you which — they don't. `{ }` only means *"evaluate this as JavaScript"*; `as={'ol'}` is still
+a string. The type check happens inside React, not at the call site.
+
 ---
 
 ## Exercise 6 — Coding Exercise 15, from a blank file
@@ -442,14 +538,49 @@ own first attempt.**
 Used all of these ways:
 
 ```jsx
-<Button>Default</Button>
-<Button mode="filled">Filled</Button>
-<Button mode="outline">Outline</Button>
-<Button mode="text">Text</Button>
-<Button Icon={HomeIcon}>Home</Button>
-<Button Icon={PlusIcon} mode="text">Add</Button>
-<Button disabled>Disabled</Button>
-<Button onClick={() => console.log('hi')} className="extra">Click me</Button>
+function Button({ Icon, className, mode = 'filled', children, ...rest }) {
+  let classes = `button ${mode}-button`;
+  if (Icon) {classes += ' icon-button'};
+  if (className) {classes += ` ${className}`}
+
+  return (
+    <button className={classes} {...rest}>
+      {Icon && (
+        <span className="button-icon">
+          <Icon />
+        </span>
+      )}
+      <span>{children}</span>
+    </button>
+  );
+}
+
+function HomeIcon() {
+  return <p>home</p>;
+}
+
+function PlusIcon() {
+  return <p>plus</p>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Button>Default</Button>
+      <Button mode="filled">Filled</Button>
+      <Button mode="outline">Outline</Button>
+      <Button mode="text">Text</Button>
+      <Button Icon={HomeIcon}>Home</Button>
+      <Button Icon={PlusIcon} mode="text">
+        Add
+      </Button>
+      <Button disabled>Disabled</Button>
+      <Button onClick={() => console.log('hi')} className="extra">
+        Click me
+      </Button>
+    </>
+  );
+}
 ```
 
 Requirements, all at once:
