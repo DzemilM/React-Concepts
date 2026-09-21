@@ -80,11 +80,21 @@ four, but because they stack.
 **Build:** a component `Label`, used all five of these ways:
 
 ```jsx
-<Label />
-<Label text="Hello" />
-<Label text="" />
-<Label text={null} />
-<Label text={0} />
+function Label({ text = 'Untitled' }) {
+  return <p>{text}</p>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Label />
+      <Label text="Hello" />
+      <Label text="" />
+      <Label text={null} />
+      <Label text={0} />
+    </>
+  );
+}
 ```
 
 - Renders a `<p>` containing `text`.
@@ -99,6 +109,33 @@ The value table from Conditional Content is in play alongside the default rule.
 **Then answer:** which of the five triggered the default, and what is the exact condition? Then:
 `<Label text={0} />` — why does that one behave differently from `text={null}`?
 
+### My answer
+
+**Prediction, written before running — all five correct:** Untitled, Hello, nothing, nothing, `0`.
+
+Only `<Label />` triggered the default. The condition is **`text === undefined`**, which is what a
+missing prop gives you. `''`, `null` and `0` are values the caller deliberately passed, so they're
+used as-is.
+
+**Why `0` differs from `null`:** two different reasons that happen to look alike.
+
+| Value | What React does |
+| --- | --- |
+| `null`, `undefined`, `true`, `false` | **skipped by rule** — they're what conditionals produce, so painting them would be useless |
+| any string or number | **rendered as text** |
+
+`''` and `0` both go down the second row. `''` is invisible because it has no characters, not
+because React skipped it. `0` has one character, so you see it — which is where the stray-zero bug
+comes from.
+
+So the model is not *"falsy renders nothing."*
+
+**What tripped me up:** I first wrote `text ? <p>{text}</p> : <p>Untitled</p>` — a ternary tests
+**truthiness**, a default tests **`undefined`**. That collapsed all four falsy values into
+"Untitled" and printed it four times instead of once. Then I hand-rolled
+`if (text === undefined)`, which is correct but is exactly what `= 'Untitled'` already means. A
+destructuring default *is* that `if`, in one token.
+
 ---
 
 ## Exercise 2 — The tag comes from a string
@@ -106,10 +143,20 @@ The value table from Conditional Content is in play alongside the default rule.
 **Build:** a component `Text`, used all four of these ways:
 
 ```jsx
-<Text>plain</Text>
-<Text as="strong">bold</Text>
-<Text as="em">italic</Text>
-<Text as="h1">heading</Text>
+function Text({ as: Tag = 'span', children }) {
+  return <Tag>{children}</Tag>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Text>plain</Text>
+      <Text as="strong">bold</Text>
+      <Text as="em">italic</Text>
+      <Text as="h1">heading</Text>
+    </>
+  );
+}
 ```
 
 - The children render inside an element whose tag name comes from `as`.
@@ -120,8 +167,41 @@ The value table from Conditional Content is in play alongside the default rule.
 **Check it:** devtools. Four different tags. If you see four `<span>`s, or an `<as>` anywhere, it's
 wrong — and the screen won't tell you.
 
-**Then answer:** in `{ as: Tag = 'span' }`, which of `as` and `Tag` must already exist as a key in
-the props object, and why does it have to be that one?
+**Then answer:** when you write `<Text as="strong">bold</Text>`, React hands your function this
+object:
+
+```js
+{ as: 'strong', children: 'bold' }
+```
+
+Now look at `{ as: Tag = 'span' }`. Which of the two words — `as` or `Tag` — appears in that object,
+and which one did you invent? So which side of the colon is a **lookup**, and which side is just a
+**name you're storing it under**?
+
+### My answer
+
+**`as` is the lookup, `Tag` is the name.** `as` is the key React actually put in the props object —
+it's there because the call site wrote `as="strong"`. `Tag` appears nowhere in that object; it's my
+local variable. Destructuring can only read keys that exist, so the source has to come first.
+
+Left of the colon = **where the value comes from**. Right = **what I call it here**, capitalised so
+`<Tag>` is read as a variable instead of a literal HTML tag name.
+
+Read it aloud every time: **"take `as`, call it `Tag`."** Source first.
+
+**Why it feels backwards:** because it *is* flipped from ordinary assignment.
+
+```js
+const Tag = props.as;      // new variable first, source second
+const { as: Tag } = props; // source first, new variable second
+```
+
+Both lines do exactly the same thing.
+
+**What tripped me up:** I hand-rolled the default again — `if (As) { return <As>... } return <span>...`
+— which is the same move as Exercise 1's `if (text === undefined)`, one exercise later. `= 'span'`
+replaces both returns. And `if (As)` tests **truthiness**, not `undefined`, so it's the Exercise 1
+trap a second time.
 
 ---
 
@@ -132,8 +212,28 @@ Same `Text` component, same four call sites, but now do the rename with **a plai
 
 Two lines of body. That's the whole exercise.
 
-**Then answer:** both versions work. What is the one thing that is true in both — the thing that
-would break either version if you got it wrong?
+```jsx
+function Text({ as = 'span', children }) {
+  const Tag = as;
+  return <Tag>{children}</Tag>;
+}
+```
+
+**Then answer:** the two versions differ in *where* the rename happens. What do they have in
+**common**?
+
+Concrete test: in each version, change `Tag` to `tag` — lowercase — everywhere it appears. Run both.
+What renders now, and what does that tell you is the thing neither version can do without?
+
+### My answer
+
+**The name in the tag position must be capitalised.** Lowercase it in either version and React stops
+looking anything up — it creates a literal `<tag>` element with the children inside, no error and
+nothing in the console. Where the rename happens is style; that it's capitalised is the rule.
+
+The capital doesn't mean *"this is a component."* It means **"this is a variable — look up what's
+inside it."** What's found there decides whether you get a component or a built-in element, and
+React works that out afterwards by checking the type.
 
 ---
 
@@ -142,8 +242,30 @@ would break either version if you got it wrong?
 **Build:** a component `Row`, used like this:
 
 ```jsx
-<Row Cell={TextCell}>hello</Row>
-<Row Cell={CodeCell}>const x = 1</Row>
+function Row({ Cell, children }) {
+  return (
+    <div className="row">
+      <Cell>{children}</Cell>
+    </div>
+  );
+}
+
+function TextCell({ children }) {
+  return <span>{children}</span>;
+}
+
+function CodeCell({ children }) {
+  return <code>{children}</code>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Row Cell={TextCell}>hello</Row>
+      <Row Cell={CodeCell}>const x = 1</Row>
+    </>
+  );
+}
 ```
 
 - `Row` renders a `<div className="row">`.
@@ -159,8 +281,32 @@ both times.
 **Part 1:** `Cell` holds a function. Name the other kind of value React would also accept in that
 position, and what it would do with it.
 
-**Part 2:** Try `Cell={TextCell()}` and read the error. Say which word in the error is the value
-React *received*, and which words are the two it *wanted*.
+**Part 2:** Try `Cell={TextCell()}` and read the error — it is **not** the one from set 1's `Badge`.
+Work out why: what does `TextCell()` receive as its argument when you call it yourself, and what
+does its parameter list try to do with that? Then say what set 1's `StarIcon` did differently that
+let it get far enough to produce the *element type* error instead.
+
+### My answer
+
+**Part 1:** a **string**. React would **create** that built-in HTML element — `'span'` gives a
+`<span>`. It doesn't search for anything; a lowercase name *is* the element name.
+
+**Part 2:** it throws before React is involved at all:
+
+> *Cannot destructure property 'children' of 'undefined'*
+
+`TextCell()` calls the function **with no arguments**, so `props` is `undefined`, and the parameter
+list `{ children }` tries to read a key off `undefined`.
+
+Set 1's `StarIcon` took no props, so `StarIcon()` ran fine and returned an element **object** —
+React then refused that object as an element type. Two different failure points:
+
+| Component reads props? | What breaks | Error |
+| --- | --- | --- |
+| no (`StarIcon`) | React gets an object as a type | *expected a string or a class/function… got: object* |
+| yes (`TextCell`) | the call itself | *Cannot destructure 'children' of undefined* |
+
+Same root cause both times — **called it instead of passing it** — surfacing at different moments.
 
 ---
 
@@ -171,8 +317,22 @@ React *received*, and which words are the two it *wanted*.
 Now use it **both** ways on the same component:
 
 ```jsx
-<Wrapper as="section">a built-in element</Wrapper>
-<Wrapper as={Card}>a component</Wrapper>
+function Wrapper({ as: Tag = "div", children }) {
+  return <Tag>{children}</Tag>;
+}
+
+function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Wrapper as="section">a built-in element</Wrapper>
+      <Wrapper as={Card}>a component</Wrapper>
+    </>
+  );
+}
 ```
 
 Write `Card` yourself — it renders a `<div className="card">` with its children inside.
@@ -184,6 +344,20 @@ Write `Card` yourself — it renders a `<div className="card">` with its childre
 
 **Then answer:** the same prop took a string one time and a function the next, and you wrote no
 condition for it. Why does that work — what is doing the deciding?
+
+### My answer
+
+**React is doing the deciding.** It checks the **type** of the value handed to it as an element
+type: a **string** means "create that built-in HTML element", a **function** means "call it and
+render what it returns." That check already exists inside React, which is why one `<Tag>` covers
+both cases and I never write a condition.
+
+So `as` here and `Icon` in set 1's `Badge` were never two mechanisms — one slot, two kinds of value.
+
+**What tripped me up:** I first said the **quotes** were deciding. They're not — quotes and braces
+are only how the value is *written* at the call site, and `as="section"` and `as={'section'}` produce
+the identical string. The syntax is gone by the time the component runs; only the value's type is
+left.
 
 ---
 
@@ -324,12 +498,15 @@ point of this file. Last time this scored one clean partial out of six.
    falsy values a caller could pass that would **not** trigger it.
 6. You have two conditions that both affect an element's class list. Ternary, or build the string
    up? Give the question you ask yourself to decide.
+7. `null`, `''` and `0` in braces — which of the three does React **skip**, which does it **render
+   as text**, and why do two of them end up invisible for different reasons? (Flagged during
+   Exercise 1 as still shaky — answer it cold.)
 
 Then:
 
-7. How many exercises did you get right **first try, without running the code to find out**? Set 1
+8. How many exercises did you get right **first try, without running the code to find out**? Set 1
    scored 1 of 6.
-8. Which of the seven took the longest, and what was the sentence you were stuck on?
+9. Which of the seven took the longest, and what was the sentence you were stuck on?
 
 ---
 
