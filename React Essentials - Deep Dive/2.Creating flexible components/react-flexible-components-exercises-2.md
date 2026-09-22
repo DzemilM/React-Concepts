@@ -637,6 +637,54 @@ Then:
    scored 1 of 6.
 9. Which of the seven took the longest, and what was the sentence you were stuck on?
 
+### My answers
+
+**Score: four clean, one partial, two wrong — against one partial out of six in set 1.**
+
+**1. ✅** React **creates** an element with that name; a lowercase tag name *is* the element name, so
+nothing gets looked up. That's why a variable used as a tag must be capitalised — the capital is what
+makes React read it as a variable and use whatever is inside it.
+
+**2. ✗** *(second failure on this one)* The only difference is **how they're filled**. React fills
+`children` from whatever sits between the tags; I fill `footer` explicitly, as an attribute. That
+difference lives entirely at the **call site** — inside the component they're identical, both props
+holding a value, both placed in braces between tags.
+
+**3. ✅** `Icon={PlusIcon}` passes the **function**, and `<Icon />` calls it. `Icon={PlusIcon()}`
+calls it first and passes the element **object** it returned, which React refuses as a type.
+(Careful with the wording: calling it doesn't "hold" an object, it **returns** one.)
+
+**4. ✅** **A string** — `'div'`, `'menu'` — which React creates as a built-in element. **Or a
+function** — `PlusIcon`, `Card` — which React calls. Set 1's answer to this was "object and string";
+an object is what React *refuses*.
+
+**5. ✗** *(second failure)* The default fires **only when the value is `undefined`**, which is what a
+missing prop gives you. Not for `null`, `''`, `0` or `false` — those are values that exist, so
+they're used as-is. Odd gap: Exercise 1 in this file is exactly this, and the prediction was right on
+all five. The behaviour is known; the sentence isn't.
+
+**6. Partial** — I answered "if it's just 2 conditions", which is the **count** test. Wrong axis.
+It's about **kind**: choosing between **alternatives** → ternary, however many branches; independent
+conditions that **stack** → build the string up. I'd stated this correctly in Exercise 7's Part 2
+twenty minutes earlier.
+
+**7. ✅** React **skips** `null` (and `undefined`, `true`, `false`) by rule. It **renders `''` and
+`0` as text** — `''` is invisible because it has no characters, not because it was skipped; `0` has
+one character, so it shows.
+
+**8. Right first try, without running: 3 of 7** — Exercises 3, 4 and 5. Exercise 1 used a ternary
+instead of a default, Exercise 2 hand-rolled one, and 6 and 7 both needed rounds. Set 1 scored 1 of
+6.
+
+**9. Longest stall: Exercise 6**, and the sentence was *"`tile` is fixed and `className` comes from
+the caller — one variable can't be both."* Exercise 7 took more rounds but none of them were
+conceptual; they were assembly slips.
+
+**What this says about what's left.** The concepts are in place — dynamic tags, string vs function,
+slots, defaults all came out clean in code. What's still shaky is two things: **stating the rules in
+words** (questions 2, 5 and 6), and **assembling a large component without dropping a piece**. Those
+need different treatment from more explanation.
+
 ---
 
 ## Solutions
