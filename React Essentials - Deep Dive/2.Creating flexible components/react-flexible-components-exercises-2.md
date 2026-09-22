@@ -366,11 +366,36 @@ left.
 **Build:** a component `Tile`, used all of these ways:
 
 ```jsx
-<Tile>Plain</Tile>
-<Tile size="large">Large</Tile>
-<Tile selected>Selected</Tile>
-<Tile size="small" selected className="promo">Everything</Tile>
-<Tile onClick={() => console.log('hi')} id="t1">Clickable</Tile>
+function Tile({ size = 'medium', selected, className, children, ...rest }) {
+  let classes = `tile tile-${size}`;
+
+  if (selected) {
+    classes += ' tile-selected';
+  }
+
+  if (className) {
+    classes += ` ${className}`;
+  }
+
+  return (
+    <div className={classes} {...rest}>
+      {children}
+    </div>
+  );
+}
+
+
+export default function App() {
+  return (
+    <>
+      <Tile>Plain</Tile>
+      <Tile size="large">Large</Tile>
+      <Tile selected>Selected</Tile>
+      <Tile size="small" selected className="promo">Everything</Tile>
+      <Tile onClick={() => console.log('hi')} id="t1">Clickable</Tile>
+    </>
+  );
+}
 ```
 
 Requirements:
@@ -403,6 +428,35 @@ vanished.
 **Then answer:** the size class is `tile-${size}` and the selected class is conditional. Why can
 those two not be written as one ternary?
 
+### My answer
+
+```js
+// MINE:     size, selected, className — read and used, never put on the DOM
+// FIXED:    "tile" — nobody passes it, it's typed straight into the string
+// PASS ON:  onClick, id… → the <div>, via ...rest
+// SLOTS:    children
+```
+
+**Why not one ternary:** `size` and `selected` are **independent**. A tile can be small **and**
+selected, so `tile-small` and `tile-selected` have to appear together. A ternary produces one value,
+so it can only ever hand back one of them. Choosing between alternatives → ternary. Conditions that
+stack → build the string up.
+
+**What tripped me up — all three failures were category errors, and I skipped the four lines above
+for the third time in a row.**
+
+1. I wrote `className = 'tile'`, giving the caller's prop a default of the fixed class. That merges
+   **MINE** with **FIXED**: a caller passing `className="promo"` replaced `tile` instead of adding
+   to it, so the base class vanished on exactly the tile that needed it most.
+2. I put `size` and `selected` on the `<div>` as bare attributes, which is `={true}` — both landed
+   in the DOM. They're **MINE**; naming them in the parameter list is what keeps them off.
+3. `${selected ? 'tile-selected' : ''}` — the empty branch is the tell. Choosing between "a class"
+   and "no class" isn't choosing, it's adding conditionally, and it left a trailing space on every
+   unselected tile.
+
+`tile` is fixed and `className` comes from the caller. They are two different kinds of thing and one
+variable can't be both.
+
 ---
 
 ## Exercise 7 — Everything at once
@@ -413,25 +467,70 @@ category lines before any JSX.
 **Build:** a component `Notice`, used all five of these ways:
 
 ```jsx
-<Notice>Plain notice</Notice>
+function WarnIcon() {
+  return <span>Warrnnnn</span>;
+}
 
-<Notice level="warning">Careful.</Notice>
+function InfoIcon() {
+  return <span>Infooo</span>;
+}
 
-<Notice
-  as="section"
-  Icon={WarnIcon}
-  level="danger"
-  title={<h3>Payment failed</h3>}
-  id="pay-notice"
->
-  Your card was declined.
-</Notice>
+function Notice({
+  as: Tag = 'div',
+  className,
+  level = 'info',
+  dismissible,
+  Icon,
+  title,
+  children,
+  ...rest
+}) {
+  let classes = `notice notice-${level}`;
+  let renderTitle;
+  let renderIcon;
 
-<Notice Icon={InfoIcon} dismissible className="pinned">
-  Heads up.
-</Notice>
+  if (Icon) {
+    classes += ' notice-with-icon';
+    renderIcon = (
+      <span className="notice-icon">
+        <Icon />
+      </span>
+    );
+  }
 
-<Notice as="aside" onClick={() => console.log('hi')}>Clickable</Notice>
+  if (dismissible) {classes += ' notice-dismissible'};
+  if (className) {classes += ` ${className}`};
+  
+  if (title) {renderTitle = title};
+
+  return (
+    <Tag className={classes} {...rest}>
+      {renderIcon}
+      {renderTitle}
+      {children}
+    </Tag>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Notice>Plain notice</Notice>
+      <Notice level="warning">Careful.</Notice>
+      <Notice
+        as="section"
+        Icon={WarnIcon}
+        level="danger"
+        title={<h3>Payment failed</h3>}
+        id="pay-notice"
+      >
+        Your card was declined.
+      </Notice>
+      <Notice Icon={InfoIcon} dismissible className="pinned">Heads up.</Notice>
+      <Notice as="aside" onClick={() => console.log('hi')}>Clickable</Notice>
+    </>
+  );
+}
 ```
 
 Requirements, all at once:
@@ -455,7 +554,7 @@ Write `WarnIcon` and `InfoIcon` yourself — one line each.
 **Before writing the component,** fill these in:
 
 ```js
-// MINE:     props this component reads and consumes
+// MINE:     
 // FIXED:    values that are the same every time
 // PASS ON:  forwarded — onto which element?
 // SLOTS:    values placed as JSX, or used as a tag
@@ -479,6 +578,36 @@ differently — `<Icon />` for one, `{title}` for the other. Why?
 
 **Part 2:** three of the class rules (3, 4, 5) are separate conditions. Could any pair of them be
 written as a single ternary? Say why or why not, using the word *alternatives*.
+
+### My answer
+
+```js
+// MINE:     as, level, dismissible, className — read and used, never on the DOM
+// FIXED:    "notice", "notice-icon"
+// PASS ON:  id, onClick… → the outer element, via ...rest
+// SLOTS:    Icon (used as a tag), title (placed as content), children
+```
+
+**Part 1:** `title` holds a **finished element** — the caller already wrote
+`<h3>Payment failed</h3>`, so there's nothing to do but place it between tags. `Icon` holds a
+**function that hasn't been called yet**, so `<Icon />` is what calls it. Element vs function: the
+two words the whole unit turns on.
+
+**Part 2:** No. A ternary picks between **alternatives** — one wins and the other can't also happen.
+These three are **independent**: a notice can be `danger` **and** have an icon **and** be
+dismissible, so all three classes have to appear together. A ternary produces one value, so it
+structurally can't.
+
+**What tripped me up:** I built `classes` over five lines and then left both it *and* `...rest` off
+the `<Tag>`. Six of the eleven requirements were failing at the final line while the string above it
+was perfect. That's the third time in two files: **compute a value correctly, forget to attach it.**
+New habit — after writing the `return`, read the opening tag and check every variable computed above
+is actually on it.
+
+Then, fixing that, I deleted the `renderIcon` declaration and its assignment while adding the icon
+components, leaving `{renderIcon}` in the JSX with nothing behind it, and I declared `WarnIcon` and
+`InfoIcon` **inside** `Notice`, where `App` can't see them. Both are the same class of slip: editing
+one part and not re-reading what depended on it.
 
 ---
 
