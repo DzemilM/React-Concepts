@@ -218,19 +218,40 @@ element: `required` is an attribute of the input, not the div.
 ## Rep 3 — `Panel`
 
 ```jsx
-<Panel>Just a body.</Panel>
+function Panel({ as : Tag="div", className, tone="plain", collapsed, header, footer, children, ...rest }){
+  let classes=`panel panel-${tone}`;
+  if(collapsed){classes += " panel-collapsed"};
+  if(className){classes += ` ${className}`};
 
-<Panel
-  as="section"
-  header={<h2>Settings</h2>}
-  footer={<button>Save</button>}
-  tone="warning"
-  collapsed
-  className="narrow"
-  id="settings"
->
-  Body text.
-</Panel>
+  return(
+    <Tag className={classes} {...rest}>
+     {header && <div className="panel-header">{header}</div>}
+     <div className="panel-body">{children}</div>
+     {footer && <div className="panel-footer">{footer}</div>}
+    </Tag>
+  )
+}
+
+export default function App(){
+  return(
+    <>
+      <Panel>Just a body.</Panel>
+
+      <Panel
+        as="section"
+        header={<h2>Settings</h2>}
+        footer={<button>Save</button>}
+        tone="warning"
+        collapsed
+        className="narrow"
+        id="settings"
+      >
+        Body text.
+      </Panel>
+    </>
+  )
+}
+
 ```
 
 1. Outer tag from `as`, defaulting to `div`.
