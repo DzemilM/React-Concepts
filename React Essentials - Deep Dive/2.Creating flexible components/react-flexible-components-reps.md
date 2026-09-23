@@ -59,11 +59,45 @@ Every rep here is the same five moves. Recognising that is the point.
 ## Rep 1 — `Chip`
 
 ```jsx
-<Chip>Default</Chip>
-<Chip tone="success">Paid</Chip>
-<Chip tone="danger" removable>Overdue</Chip>
-<Chip Icon={StarIcon} tone="info" className="pinned" id="c1">Starred</Chip>
-<Chip as="a" href="/tags/react">React</Chip>
+function Chip({
+  as: Tag = 'span',
+  className,
+  tone = 'neutral',
+  removable,
+  Icon,
+  children,
+  ...rest
+}) {
+  let classes = `chip chip-${tone}`;
+  if (removable) {classes += ' chip-removable';}
+  if (Icon) {classes += ' chip-with-icon';}
+  if (className) {classes += ` ${className}`;}
+
+  return (
+    <Tag className={classes} {...rest}>
+      {Icon && (<span className="chip-icon"><Icon /></span>)}
+      {children}
+    </Tag>
+  );
+}
+
+function StarIcon({ children }) {
+  return <span>Starrr</span>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Chip>Default</Chip>
+      <Chip tone="success">Paid</Chip>
+      <Chip tone="danger" removable>Overdue</Chip>
+      <Chip Icon={StarIcon} tone="info" className="pinned" id="c1">
+        Starred
+      </Chip>
+      <Chip as="a" href="/tags/react">React</Chip>
+    </>
+  );
+}
 ```
 
 1. Outer tag from `as`, defaulting to `span`.
@@ -80,15 +114,56 @@ Every rep here is the same five moves. Recognising that is the point.
 
 **Check it:** the fourth chip has **four** class names. The first has **two**. The fifth is an `<a>`.
 
+### My answer
+
+```js
+// MINE:     as, tone, removable, Icon, className
+// FIXED:    "chip", "chip-icon"
+// PASS ON:  id, href… → the outer element, via ...rest
+// SLOTS:    Icon (used as a tag), children (placed as content)
+```
+
+**What tripped me up on the lines:** I put `children` under PASS ON. It isn't forwarded — it's a
+**slot** I place myself between the tags. Left in `...rest` it rides along in the spread and the
+element ends up with content from two sources, which is the bug from set 1's Exercise 5.
+
+`"chip-icon"` is FIXED even though it only appears when there's an icon. **FIXED isn't about whether
+it always renders — it's about whether the value ever comes from the caller.** It's that exact
+string every time it appears. Conditional *appearance* and variable *value* are different things.
+
+**On props appearing on two lines:** `as` and `Icon` are both MINE *and* SLOTS, and that's correct.
+The lines answer two different questions — **MINE vs PASS ON** is *does this reach the DOM?*, and
+**SLOTS** is *how do I place it in the output?*
+
 ---
 
 ## Rep 2 — `Field`
 
 ```jsx
-<Field label="Email" name="email" />
-<Field label="Password" name="pw" type="password" required />
-<Field label="Bio" as="textarea" name="bio" rows={4} />
-<Field label="Age" name="age" hint={<small>Must be 18+</small>} className="wide" />
+
+function Field({ className, required, label, as : Input="input", hint, ...rest }){
+  let classes = "field";
+  if(required){classes += " field-required"};
+  if(className){classes += ` ${className}`};
+
+  return(
+    <div className={classes}>
+      <label>{label}</label>
+      <Input required={required} {...rest} />
+      {hint}
+    </div>
+  )
+}
+export default function App(){
+  return(
+    <>
+      <Field label="Email" name="email" />
+      <Field label="Password" name="pw" type="password" required />
+      <Field label="Bio" as="textarea" name="bio" rows={4} />
+      <Field label="Age" name="age" hint={<small>Must be 18+</small>} className="wide" />
+    </>
+  )
+}
 ```
 
 1. Renders a `<div>` with the class `field`, **always**.
@@ -108,6 +183,35 @@ must carry no `name`, `type` or `rows`.
 component returns, not on the outer one. Same as Forwarding Props Exercise 6. Note that `required`
 is consumed for the class **and** is a real input attribute — decide what you want and say which in
 your category lines.
+
+### My answer
+
+```js
+// MINE:     label, as, hint, className
+// FIXED:    "field"
+// PASS ON:  name, type, rows… → the <Input>, not the <div>
+// SLOTS:    hint (content), and `as` used as a tag
+// BOTH:     required — read for the class AND forwarded to the input
+```
+
+**`required` does two jobs.** `Field` reads it to add `field-required` to the div's class — that's
+MINE. It's also a real `<input>` attribute the browser acts on — that's PASS ON. Naming it in the
+destructuring took it out of `...rest`, so the only way to have both was to put it back by hand:
+`required={required}`.
+
+The general rule: **naming a prop removes it from the spread.** Usually that's the point — it's how
+`label` and `as` stay off the DOM. When a prop is both mine *and* the element's, I pay for it by
+re-attaching it myself.
+
+**What tripped me up:** I wrote `<label label={label}>` — the text as an **attribute** instead of
+between the tags. That's set 1's Exercise 2 again (`<aside sidebar={Sidebar}>`), and it also broke
+requirement 8, since `label` is MINE and must not appear on any element. I also nested the input and
+hint *inside* the `<label>` instead of making them siblings.
+
+Then, forwarding `required`, I wrote `<div className={classes} {required}>` — a bare `{...}` in an
+attribute list can only be a **spread**, so that's a syntax error. An attribute is **name, equals,
+value**, which `className={classes}` right beside it was already showing. And it was on the wrong
+element: `required` is an attribute of the input, not the div.
 
 ---
 
