@@ -273,6 +273,30 @@ child — the body div. The second is a `<section>` with **four** class names an
 **Two slots this time**, both content, both optional. Set 2 only ever made one thing optional at a
 time.
 
+### My answer
+
+```js
+// MINE:     as, tone, collapsed, className
+// FIXED:    "panel", "panel-header", "panel-body", "panel-footer"
+// PASS ON:  id… → the outer element, via ...rest
+// SLOTS:    header, footer, children — all three placed as content
+```
+
+Nothing is used as a tag here except `as` itself. All three slots hold finished JSX, so all three go
+between tags in braces.
+
+The two optional wrappers are conditional **as a whole** — `{header && <div …>{header}</div>}`, not
+`<div>{header && header}</div>`. Wrapping only the contents would leave an empty `panel-header` div
+in the DOM on every panel without a header: invisible on screen, wrong in the document.
+
+**What tripped me up:** I made the body conditional too. Requirement 7 says the children render
+**always**. It looked fine because both my panels had children — a `<Panel />` with nothing between
+the tags would have come out with no body div at all.
+
+The habit behind it: I found a pattern that worked for the first slot and applied it to the other
+two without re-reading which requirement each one answers. That's the tick-off step in rule 3, and
+skipping it is what this file exists to fix.
+
 ---
 
 ## Rep 4 — `MenuItem`
