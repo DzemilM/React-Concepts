@@ -302,10 +302,47 @@ skipping it is what this file exists to fix.
 ## Rep 4 — `MenuItem`
 
 ```jsx
-<MenuItem>Plain</MenuItem>
-<MenuItem Icon={HomeIcon} shortcut="⌘H">Home</MenuItem>
-<MenuItem Icon={TrashIcon} tone="danger" disabled>Delete</MenuItem>
-<MenuItem as="a" href="/help" Badge={NewBadge} className="promoted">Help</MenuItem>
+function MenuItem({ 
+ as : Tag="button",
+ className, 
+ tone="default", 
+ disabled, 
+ Icon, 
+ Badge, 
+ shortcut,
+ children, 
+ ...rest 
+ }){
+
+  let classes = `menu-item menu-item-${tone}`;
+  const isButtonDisabled = Tag === 'button' && disabled;
+  if(disabled){classes += " menu-item-disabled"};
+  if(className){classes += ` ${className}`};
+
+  return(
+    <Tag className={classes} disabled={isButtonDisabled} {...rest}>
+     {Icon && <span className="menu-icon"><Icon /></span>}
+     {children}
+     {Badge && <span className="menu-badge"><Badge /></span>}
+     {shortcut && <span className="menu-shortcut">{shortcut}</span>}
+    </Tag>
+  )
+}
+
+function HomeIcon(){return(<span>Homeee</span>)};
+function TrashIcon(){return(<span>Trashh</span>)};
+function NewBadge(){return(<span>Badgee</span>)}
+
+export default function App(){
+  return(
+    <>
+      <MenuItem>Plain</MenuItem>
+      <MenuItem Icon={HomeIcon} shortcut="⌘H">Home</MenuItem>
+      <MenuItem Icon={TrashIcon} tone="danger" disabled>Delete</MenuItem>
+      <MenuItem as="a" href="/help" Badge={NewBadge} className="promoted">Help</MenuItem>
+    </>
+  )
+}
 ```
 
 1. Outer tag from `as`, defaulting to `button`.
@@ -332,6 +369,34 @@ three class names, and holds a `menu-badge` span but no `menu-shortcut`.
 "placed as content vs used as a tag" decision has to be made three times in one component.
 Requirement 11 is the interesting one: a prop that is **both** MINE and PASS ON.
 
+### My answer
+
+```js
+// MINE:     as, tone, Icon, Badge, shortcut, className
+// FIXED:    "menu-item", "menu-icon", "menu-badge", "menu-shortcut"
+// PASS ON:  href… → the outer element, via ...rest
+// SLOTS:    Icon and Badge (used as tags), shortcut and children (placed as content)
+// BOTH:     disabled — read for the class, and forwarded only when the tag is a <button>
+```
+
+**Requirement 11, my decision:** `const isButtonDisabled = Tag === 'button' && disabled`, then
+`disabled={isButtonDisabled}`. `disabled` is a real `<button>` attribute but means nothing on an
+`<a>`, so it's forwarded only when the element is actually a button.
+
+**Three slots, two treatments, decided by what the value is:** `Icon` and `Badge` hold
+**functions**, so they're used as tags — `<Icon />`, `<Badge />`. `shortcut` holds a **string**, so
+it's placed as content — `{shortcut}`. Each wrapper span is conditional as a whole.
+
+**What tripped me up:**
+
+1. I wrote `{Icon}` — a function placed as content. React can't render a function; nothing
+   appeared. The question to ask: *finished element, or the function that makes one?*
+2. `Badge` was named in the destructuring and never rendered. Same named-and-unused slip as
+   `className` in set 1 and `required` in Rep 2.
+3. I moved the `menu-icon` and `menu-badge` wrapper spans **into** the icon components — the same
+   move as Rep 1's `StarIcon`. Those classes are FIXED values owned by `MenuItem`; the icons should
+   render only themselves.
+
 ---
 
 ## After all four
@@ -346,8 +411,43 @@ Requirement 11 is the interesting one: a prop that is **both** MINE and PASS ON.
 Then the three statements that failed twice in set 2 — say them cold:
 
 5. `children` and a named slot like `footer`: what is the only difference, and where does it live?
-6. When exactly does a destructuring default fire?
+6. `function Button({ mode = 'filled' })` — when does `'filled'` actually get used? And name two
+   values a caller could pass that would **not** make it kick in.
 7. Ternary or build-up — what's the test?
+
+### My answers
+
+**1. First try, without running: 0 of 4 strictly.** Rep 3 came closest — one requirement misread,
+nothing else.
+
+**2. The attaching habit has formed.** Across all four reps, `classes` and `...rest` never got left
+off the tag — in set 2 that happened three times. What still slips is **named props going unused**:
+`required` in Rep 2, `Badge` in Rep 4.
+
+**3.** `required` (Rep 2) and `disabled` (Rep 4). Both are read to build a class **and** are real
+HTML attributes, so after naming them in the destructuring I had to put them back on the element by
+hand.
+
+**4.** The five moves — which I hadn't actually read at the top of the file:
+1. destructure: rename the tag prop, defaults, name every consumed prop, gather the rest
+2. start the class string with the fixed class plus the one built from a prop
+3. add a class per independent condition
+4. add the caller's `className` last
+5. return: tag, `className`, spread, then the slots in order
+
+**5.** *(third attempt, finally)* `footer` is written like any normal prop — as an **attribute inside
+the opening tag**, holding JSX instead of a string. `children` is whatever sits **between the opening
+and closing tags**. Inside the component they're both just props.
+
+I kept answering "children holds anything, footer holds specific stuff." Wrong — both can hold
+anything. The difference is **where you write it**, not **what it holds**.
+
+**6.** `'filled'` gets used only when `mode` isn't passed at all — `undefined`. Passing `null`, `''`,
+`0` or `false` doesn't trigger it; those are values that exist. *(The original wording, "when does a
+destructuring default fire", was jargon and I didn't recognise the question — reworded above.)*
+
+**7. ✅** Ternary when I need **one outcome among alternatives**. Build up when independent
+conditions **add onto** each other. It's about kind, not count.
 
 ---
 
