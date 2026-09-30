@@ -29,6 +29,12 @@ function Box({ as = 'div', children }) {
 <Box as="section">Hi</Box>
 ```
 
+**My answer:** `<section>Hi</section>` — **✗**
+
+It's `<as>Hi</as>`. A lowercase name in the tag position is a **string**, a literal tag name, so React
+never looks at the prop. To use the prop's value it has to go into a **capitalised** variable first
+(`as: Tag`).
+
 ### A2
 
 What does each `<p>` contain? All five.
@@ -44,6 +50,13 @@ function Label({ text = 'Untitled' }) {
 <Label text="" />
 <Label text={0} />
 ```
+
+**My answer:** the first three show "Untitled", the last two show an empty string and `0` —
+**4 of 5**
+
+Got the tricky one — explicit `undefined` does trigger the default. But `null` does **not**: it's a
+value that exists, so no default, and React draws nothing. Correct: Untitled, Untitled, nothing,
+nothing, `0`. **Only `undefined` triggers a default.**
 
 ### A3
 
@@ -66,6 +79,14 @@ function Heading({ as: Tag = 'h2', className, children, ...rest }) {
 <Heading as={Fancy} id="intro" className="big">Hello</Heading>
 ```
 
+**My answer:** `Fancy` wrote the `<h3>`, `Heading` wrote the class.
+`<h3 className="heading big">Hello</h3>` — **half**
+
+The attribution is right, and that's the key idea. The HTML is missing `id="intro"`, which travels the
+same path as the class (`Heading` → `...rest` → `Fancy`'s props → `...props` → `<h3>`), and the `»`
+that `Fancy` writes before `{children}`. In the DOM the attribute is `class`, not `className`:
+`<h3 class="heading big" id="intro">» Hello</h3>`.
+
 ### A4
 
 What renders? And what happened to `title`? Both halves.
@@ -77,6 +98,12 @@ function Card({ title, ...rest }) {
 
 <Card title="Welcome">Body text</Card>
 ```
+
+**My answer:** a div with class `card` and "Body text" shows. Nothing happens with `title` — it was
+named, so it isn't in `...rest`. — **✅**
+
+Both halves right. "Body text" shows because `children` *wasn't* named, so it rode in `...rest` onto
+the div — it works, but by accident.
 
 ### A5
 
@@ -95,6 +122,12 @@ function Chip({ Icon, children }) {
 <Chip>Plain</Chip>
 ```
 
+**My answer:** the outer chip span with an empty `chip-icon` span inside, and "Plain" after it. —
+**✅** *("Plain" added after pressing enter too early.)*
+
+`<span class="chip"><span class="chip-icon"></span>Plain</span>`. The `&&` wraps only the icon, not
+its wrapper, so the empty wrapper is always there.
+
 ### A6
 
 What is the `class` on the button, and does "Go" appear?
@@ -106,6 +139,16 @@ function Btn({ ...rest }) {
 
 <Btn className="primary">Go</Btn>
 ```
+
+**My answer:** class is `btn`, and "Go" doesn't appear because there are no children. — **✗ both**
+
+*(My first instinct was right; I talked myself out of it.)* Nothing is named, so **everything is in
+`rest`** — `className` **and** `children`.
+
+- **"Go" appears**: `children` rides the spread onto the button, exactly like A4.
+- **The class is `primary`**: the spread comes after `className="btn"`, and **last one wins**.
+
+Ask "what's in `rest`?" before changing an answer.
 
 ### A7
 
@@ -128,6 +171,23 @@ function TextCell({ children }) {
 <Row Cell={TextCell()}>hello</Row>
 ```
 
+**My answer:** the error is that the function gets called — it should be just `StarIcon` and
+`TextCell`. — **half**
+
+The root cause and the fix are right. But (a) and (b) fail **differently**:
+
+- **(a)** `StarIcon()` takes no props, runs fine, and returns an element **object**. It breaks
+  **later**, when React reaches `<Icon />`: *"expected a string or a class/function… got: object."*
+- **(b)** `TextCell()` tries to destructure `children` with no arguments. It breaks **immediately**,
+  at the call site: *"Cannot destructure property 'children' of 'undefined'."*
+
+### Section A so far
+
+A1 ✗ · A2 4/5 · A3 half · A4 ✅ · A5 ✅ · A6 ✗ · A7 half.
+
+The ideas are there — attribution in A3, `rest` in A4, the root cause in A7. What slipped is
+**completeness**: the lowercase trap in A1, second-guessing in A6, and half of A3 and A7 left out.
+
 ---
 
 ## Section B — Spot the bug
@@ -136,8 +196,18 @@ Each has one main bug. Name the line, say what goes wrong, and say why.
 
 ### B1
 
-The spec: *"`Badge` wraps any icon it's given in `<span className="badge-icon">`."* In devtools the
-DOM looks right. What's wrong?
+The spec: *"`Badge` wraps any icon it's given in `<span className="badge-icon">`."* With `StarIcon`
+the DOM looks right. Now imagine someone else writes a second icon and passes it in:
+
+```jsx
+function HeartIcon() {
+  return <span>♥</span>;
+}
+
+<Badge Icon={HeartIcon}>Liked</Badge>
+```
+
+Is there a `badge-icon` span in that one? What's wrong with the code?
 
 ```jsx
 function Badge({ Icon, children }) {
@@ -153,6 +223,15 @@ function StarIcon() {
   return <span className="badge-icon">★</span>;
 }
 ```
+
+**My answer:** the span with the class is written inside `StarIcon`, so it doesn't wrap other icons —
+with `HeartIcon` there's no `badge-icon`. — **half**
+
+I found where the span was, but my first read was *"so it always wraps an icon?"* — the opposite
+conclusion. The second-icon test is what turned it around. `"badge-icon"` is a FIXED class owned by
+`Badge`: `{Icon && <span className="badge-icon"><Icon /></span>}`, and every icon returns only itself.
+Fourth time this unit — the reflex to build: **when an icon contains its own wrapper, imagine a second
+icon that doesn't.**
 
 ### B2
 
@@ -171,6 +250,12 @@ function Panel({ header, children }) {
 <Panel header={<h2>Settings</h2>}>Body</Panel>
 ```
 
+**My answer:** it should be `{header}` between the tags, not `header=` in the attribute list. — **✅**
+
+The div has nothing between its tags, so it renders empty and "Settings" appears nowhere — a `<div>`
+doesn't display its attributes. Fix: `<div className="panel-header">{header}</div>`. I've made this
+mistake twice (set 1's `<aside sidebar>`, Rep 2's `<label label>`) and caught it straight away here.
+
 ### B3
 
 The caller's class vanishes.
@@ -184,6 +269,14 @@ function Tile({ size = 'medium', className, children, ...rest }) {
 <Tile className="promo">X</Tile>
 ```
 
+**My answer:** `promo` vanishes. It would have overwritten the classes if `className` weren't named in
+`Tile`, but it was named, so `...rest` doesn't take it — it's just discarded. — **✅**
+
+Both paths right: **named** → not in `rest`, never joined, discarded; **not named** → in `rest`,
+spread after `className={classes}`, **overwrites** it (A6's last-one-wins). Fix: name it **and** join
+it — `let classes = …; if (className) classes += \` ${className}\`;` — `let`, because `const` can't be
+appended to.
+
 ### B4
 
 Different bug, same symptom area. What's the `class` on the div, and what went wrong?
@@ -196,6 +289,14 @@ function Tile({ className = 'tile', size = 'medium', children }) {
 <Tile className="promo">X</Tile>
 ```
 
+**My answer:** `promo tile-medium` — the fixed class wasn't written in; it's whatever `className`
+holds. — **✅**
+
+Precisely: `'tile'` is a FIXED class written as the **default** of `className`, a MINE prop. A default
+only applies when the prop is missing, so the caller's `"promo"` **replaces** `tile` instead of adding
+to it. Two categories merged into one variable. Fix: type `tile` into the string, no default on
+`className`, join it last.
+
 ### B5
 
 One mistake, two consequences. Name both.
@@ -207,6 +308,18 @@ function List({ Tag: as = 'ul', children }) {
 
 <List as="ol"><li>One</li></List>
 ```
+
+**My answer:** `as` and `Tag` are swapped, so there's no key called `Tag`… it stays `ul`, or nothing
+shows. — **half**
+
+Read it with the rule **"take X, call it Y"**: `{ Tag: as = 'ul' }` is *take `Tag`, call it `as`*.
+
+1. There's no `Tag` key (the caller wrote `as="ol"`), so the default fires and the variable `as` is
+   always `'ul'` — **the caller's `"ol"` is ignored.** *(Got this one.)*
+2. No variable `Tag` is ever created, so `<Tag>` **crashes** with *"Tag is not defined"* — nothing
+   renders at all. *(Missed this one.)*
+
+Fix: `{ as: Tag = 'ul' }` — take `as`, the key that exists; call it `Tag`, capitalised.
 
 ### B6
 
@@ -228,6 +341,20 @@ function Field({ label, required, ...rest }) {
 
 <Field label="Password" type="password" required />
 ```
+
+**My answer:** it's not in `rest` because it's named specifically, and because of that it doesn't
+reach the input. — **✅**
+
+Wanted: `<input type="password" required>`. Got: `<input type="password">`. A prop that's both mine
+(used for the class) and a real HTML attribute has to be put back by hand:
+`<input required={required} {...rest} />`. Same as Rep 2.
+
+### Section B total
+
+B1 half · B2 ✅ · B3 ✅ · B4 ✅ · B5 half · B6 ✅ — **5 of 6**.
+
+Clearly stronger than Section A. Spotting a bug in code I'm shown is solid; predicting the exact
+output from scratch is where points leaked.
 
 ---
 
