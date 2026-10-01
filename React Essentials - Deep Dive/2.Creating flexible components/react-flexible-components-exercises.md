@@ -168,30 +168,6 @@ function greet() {
 function shout() {
   return 'HELLO';
 }
-
- const actions={
-  greet : greet,
-  shout : shout
-}
-
-actions.greet();
-
-const Chosen = actions.greet;
-Chosen();
-
-console.log(actions.greet);
-console.log(actions.greet());
-
-function run(fn){
-  return fn()
-};
-
-run(greet);
-run(greet());
-
-const functions = [greet, shout];
-functions[1]();
-
 ```
 
 **Build:**
@@ -219,6 +195,41 @@ holding it. Three different things, one `.` apart.
 **Part 2:** In step 4, `run(greet)` works and `run(greet())` doesn't. Explain what value each call
 actually hands to `run`, and why only one of them can be called inside.
 
+### My solution
+
+```js
+function greet() {
+  return 'hello';
+}
+
+function shout() {
+  return 'HELLO';
+}
+
+ const actions={
+  greet : greet,
+  shout : shout
+}
+
+actions.greet();
+
+const Chosen = actions.greet;
+Chosen();
+
+console.log(actions.greet);
+console.log(actions.greet());
+
+function run(fn){
+  return fn()
+};
+
+run(greet);
+run(greet());
+
+const functions = [greet, shout];
+functions[1]();
+```
+
 ### My answer
 
 **Part 1:** `actions.greet` **is the function itself** — a value I can store and pass around.
@@ -238,6 +249,35 @@ question fixes both: **am I handing this over, or running it?**
 ## Exercise 2 — A named slot
 
 **Build:** a component `SplitPanel`, used like this:
+
+```jsx
+<SplitPanel sidebar={<Nav />}>
+  <Article />
+</SplitPanel>
+```
+
+- Renders an `<aside>` containing whatever came in through `sidebar`.
+- Then a `<main>` containing the children.
+- **No wrapper `<div>`.** The two elements sit side by side in the DOM.
+
+Write `Nav` and `Article` too — one line each, anything visible will do.
+
+**Check it:** open devtools. There must be exactly two elements at the top, `<aside>` and `<main>`,
+with no parent added by `SplitPanel`.
+
+**Watch for:** "no wrapper div" means a Fragment — that's your Fragments unit, and this is the first
+place it earns its keep here. Also the `return`: three components in one file is three chances to
+forget it.
+
+**Then answer (two parts):**
+
+**Part 1:** `sidebar` and `children` both arrive holding JSX. What is the *only* difference between
+them?
+
+**Part 2:** What happens if the caller writes `<SplitPanel sidebar={<Nav />} />` with nothing
+between the tags? What does `children` hold, and what does React draw for that value?
+
+### My solution
 
 ```jsx
 function Nav() {
@@ -263,29 +303,7 @@ export default function App() {
     </SplitPanel>
   );
 }
-
 ```
-
-- Renders an `<aside>` containing whatever came in through `sidebar`.
-- Then a `<main>` containing the children.
-- **No wrapper `<div>`.** The two elements sit side by side in the DOM.
-
-Write `Nav` and `Article` too — one line each, anything visible will do.
-
-**Check it:** open devtools. There must be exactly two elements at the top, `<aside>` and `<main>`,
-with no parent added by `SplitPanel`.
-
-**Watch for:** "no wrapper div" means a Fragment — that's your Fragments unit, and this is the first
-place it earns its keep here. Also the `return`: three components in one file is three chances to
-forget it.
-
-**Then answer (two parts):**
-
-**Part 1:** `sidebar` and `children` both arrive holding JSX. What is the *only* difference between
-them?
-
-**Part 2:** What happens if the caller writes `<SplitPanel sidebar={<Nav />} />` with nothing
-between the tags? What does `children` hold, and what does React draw for that value?
 
 ### My answer
 
@@ -315,6 +333,18 @@ in the tag position (`<Icon />`). As content → ordinary name, in braces betwee
 1. a `<div className="toolbar-left">` holding the `left` slot
 2. a `<div className="toolbar-right">` holding the `right` slot
 
+Use it with **three** buttons on the left and **one** on the right.
+
+**Check it:** all four buttons render, in the right two groups.
+
+**Watch for:** the hard part is at the **call site**, not in the component. The component is four
+lines and you already know them. Three buttons in one prop is where this exercise actually lives.
+
+**Then answer:** the `left` slot needs three buttons. You can't write three elements as one prop
+value. What did you wrap them in, and what's the one-sentence reason a prop forces that?
+
+### My solution
+
 ```jsx
 function Toolbar({ left, right }) {
   return (
@@ -341,16 +371,6 @@ export default function App() {
 }
 ```
 
-Use it with **three** buttons on the left and **one** on the right.
-
-**Check it:** all four buttons render, in the right two groups.
-
-**Watch for:** the hard part is at the **call site**, not in the component. The component is four
-lines and you already know them. Three buttons in one prop is where this exercise actually lives.
-
-**Then answer:** the `left` slot needs three buttons. You can't write three elements as one prop
-value. What did you wrap them in, and what's the one-sentence reason a prop forces that?
-
 ### My answer
 
 A Fragment. **A prop holds exactly one value** — three elements are three values, so they need a
@@ -370,24 +390,9 @@ Two named slots in **one** component is the point.
 **Build:** a component `List`, used all three of these ways:
 
 ```jsx
-function List({ as : As = 'ul', children }) {            
-  return <As>{children}</As>;
-}
-
-function Item(){
-  return(<li>ayoo</li>)
-}
-
-export default function App(){
-  return(
-    <>
-      <List>              <Item /> <Item /> </List>
-      <List as="ol">      <Item /> <Item /> </List>
-      <List as="menu">    <Item /> <Item /> </List>
-    </>
-  )
-}
-
+<List>              <Item /> <Item /> </List>
+<List as="ol">      <Item /> <Item /> </List>
+<List as="menu">    <Item /> <Item /> </List>
 ```
 
 - The children are rendered inside an element whose **tag name comes from the `as` prop**.
@@ -409,6 +414,28 @@ do with that.
 
 **Part 2:** The prop is written lowercase at the call site (`as="ol"`) but must be capitalised
 inside the component. Where does the rename happen, and what is one way to write it?
+
+### My solution
+
+```jsx
+function List({ as : As = 'ul', children }) {            
+  return <As>{children}</As>;
+}
+
+function Item(){
+  return(<li>ayoo</li>)
+}
+
+export default function App(){
+  return(
+    <>
+      <List>              <Item /> <Item /> </List>
+      <List as="ol">      <Item /> <Item /> </List>
+      <List as="menu">    <Item /> <Item /> </List>
+    </>
+  )
+}
+```
 
 ### My answer
 
@@ -448,6 +475,39 @@ on being handed an object as an element type.
 **Build:** a component `Badge`, used like this:
 
 ```jsx
+<Badge Icon={StarIcon}>Featured</Badge>
+<Badge Icon={BoltIcon}>Fast</Badge>
+<Badge>Plain</Badge>
+```
+
+- Renders a `<span className="badge">`.
+- If `Icon` was passed, the icon component renders first, wrapped in a
+  `<span className="badge-icon">`.
+- Then the children.
+- With no `Icon`, no `badge-icon` span appears in the DOM at all.
+
+Write `StarIcon` and `BoltIcon` yourself — each returns an `<svg>`, or just a text character if you
+want to move faster.
+
+**Check it:** in devtools, the third badge must have **no** `<span class="badge-icon">` inside it —
+not an empty one.
+
+**Watch for:** where the `&&` starts. Put it around `<Icon />` only and you get an empty wrapper
+span in the DOM — invisible on screen, wrong in the document. This is "inside vs. outside the loop"
+from Dynamic lists, asked about a conditional instead of a `.map()`: decide what repeats, or in this
+case what's optional, before you type the braces.
+
+**Then answer (two parts):**
+
+**Part 1:** `as="ol"` in Exercise 4 and `Icon={StarIcon}` here both end up as a tag. What is
+different about the two **values**, and how does React tell which kind it's been given?
+
+**Part 2:** What renders if you write `Icon={StarIcon()}` at the call site instead? Predict first,
+then try it, then explain the gap if you got it wrong.
+
+### My solution
+
+```jsx
 function Badge({ Icon, children }) {
   return (
     <span className="badge">
@@ -480,31 +540,6 @@ export default function App() {
 }
 ```
 
-- Renders a `<span className="badge">`.
-- If `Icon` was passed, the icon component renders first, wrapped in a
-  `<span className="badge-icon">`.
-- Then the children.
-- With no `Icon`, no `badge-icon` span appears in the DOM at all.
-
-Write `StarIcon` and `BoltIcon` yourself — each returns an `<svg>`, or just a text character if you
-want to move faster.
-
-**Check it:** in devtools, the third badge must have **no** `<span class="badge-icon">` inside it —
-not an empty one.
-
-**Watch for:** where the `&&` starts. Put it around `<Icon />` only and you get an empty wrapper
-span in the DOM — invisible on screen, wrong in the document. This is "inside vs. outside the loop"
-from Dynamic lists, asked about a conditional instead of a `.map()`: decide what repeats, or in this
-case what's optional, before you type the braces.
-
-**Then answer (two parts):**
-
-**Part 1:** `as="ol"` in Exercise 4 and `Icon={StarIcon}` here both end up as a tag. What is
-different about the two **values**, and how does React tell which kind it's been given?
-
-**Part 2:** What renders if you write `Icon={StarIcon()}` at the call site instead? Predict first,
-then try it, then explain the gap if you got it wrong.
-
 ### My answer
 
 **Part 1:** The **type of the value**. `"ol"` is a **string**, `StarIcon` is a **function**. React
@@ -536,6 +571,63 @@ Rebuild the Udemy `Button`. Blank file. **Do not look at the solution you were g
 own first attempt.**
 
 Used all of these ways:
+
+```jsx
+<Button>Default</Button>
+<Button mode="filled">Filled</Button>
+<Button mode="outline">Outline</Button>
+<Button mode="text">Text</Button>
+<Button Icon={HomeIcon}>Home</Button>
+<Button Icon={PlusIcon} mode="text">Add</Button>
+<Button disabled>Disabled</Button>
+<Button onClick={() => console.log('hi')} className="extra">Click me</Button>
+```
+
+Requirements, all at once:
+
+- Every button carries the class `button`, **always**.
+- Plus a mode class: `filled-button`, `outline-button` or `text-button`.
+- No `mode` passed means `filled`.
+- If `Icon` is passed, **also** the class `icon-button`, and the icon renders inside a
+  `<span className="button-icon">`.
+- The children are wrapped in a plain `<span>`.
+- Any standard `<button>` prop the caller sets (`disabled`, `onClick`, `type`, `id`…) reaches the
+  real `<button>`.
+- A `className` from the caller is **added** to the classes, not replacing them.
+- `mode` and `Icon` must not appear as attributes on the `<button>` in devtools.
+
+**Before you write the component,** write the four category lines and fill them in:
+
+```js
+// MINE:     props this component reads and consumes
+// FIXED:    values that are the same every time
+// PASS ON:  forwarded — onto which element?
+// SLOTS:    values placed as JSX or used as a tag
+```
+
+**Check it:** inspect `<Button Icon={PlusIcon} mode="text" className="extra">`. Its class attribute
+must contain **four** class names. Count them in devtools.
+
+**Watch for:** the JS↔JSX boundary, your standing weak spot, and this exercise is built on it. The
+class string is **computed above the `return`** with `let` and `if` — it's accumulation, which is
+statements, which can't live in braces. Only the finished variable goes inside. If you find yourself
+trying to write an `if` or a `+=` inside `className={...}`, that's the boundary telling you you're
+on the wrong side of it.
+
+**Watch for:** fixing only half the list. There are eight requirements above. Tick them off one by
+one against your finished component before you decide it's done — this is the exact situation where
+you historically apply three of four fixes and move on.
+
+**Then answer (two parts):**
+
+**Part 1:** Which requirement in that list is the one your first attempt got wrong, and what is the
+general rule it violated?
+
+**Part 2:** `className` arrives from the caller and `button` is fixed. Why can't you solve that
+collision by reordering the attributes on the `<button>` tag? (You worked this out in Forwarding
+Props Exercise 4 — say the rule from memory.)
+
+### My solution
 
 ```jsx
 function Button({ Icon, className, mode = 'filled', children, ...rest }) {
@@ -582,50 +674,6 @@ export default function App() {
   );
 }
 ```
-
-Requirements, all at once:
-
-- Every button carries the class `button`, **always**.
-- Plus a mode class: `filled-button`, `outline-button` or `text-button`.
-- No `mode` passed means `filled`.
-- If `Icon` is passed, **also** the class `icon-button`, and the icon renders inside a
-  `<span className="button-icon">`.
-- The children are wrapped in a plain `<span>`.
-- Any standard `<button>` prop the caller sets (`disabled`, `onClick`, `type`, `id`…) reaches the
-  real `<button>`.
-- A `className` from the caller is **added** to the classes, not replacing them.
-- `mode` and `Icon` must not appear as attributes on the `<button>` in devtools.
-
-**Before you write the component,** write the four category lines and fill them in:
-
-```js
-// MINE:     props this component reads and consumes
-// FIXED:    values that are the same every time
-// PASS ON:  forwarded — onto which element?
-// SLOTS:    values placed as JSX or used as a tag
-```
-
-**Check it:** inspect `<Button Icon={PlusIcon} mode="text" className="extra">`. Its class attribute
-must contain **four** class names. Count them in devtools.
-
-**Watch for:** the JS↔JSX boundary, your standing weak spot, and this exercise is built on it. The
-class string is **computed above the `return`** with `let` and `if` — it's accumulation, which is
-statements, which can't live in braces. Only the finished variable goes inside. If you find yourself
-trying to write an `if` or a `+=` inside `className={...}`, that's the boundary telling you you're
-on the wrong side of it.
-
-**Watch for:** fixing only half the list. There are eight requirements above. Tick them off one by
-one against your finished component before you decide it's done — this is the exact situation where
-you historically apply three of four fixes and move on.
-
-**Then answer (two parts):**
-
-**Part 1:** Which requirement in that list is the one your first attempt got wrong, and what is the
-general rule it violated?
-
-**Part 2:** `className` arrives from the caller and `button` is fixed. Why can't you solve that
-collision by reordering the attributes on the `<button>` tag? (You worked this out in Forwarding
-Props Exercise 4 — say the rule from memory.)
 
 ### My answer
 

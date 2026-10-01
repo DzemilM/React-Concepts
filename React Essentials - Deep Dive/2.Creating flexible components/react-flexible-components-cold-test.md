@@ -27,6 +27,41 @@ every component is yours, in a blank StackBlitz.
 ## Task 1 — `Page`
 
 ```jsx
+<Page title="Home">Welcome.</Page>
+
+<Page
+  title="Settings"
+  sidebar={<nav>Menu</nav>}
+  actions={
+    <>
+      <button>Save</button>
+      <button>Cancel</button>
+    </>
+  }
+  wide
+  id="settings-page"
+>
+  Settings body.
+</Page>
+```
+
+1. Renders a `<main>`. Always the class `page`, plus `page-wide` when `wide` is set.
+2. Inside it, first an `<h1>` holding `title`.
+3. Then, **only when `sidebar` is passed**, an `<aside className="page-sidebar">` holding it.
+4. Then a `<section className="page-body">` holding the children — **always**.
+5. Then, **only when `actions` is passed**, a `<div className="page-actions">` holding it.
+6. `id` and other standard props reach the `<main>`.
+7. `title`, `sidebar`, `actions`, `wide` must not appear as attributes.
+
+**Check it:** the first page's `<main>` has **one** class and **two** children (`<h1>`, the body
+section). The second has **two** classes and **four** children.
+
+**When you're done, ask yourself:** `title` holds a string and `sidebar` holds JSX. Both are placed
+the same way. Why?
+
+### My solution
+
+```jsx
 function Page({ wide, title, sidebar, actions, children, ...rest }) {
   let classes = 'page';
   if (wide) {
@@ -66,20 +101,6 @@ export default function App() {
 }
 ```
 
-1. Renders a `<main>`. Always the class `page`, plus `page-wide` when `wide` is set.
-2. Inside it, first an `<h1>` holding `title`.
-3. Then, **only when `sidebar` is passed**, an `<aside className="page-sidebar">` holding it.
-4. Then a `<section className="page-body">` holding the children — **always**.
-5. Then, **only when `actions` is passed**, a `<div className="page-actions">` holding it.
-6. `id` and other standard props reach the `<main>`.
-7. `title`, `sidebar`, `actions`, `wide` must not appear as attributes.
-
-**Check it:** the first page's `<main>` has **one** class and **two** children (`<h1>`, the body
-section). The second has **two** classes and **four** children.
-
-**When you're done, ask yourself:** `title` holds a string and `sidebar` holds JSX. Both are placed
-the same way. Why?
-
 ### My answer
 
 ```js
@@ -116,6 +137,31 @@ function Fancy({ children, ...props }) {
 That one's given — copy it in as-is. Now build `Title`:
 
 ```jsx
+<Title>Default</Title>
+<Title level="h1" size="large">Big one</Title>
+<Title level="h3" muted className="subtle">Quiet</Title>
+<Title level={Fancy} id="fancy">Decorated</Title>
+```
+
+1. The rendered tag comes from `level`, defaulting to `h2`.
+2. Always the class `title`.
+3. Plus `title-${size}`, `size` defaulting to `medium`.
+4. Plus `title-muted` when `muted` is set.
+5. Plus the caller's `className`, **added**.
+6. `id` and other standard props reach the element.
+7. `level`, `size`, `muted`, `className` must not appear as attributes.
+
+**Check it:** the third title is an `<h3>` with **four** class names. The fourth is an `<h2>` with
+the ✦ characters around the text, and `id="fancy"` on it.
+
+**When you're done, ask yourself (two parts):** `level` received a string three times and a
+function once, and you wrote no condition to tell them apart. Who decided what to do with each, and
+by checking what? Then: why does `Fancy` still end up with the classes, even though `Title` never
+renders an `<h2>` itself?
+
+### My solution
+
+```jsx
 function Fancy({ children, ...props }) {
   return <h2 {...props}>✦ {children} ✦</h2>;
 }
@@ -143,22 +189,6 @@ export default function App(){
   )
 }
 ```
-
-1. The rendered tag comes from `level`, defaulting to `h2`.
-2. Always the class `title`.
-3. Plus `title-${size}`, `size` defaulting to `medium`.
-4. Plus `title-muted` when `muted` is set.
-5. Plus the caller's `className`, **added**.
-6. `id` and other standard props reach the element.
-7. `level`, `size`, `muted`, `className` must not appear as attributes.
-
-**Check it:** the third title is an `<h3>` with **four** class names. The fourth is an `<h2>` with
-the ✦ characters around the text, and `id="fancy"` on it.
-
-**When you're done, ask yourself (two parts):** `level` received a string three times and a
-function once, and you wrote no condition to tell them apart. Who decided what to do with each, and
-by checking what? Then: why does `Fancy` still end up with the classes, even though `Title` never
-renders an `<h2>` itself?
 
 ### My answer
 
@@ -205,6 +235,48 @@ the Forwarding Props pattern, one level deeper.
 ## Task 3 — `Toast`
 
 ```jsx
+<Toast>Saved.</Toast>
+
+<Toast level="error" Icon={AlertIcon} heading={<strong>Upload failed</strong>} closable>
+  The file was too large.
+</Toast>
+
+<Toast as="section" level="success" Icon={CheckIcon} className="pinned" role="status">
+  All done.
+</Toast>
+```
+
+Write `AlertIcon` and `CheckIcon` yourself — each returns a span with a character in it, nothing
+else.
+
+1. The outer tag comes from `as`, defaulting to `div`.
+2. Always the class `toast`.
+3. Plus `toast-${level}`, `level` defaulting to `info`.
+4. Plus `toast-with-icon` when `Icon` is passed.
+5. Plus `toast-closable` when `closable` is set.
+6. Plus the caller's `className`.
+7. When `Icon` is passed, it renders first, inside `<span className="toast-icon">`. When it isn't,
+   that span must not exist.
+8. Then `heading`, when passed.
+9. Then the children, inside `<p className="toast-message">` — **always**.
+10. When `closable` is set, a `<button className="toast-close">×</button>` renders last. When it
+    isn't, that button must not exist.
+11. `role` and other standard props reach the outer element.
+12. `as`, `level`, `Icon`, `heading`, `closable`, `className` must not appear as attributes.
+
+**Check it:** the first toast has **two** classes and exactly **one** child. The second has **four**
+classes and four children. The third is a `<section>` with **four** classes and `role="status"`.
+
+`closable` is new: one boolean that drives **both** a class **and** an extra element. No hint beyond
+that.
+
+**When you're done, ask yourself:** `Icon` and `heading` both render something optional near the
+top. One is written `<Icon />` and the other `{heading}`. Say why in one sentence, using the words
+*function* and *element*.
+
+### My solution
+
+```jsx
 function AlertIcon(){return(<span>Alerttt</span>)}
 function CheckIcon(){return(<span>Checkkk</span>)}
 
@@ -240,34 +312,6 @@ export default function App(){
   )
 }
 ```
-
-Write `AlertIcon` and `CheckIcon` yourself — each returns a span with a character in it, nothing
-else.
-
-1. The outer tag comes from `as`, defaulting to `div`.
-2. Always the class `toast`.
-3. Plus `toast-${level}`, `level` defaulting to `info`.
-4. Plus `toast-with-icon` when `Icon` is passed.
-5. Plus `toast-closable` when `closable` is set.
-6. Plus the caller's `className`.
-7. When `Icon` is passed, it renders first, inside `<span className="toast-icon">`. When it isn't,
-   that span must not exist.
-8. Then `heading`, when passed.
-9. Then the children, inside `<p className="toast-message">` — **always**.
-10. When `closable` is set, a `<button className="toast-close">×</button>` renders last. When it
-    isn't, that button must not exist.
-11. `role` and other standard props reach the outer element.
-12. `as`, `level`, `Icon`, `heading`, `closable`, `className` must not appear as attributes.
-
-**Check it:** the first toast has **two** classes and exactly **one** child. The second has **four**
-classes and four children. The third is a `<section>` with **four** classes and `role="status"`.
-
-`closable` is new: one boolean that drives **both** a class **and** an extra element. No hint beyond
-that.
-
-**When you're done, ask yourself:** `Icon` and `heading` both render something optional near the
-top. One is written `<Icon />` and the other `{heading}`. Say why in one sentence, using the words
-*function* and *element*.
 
 ### My answer
 

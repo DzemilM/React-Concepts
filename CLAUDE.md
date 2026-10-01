@@ -111,6 +111,26 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   survives by accident; `rounded="false"` is a truthy string; a template literal prints
   `undefined` as text. The reps' `MINE / FIXED / PASS ON` plan lines were right from Rep 2 on — the
   remaining slips were JS↔JSX mechanics, not forwarding.
+- **Creating Flexible Components — done** (2026-10-01). Udemy lectures 67–69 + Coding Exercise 15.
+  Named JSX slots (a prop holding JSX is written as an **attribute in the opening tag**; `children`
+  is whatever sits **between the tags** — inside the component they're identical), setting component
+  types dynamically (a prop used as a tag goes into a **capitalised** variable, and React checks
+  what's inside: a string makes a built-in element, a function gets called), and default prop values
+  (they fire only when the value is `undefined` — not for `null`, `''`, `0` or `false`). Underneath:
+  **a component is a function and a function is a value**, so `Icon={StarIcon}` hands it over uncalled
+  and `<Icon />` calls it, while `heading={<strong/>}` arrives already built and is placed with
+  `{heading}`. Also: class lists that **accumulate** rather than choose (build the string up; a
+  ternary is for alternatives — decided by kind, not count), naming a prop to keep it off the DOM and
+  re-attaching it by hand when it's also a real attribute (`required`, `disabled`), and props flowing
+  down through a tag prop that holds a component (`Title` builds the class, `Fancy` receives it and
+  forwards it to its `<h2>`). Confirmed via two exercise sets (1/6, then 3/7 first try), four combined
+  reps, a three-task cold test, and a 24-question exam (≈16/22).
+  **The format lesson:** the `MINE / FIXED / PASS ON / SLOTS` plan from Forwarding Props didn't
+  scale. It confused me every time, I skipped it on every cold-test task, and I miscategorised in it
+  even when my code was right. Dropped during the exam and replaced with three plain checks run
+  *after* writing (see weak spots). Exams test React, not mnemonics.
+  **Loose end:** what the capital letter on a tag means — wrong in prediction and explanation (exam
+  A1 and D3), never in my own code. Rule 3 below.
 
 ## My known weak spots
 
@@ -149,6 +169,16 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
   field? a parameter or a property? Underneath it was one wrong belief, now fixed: I thought an
   array *forwarded* field access to its contents — that `shelves.label` collects the labels. It
   doesn't. An array owns `length`, `map`, `filter`, `sort` and nothing else.
+- **Wrappers, `children` and named props.** The three repeat slips from Creating Flexible
+  Components. Don't make me plan with labels first — run these three checks **after** writing a
+  component:
+  1. **Every prop I named — did I use it?** Named means it won't reach the DOM unless I put it
+     there. `Badge`, `required` and `className` all silently vanished this way.
+  2. **Is `children` named, and placed between the tags?** Unnamed, it only works by riding in
+     `...rest`.
+  3. **Every fixed class — is it written in *this* component, not inside a child?** The icon's
+     wrapper span drifted into the icon component four times. Test: would a second icon that
+     someone else wrote still get the class?
 
 Call these out when you see them, but name them as syntax slips, not concept failures.
 
@@ -157,8 +187,11 @@ understanding usually runs ahead of my words: a vague answer ("event is built in
 me reaching for wording, not missing the concept. Confirm the idea, hand me the precise sentence,
 have me say it back — don't re-teach from scratch.
 
-## Two rules I should have memorized
+## Three rules I should have memorized
 
 1. **React passes exactly one argument to a component: the props object.** That's why
    `function C(a, b)` fails and `function C({ a, b })` works.
 2. **Compute above the `return`, display inside it.**
+3. **A capital letter on a tag means "look inside this variable."** Whatever's inside decides what
+   you get — a string gives a built-in element, a function gives a component. Lowercase is always a
+   literal tag name: `<as>` makes an `<as>` element.

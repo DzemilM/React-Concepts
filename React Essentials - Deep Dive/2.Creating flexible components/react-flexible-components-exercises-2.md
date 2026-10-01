@@ -80,6 +80,28 @@ four, but because they stack.
 **Build:** a component `Label`, used all five of these ways:
 
 ```jsx
+<Label />
+<Label text="Hello" />
+<Label text="" />
+<Label text={null} />
+<Label text={0} />
+```
+
+- Renders a `<p>` containing `text`.
+- With no `text`, it says `Untitled`.
+
+**Predict before you run it.** Write down what each of the five `<p>`s will contain. Then run it and
+compare. Getting one wrong here is the point of the exercise.
+
+**Watch for:** two of these render nothing at all, and one renders something you might not expect.
+The value table from Conditional Content is in play alongside the default rule.
+
+**Then answer:** which of the five triggered the default, and what is the exact condition? Then:
+`<Label text={0} />` — why does that one behave differently from `text={null}`?
+
+### My solution
+
+```jsx
 function Label({ text = 'Untitled' }) {
   return <p>{text}</p>;
 }
@@ -96,18 +118,6 @@ export default function App() {
   );
 }
 ```
-
-- Renders a `<p>` containing `text`.
-- With no `text`, it says `Untitled`.
-
-**Predict before you run it.** Write down what each of the five `<p>`s will contain. Then run it and
-compare. Getting one wrong here is the point of the exercise.
-
-**Watch for:** two of these render nothing at all, and one renders something you might not expect.
-The value table from Conditional Content is in play alongside the default rule.
-
-**Then answer:** which of the five triggered the default, and what is the exact condition? Then:
-`<Label text={0} />` — why does that one behave differently from `text={null}`?
 
 ### My answer
 
@@ -143,20 +153,10 @@ destructuring default *is* that `if`, in one token.
 **Build:** a component `Text`, used all four of these ways:
 
 ```jsx
-function Text({ as: Tag = 'span', children }) {
-  return <Tag>{children}</Tag>;
-}
-
-export default function App() {
-  return (
-    <>
-      <Text>plain</Text>
-      <Text as="strong">bold</Text>
-      <Text as="em">italic</Text>
-      <Text as="h1">heading</Text>
-    </>
-  );
-}
+<Text>plain</Text>
+<Text as="strong">bold</Text>
+<Text as="em">italic</Text>
+<Text as="h1">heading</Text>
 ```
 
 - The children render inside an element whose tag name comes from `as`.
@@ -177,6 +177,25 @@ object:
 Now look at `{ as: Tag = 'span' }`. Which of the two words — `as` or `Tag` — appears in that object,
 and which one did you invent? So which side of the colon is a **lookup**, and which side is just a
 **name you're storing it under**?
+
+### My solution
+
+```jsx
+function Text({ as: Tag = 'span', children }) {
+  return <Tag>{children}</Tag>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Text>plain</Text>
+      <Text as="strong">bold</Text>
+      <Text as="em">italic</Text>
+      <Text as="h1">heading</Text>
+    </>
+  );
+}
+```
 
 ### My answer
 
@@ -212,18 +231,20 @@ Same `Text` component, same four call sites, but now do the rename with **a plai
 
 Two lines of body. That's the whole exercise.
 
+**Then answer:** the two versions differ in *where* the rename happens. What do they have in
+**common**?
+
+Concrete test: in each version, change `Tag` to `tag` — lowercase — everywhere it appears. Run both.
+What renders now, and what does that tell you is the thing neither version can do without?
+
+### My solution
+
 ```jsx
 function Text({ as = 'span', children }) {
   const Tag = as;
   return <Tag>{children}</Tag>;
 }
 ```
-
-**Then answer:** the two versions differ in *where* the rename happens. What do they have in
-**common**?
-
-Concrete test: in each version, change `Tag` to `tag` — lowercase — everywhere it appears. Run both.
-What renders now, and what does that tell you is the thing neither version can do without?
 
 ### My answer
 
@@ -240,6 +261,31 @@ React works that out afterwards by checking the type.
 ## Exercise 4 — The tag is a function
 
 **Build:** a component `Row`, used like this:
+
+```jsx
+<Row Cell={TextCell}>hello</Row>
+<Row Cell={CodeCell}>const x = 1</Row>
+```
+
+- `Row` renders a `<div className="row">`.
+- Inside it, the component held in `Cell`, with the children inside that.
+- Write `TextCell` and `CodeCell` yourself. `TextCell` renders a `<span>`; `CodeCell` renders a
+  `<code>`. Both should display whatever is between their tags.
+
+**Check it:** devtools. The first row holds a `<span>`, the second a `<code>`. Same `Row` component
+both times.
+
+**Then answer (two parts):**
+
+**Part 1:** `Cell` holds a function. Name the other kind of value React would also accept in that
+position, and what it would do with it.
+
+**Part 2:** Try `Cell={TextCell()}` and read the error — it is **not** the one from set 1's `Badge`.
+Work out why: what does `TextCell()` receive as its argument when you call it yourself, and what
+does its parameter list try to do with that? Then say what set 1's `StarIcon` did differently that
+let it get far enough to produce the *element type* error instead.
+
+### My solution
 
 ```jsx
 function Row({ Cell, children }) {
@@ -267,24 +313,6 @@ export default function App() {
   );
 }
 ```
-
-- `Row` renders a `<div className="row">`.
-- Inside it, the component held in `Cell`, with the children inside that.
-- Write `TextCell` and `CodeCell` yourself. `TextCell` renders a `<span>`; `CodeCell` renders a
-  `<code>`. Both should display whatever is between their tags.
-
-**Check it:** devtools. The first row holds a `<span>`, the second a `<code>`. Same `Row` component
-both times.
-
-**Then answer (two parts):**
-
-**Part 1:** `Cell` holds a function. Name the other kind of value React would also accept in that
-position, and what it would do with it.
-
-**Part 2:** Try `Cell={TextCell()}` and read the error — it is **not** the one from set 1's `Badge`.
-Work out why: what does `TextCell()` receive as its argument when you call it yourself, and what
-does its parameter list try to do with that? Then say what set 1's `StarIcon` did differently that
-let it get far enough to produce the *element type* error instead.
 
 ### My answer
 
@@ -317,6 +345,23 @@ Same root cause both times — **called it instead of passing it** — surfacing
 Now use it **both** ways on the same component:
 
 ```jsx
+<Wrapper as="section">a built-in element</Wrapper>
+<Wrapper as={Card}>a component</Wrapper>
+```
+
+Write `Card` yourself — it renders a `<div className="card">` with its children inside.
+
+- With no `as`, it's a `<div>`.
+
+**Check it:** devtools. The first is a `<section>`. The second is a `<div class="card">` — note that
+`Card` renders its own element, so what you see is whatever `Card` returns.
+
+**Then answer:** the same prop took a string one time and a function the next, and you wrote no
+condition for it. Why does that work — what is doing the deciding?
+
+### My solution
+
+```jsx
 function Wrapper({ as: Tag = "div", children }) {
   return <Tag>{children}</Tag>;
 }
@@ -334,16 +379,6 @@ export default function App() {
   );
 }
 ```
-
-Write `Card` yourself — it renders a `<div className="card">` with its children inside.
-
-- With no `as`, it's a `<div>`.
-
-**Check it:** devtools. The first is a `<section>`. The second is a `<div class="card">` — note that
-`Card` renders its own element, so what you see is whatever `Card` returns.
-
-**Then answer:** the same prop took a string one time and a function the next, and you wrote no
-condition for it. Why does that work — what is doing the deciding?
 
 ### My answer
 
@@ -364,6 +399,46 @@ left.
 ## Exercise 6 — Accumulating classes
 
 **Build:** a component `Tile`, used all of these ways:
+
+```jsx
+<Tile>Plain</Tile>
+<Tile size="large">Large</Tile>
+<Tile selected>Selected</Tile>
+<Tile size="small" selected className="promo">Everything</Tile>
+<Tile onClick={() => console.log('hi')} id="t1">Clickable</Tile>
+```
+
+Requirements:
+
+- Every tile carries the class `tile`, **always**.
+- Plus a size class: `tile-large`, `tile-small`, `tile-medium`.
+- No `size` passed means `medium`.
+- When `selected` is set, **also** the class `tile-selected`.
+- A `className` from the caller is **added**, not replacing anything.
+- Standard props (`onClick`, `id`, …) reach the `<div>`.
+- `size` and `selected` must **not** appear as attributes in devtools.
+- The children go straight inside the `<div>` — no extra wrapper.
+
+**Before writing the component,** fill in these four lines. They are not optional here; in set 1
+you skipped them and three of the four failures were category errors.
+
+```js
+// MINE:     props this component reads and consumes
+// FIXED:    values that are the same every time
+// PASS ON:  forwarded — onto which element?
+// SLOTS:    values placed as JSX or used as a tag
+```
+
+**Check it:** inspect the fourth tile. Its class attribute must have **four** names. Count them.
+
+**Watch for:** one `let`, not `const`. `===` not `=`. And a prop pulled out by name still has to be
+*used* — in set 1 you destructured `className` and then never joined it back, so the caller's class
+vanished.
+
+**Then answer:** the size class is `tile-${size}` and the selected class is conditional. Why can
+those two not be written as one ternary?
+
+### My solution
 
 ```jsx
 function Tile({ size = 'medium', selected, className, children, ...rest }) {
@@ -397,36 +472,6 @@ export default function App() {
   );
 }
 ```
-
-Requirements:
-
-- Every tile carries the class `tile`, **always**.
-- Plus a size class: `tile-large`, `tile-small`, `tile-medium`.
-- No `size` passed means `medium`.
-- When `selected` is set, **also** the class `tile-selected`.
-- A `className` from the caller is **added**, not replacing anything.
-- Standard props (`onClick`, `id`, …) reach the `<div>`.
-- `size` and `selected` must **not** appear as attributes in devtools.
-- The children go straight inside the `<div>` — no extra wrapper.
-
-**Before writing the component,** fill in these four lines. They are not optional here; in set 1
-you skipped them and three of the four failures were category errors.
-
-```js
-// MINE:     props this component reads and consumes
-// FIXED:    values that are the same every time
-// PASS ON:  forwarded — onto which element?
-// SLOTS:    values placed as JSX or used as a tag
-```
-
-**Check it:** inspect the fourth tile. Its class attribute must have **four** names. Count them.
-
-**Watch for:** one `let`, not `const`. `===` not `=`. And a prop pulled out by name still has to be
-*used* — in set 1 you destructured `className` and then never joined it back, so the caller's class
-vanished.
-
-**Then answer:** the size class is `tile-${size}` and the selected class is conditional. Why can
-those two not be written as one ternary?
 
 ### My answer
 
@@ -465,6 +510,76 @@ The capstone, same scale as the Udemy Button — bigger, in fact. Blank file, an
 category lines before any JSX.
 
 **Build:** a component `Notice`, used all five of these ways:
+
+```jsx
+<Notice>Plain notice</Notice>
+
+<Notice level="warning">Careful.</Notice>
+
+<Notice
+  as="section"
+  Icon={WarnIcon}
+  level="danger"
+  title={<h3>Payment failed</h3>}
+  id="pay-notice"
+>
+  Your card was declined.
+</Notice>
+
+<Notice Icon={InfoIcon} dismissible className="pinned">
+  Heads up.
+</Notice>
+
+<Notice as="aside" onClick={() => console.log('hi')}>Clickable</Notice>
+```
+
+Requirements, all at once:
+
+1. The outer tag comes from `as`, defaulting to `div`.
+2. Every notice carries the class `notice`, **always**.
+3. Plus a level class: `notice-${level}`, with `level` defaulting to `info`.
+4. If `Icon` is passed, **also** the class `notice-with-icon`.
+5. If `dismissible` is set, **also** the class `notice-dismissible`.
+6. A `className` from the caller is **added** to all of that, not replacing it.
+7. If `Icon` is passed, it renders first inside a `<span className="notice-icon">`. If not, that
+   span must **not** exist in the DOM — not an empty one.
+8. If `title` is passed, it renders next. It holds **finished JSX**, not a component.
+9. Then the children.
+10. `id`, `onClick` and any other standard prop reach the outer element.
+11. `as`, `Icon`, `level`, `title`, `dismissible` and `className` must **not** appear as attributes
+    in devtools.
+
+Write `WarnIcon` and `InfoIcon` yourself — one line each.
+
+**Before writing the component,** fill these in:
+
+```js
+// MINE:     
+// FIXED:    values that are the same every time
+// PASS ON:  forwarded — onto which element?
+// SLOTS:    values placed as JSX, or used as a tag
+```
+
+**Check it:** inspect the fourth notice. Its class attribute must have **five** names. Count them in
+devtools. Then inspect the first — it must have exactly two, and no `<span class="notice-icon">`
+anywhere inside it.
+
+**Watch for:** eleven requirements. Tick them off one at a time against the finished component. In
+set 1 you passed four of eight on the first attempt and called it done.
+
+**Watch for:** `let` not `const` for the class string, `===` not `=` if you compare anything, and a
+prop pulled out by name still has to be *used* — destructuring `className` only stops it colliding,
+it doesn't join it on.
+
+**Then answer (two parts):**
+
+**Part 1:** `Icon` and `title` both arrive holding something renderable, and you treated them
+differently — `<Icon />` for one, `{title}` for the other. Why?
+
+**Part 2:** three of the class rules (3, 4, 5) are separate conditions. Could any pair of them be
+written as a single ternary? Say why or why not, using the word *alternatives*.
+
+### My solution
 
 ```jsx
 function WarnIcon() {
@@ -532,52 +647,6 @@ export default function App() {
   );
 }
 ```
-
-Requirements, all at once:
-
-1. The outer tag comes from `as`, defaulting to `div`.
-2. Every notice carries the class `notice`, **always**.
-3. Plus a level class: `notice-${level}`, with `level` defaulting to `info`.
-4. If `Icon` is passed, **also** the class `notice-with-icon`.
-5. If `dismissible` is set, **also** the class `notice-dismissible`.
-6. A `className` from the caller is **added** to all of that, not replacing it.
-7. If `Icon` is passed, it renders first inside a `<span className="notice-icon">`. If not, that
-   span must **not** exist in the DOM — not an empty one.
-8. If `title` is passed, it renders next. It holds **finished JSX**, not a component.
-9. Then the children.
-10. `id`, `onClick` and any other standard prop reach the outer element.
-11. `as`, `Icon`, `level`, `title`, `dismissible` and `className` must **not** appear as attributes
-    in devtools.
-
-Write `WarnIcon` and `InfoIcon` yourself — one line each.
-
-**Before writing the component,** fill these in:
-
-```js
-// MINE:     
-// FIXED:    values that are the same every time
-// PASS ON:  forwarded — onto which element?
-// SLOTS:    values placed as JSX, or used as a tag
-```
-
-**Check it:** inspect the fourth notice. Its class attribute must have **five** names. Count them in
-devtools. Then inspect the first — it must have exactly two, and no `<span class="notice-icon">`
-anywhere inside it.
-
-**Watch for:** eleven requirements. Tick them off one at a time against the finished component. In
-set 1 you passed four of eight on the first attempt and called it done.
-
-**Watch for:** `let` not `const` for the class string, `===` not `=` if you compare anything, and a
-prop pulled out by name still has to be *used* — destructuring `className` only stops it colliding,
-it doesn't join it on.
-
-**Then answer (two parts):**
-
-**Part 1:** `Icon` and `title` both arrive holding something renderable, and you treated them
-differently — `<Icon />` for one, `{title}` for the other. Why?
-
-**Part 2:** three of the class rules (3, 4, 5) are separate conditions. Could any pair of them be
-written as a single ternary? Say why or why not, using the word *alternatives*.
 
 ### My answer
 

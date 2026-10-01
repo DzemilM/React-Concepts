@@ -59,6 +59,30 @@ Every rep here is the same five moves. Recognising that is the point.
 ## Rep 1 — `Chip`
 
 ```jsx
+<Chip>Default</Chip>
+<Chip tone="success">Paid</Chip>
+<Chip tone="danger" removable>Overdue</Chip>
+<Chip Icon={StarIcon} tone="info" className="pinned" id="c1">Starred</Chip>
+<Chip as="a" href="/tags/react">React</Chip>
+```
+
+1. Outer tag from `as`, defaulting to `span`.
+2. Always the class `chip`.
+3. Plus `chip-${tone}`, with `tone` defaulting to `neutral`.
+4. Plus `chip-removable` when `removable` is set.
+5. Plus `chip-with-icon` when `Icon` is passed.
+6. The caller's `className` is **added**, not replacing.
+7. When `Icon` is passed it renders first, inside `<span className="chip-icon">`. When it isn't,
+   that span must **not** exist in the DOM.
+8. Then the children.
+9. `id`, `href` and other standard props reach the outer element.
+10. `as`, `tone`, `removable`, `Icon`, `className` must not appear as attributes.
+
+**Check it:** the fourth chip has **four** class names. The first has **two**. The fifth is an `<a>`.
+
+### My solution
+
+```jsx
 function Chip({
   as: Tag = 'span',
   className,
@@ -100,20 +124,6 @@ export default function App() {
 }
 ```
 
-1. Outer tag from `as`, defaulting to `span`.
-2. Always the class `chip`.
-3. Plus `chip-${tone}`, with `tone` defaulting to `neutral`.
-4. Plus `chip-removable` when `removable` is set.
-5. Plus `chip-with-icon` when `Icon` is passed.
-6. The caller's `className` is **added**, not replacing.
-7. When `Icon` is passed it renders first, inside `<span className="chip-icon">`. When it isn't,
-   that span must **not** exist in the DOM.
-8. Then the children.
-9. `id`, `href` and other standard props reach the outer element.
-10. `as`, `tone`, `removable`, `Icon`, `className` must not appear as attributes.
-
-**Check it:** the fourth chip has **four** class names. The first has **two**. The fifth is an `<a>`.
-
 ### My answer
 
 ```js
@@ -140,7 +150,33 @@ The lines answer two different questions — **MINE vs PASS ON** is *does this r
 ## Rep 2 — `Field`
 
 ```jsx
+<Field label="Email" name="email" />
+<Field label="Password" name="pw" type="password" required />
+<Field label="Bio" as="textarea" name="bio" rows={4} />
+<Field label="Age" name="age" hint={<small>Must be 18+</small>} className="wide" />
+```
 
+1. Renders a `<div>` with the class `field`, **always**.
+2. Plus `field-required` when `required` is set.
+3. Plus the caller's `className`, added.
+4. Inside the div: a `<label>` holding `label`, then the input element, then the `hint` slot.
+5. The input element's tag comes from `as`, defaulting to `input`.
+6. `name`, `type`, `rows` — and anything else standard — reach the **input element**, not the
+   `<div>`.
+7. When `hint` isn't passed, nothing extra appears.
+8. `label`, `as`, `hint`, `className` must not appear on any element.
+
+**Check it:** the third field's input is a `<textarea>` with `rows="4"`. The `<div class="field">`
+must carry no `name`, `type` or `rows`.
+
+**This one is different on purpose:** the forwarded props go on an element *inside* what the
+component returns, not on the outer one. Same as Forwarding Props Exercise 6. Note that `required`
+is consumed for the class **and** is a real input attribute — decide what you want and say which in
+your category lines.
+
+### My solution
+
+```jsx
 function Field({ className, required, label, as : Input="input", hint, ...rest }){
   let classes = "field";
   if(required){classes += " field-required"};
@@ -165,24 +201,6 @@ export default function App(){
   )
 }
 ```
-
-1. Renders a `<div>` with the class `field`, **always**.
-2. Plus `field-required` when `required` is set.
-3. Plus the caller's `className`, added.
-4. Inside the div: a `<label>` holding `label`, then the input element, then the `hint` slot.
-5. The input element's tag comes from `as`, defaulting to `input`.
-6. `name`, `type`, `rows` — and anything else standard — reach the **input element**, not the
-   `<div>`.
-7. When `hint` isn't passed, nothing extra appears.
-8. `label`, `as`, `hint`, `className` must not appear on any element.
-
-**Check it:** the third field's input is a `<textarea>` with `rows="4"`. The `<div class="field">`
-must carry no `name`, `type` or `rows`.
-
-**This one is different on purpose:** the forwarded props go on an element *inside* what the
-component returns, not on the outer one. Same as Forwarding Props Exercise 6. Note that `required`
-is consumed for the class **and** is a real input attribute — decide what you want and say which in
-your category lines.
 
 ### My answer
 
@@ -218,6 +236,43 @@ element: `required` is an attribute of the input, not the div.
 ## Rep 3 — `Panel`
 
 ```jsx
+<Panel>Just a body.</Panel>
+
+<Panel
+  as="section"
+  header={<h2>Settings</h2>}
+  footer={<button>Save</button>}
+  tone="warning"
+  collapsed
+  className="narrow"
+  id="settings"
+>
+  Body text.
+</Panel>
+```
+
+1. Outer tag from `as`, defaulting to `div`.
+2. Always the class `panel`.
+3. Plus `panel-${tone}`, `tone` defaulting to `plain`.
+4. Plus `panel-collapsed` when `collapsed` is set.
+5. Plus the caller's `className`.
+6. When `header` is passed, it renders first inside `<div className="panel-header">`. When it
+   isn't, that div must **not** exist.
+7. Then the children, always, inside `<div className="panel-body">`.
+8. When `footer` is passed, it renders last inside `<div className="panel-footer">`. When it isn't,
+   that div must **not** exist.
+9. `id` and other standard props reach the outer element.
+10. `as`, `tone`, `collapsed`, `header`, `footer`, `className` must not appear as attributes.
+
+**Check it:** the first panel is a `<div class="panel panel-plain">` containing **exactly one**
+child — the body div. The second is a `<section>` with **four** class names and three children.
+
+**Two slots this time**, both content, both optional. Set 2 only ever made one thing optional at a
+time.
+
+### My solution
+
+```jsx
 function Panel({ as : Tag="div", className, tone="plain", collapsed, header, footer, children, ...rest }){
   let classes=`panel panel-${tone}`;
   if(collapsed){classes += " panel-collapsed"};
@@ -251,27 +306,7 @@ export default function App(){
     </>
   )
 }
-
 ```
-
-1. Outer tag from `as`, defaulting to `div`.
-2. Always the class `panel`.
-3. Plus `panel-${tone}`, `tone` defaulting to `plain`.
-4. Plus `panel-collapsed` when `collapsed` is set.
-5. Plus the caller's `className`.
-6. When `header` is passed, it renders first inside `<div className="panel-header">`. When it
-   isn't, that div must **not** exist.
-7. Then the children, always, inside `<div className="panel-body">`.
-8. When `footer` is passed, it renders last inside `<div className="panel-footer">`. When it isn't,
-   that div must **not** exist.
-9. `id` and other standard props reach the outer element.
-10. `as`, `tone`, `collapsed`, `header`, `footer`, `className` must not appear as attributes.
-
-**Check it:** the first panel is a `<div class="panel panel-plain">` containing **exactly one**
-child — the body div. The second is a `<section>` with **four** class names and three children.
-
-**Two slots this time**, both content, both optional. Set 2 only ever made one thing optional at a
-time.
 
 ### My answer
 
@@ -300,6 +335,39 @@ skipping it is what this file exists to fix.
 ---
 
 ## Rep 4 — `MenuItem`
+
+```jsx
+<MenuItem>Plain</MenuItem>
+<MenuItem Icon={HomeIcon} shortcut="⌘H">Home</MenuItem>
+<MenuItem Icon={TrashIcon} tone="danger" disabled>Delete</MenuItem>
+<MenuItem as="a" href="/help" Badge={NewBadge} className="promoted">Help</MenuItem>
+```
+
+1. Outer tag from `as`, defaulting to `button`.
+2. Always the class `menu-item`.
+3. Plus `menu-item-${tone}`, `tone` defaulting to `default`.
+4. Plus `menu-item-disabled` when `disabled` is set.
+5. Plus the caller's `className`.
+6. `Icon` renders first inside `<span className="menu-icon">` when passed, and that span must not
+   exist otherwise.
+7. Then the children.
+8. Then `Badge` — **another component prop** — inside `<span className="menu-badge">`, absent when
+   not passed.
+9. Then `shortcut`, a plain string, inside `<span className="menu-shortcut">`, absent when not
+   passed.
+10. `href` and other standard props reach the outer element.
+11. `disabled` must **also** reach the outer element when it's a `<button>`, because it's a real
+    button attribute — decide how, and say why in your category lines.
+12. `as`, `tone`, `Icon`, `Badge`, `shortcut`, `className` must not appear as attributes.
+
+**Check it:** the third item has **three** class names and is disabled. The fourth is an `<a>` with
+three class names, and holds a `menu-badge` span but no `menu-shortcut`.
+
+**Two component props at once** (`Icon`, `Badge`) and one string slot (`shortcut`), so the
+"placed as content vs used as a tag" decision has to be made three times in one component.
+Requirement 11 is the interesting one: a prop that is **both** MINE and PASS ON.
+
+### My solution
 
 ```jsx
 function MenuItem({ 
@@ -344,30 +412,6 @@ export default function App(){
   )
 }
 ```
-
-1. Outer tag from `as`, defaulting to `button`.
-2. Always the class `menu-item`.
-3. Plus `menu-item-${tone}`, `tone` defaulting to `default`.
-4. Plus `menu-item-disabled` when `disabled` is set.
-5. Plus the caller's `className`.
-6. `Icon` renders first inside `<span className="menu-icon">` when passed, and that span must not
-   exist otherwise.
-7. Then the children.
-8. Then `Badge` — **another component prop** — inside `<span className="menu-badge">`, absent when
-   not passed.
-9. Then `shortcut`, a plain string, inside `<span className="menu-shortcut">`, absent when not
-   passed.
-10. `href` and other standard props reach the outer element.
-11. `disabled` must **also** reach the outer element when it's a `<button>`, because it's a real
-    button attribute — decide how, and say why in your category lines.
-12. `as`, `tone`, `Icon`, `Badge`, `shortcut`, `className` must not appear as attributes.
-
-**Check it:** the third item has **three** class names and is disabled. The fourth is an `<a>` with
-three class names, and holds a `menu-badge` span but no `menu-shortcut`.
-
-**Two component props at once** (`Icon`, `Badge`) and one string slot (`shortcut`), so the
-"placed as content vs used as a tag" decision has to be made three times in one component.
-Requirement 11 is the interesting one: a prop that is **both** MINE and PASS ON.
 
 ### My answer
 

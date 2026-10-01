@@ -1,5 +1,13 @@
 # Creating Flexible Components — Written Exam
 
+> **Keep this one line.**
+> **A capital letter on a tag means "look inside this variable."** Whatever's inside decides what you
+> get — a **string** gives a built-in element, a **function** gives a component. The capital itself
+> says nothing about which.
+>
+> *(The one gap this exam left open — wrong in A1 and D3. Lowercase is always a literal tag name:
+> `<as>` makes an `<as>` element.)*
+
 24 questions in five sections. **No running code, no looking at the other files.** Write your answer
 under each question, then check against the collapsed key at the bottom.
 
@@ -379,6 +387,10 @@ than one line. FIXED means *the caller never supplies it*, not *it always appear
 <Banner tone="warning" dismissible Icon={WarnIcon} className="top" id="b1">
   Maintenance tonight.
 </Banner>
+// MINE:     dismissible, tone, className
+// FIXED:    "banner", "banner-dismissible", "banner-icon", "banner-text", "banner-close"
+// PASS ON:  id passed onto div
+// SLOTS:    Icon, children
 ```
 
 The spec: a `<div>` with the classes `banner`, `banner-${tone}` (`tone` defaults to `info`),
@@ -388,6 +400,17 @@ The spec: a `<div>` with the classes `banner`, `banner-${tone}` (`tone` defaults
 div.
 
 Write the four lines. Then: which line — or lines — does `dismissible` go on, and why **not** SLOTS?
+
+**My answer:** the plan above, after three rounds. — **half**
+
+The first version listed three props and used `WarnIcon` — a **value** — instead of the prop `Icon`.
+Once I listed every prop from the call site, they sorted correctly: `tone` and `className` are only
+used to build the class string, never placed, so they're not SLOTS. `Icon` also belongs on MINE (it
+never becomes an attribute). FIXED needed showing: every class name in quotes in the spec, but **not**
+`banner-${tone}` (the tone is the caller's) or the caller's `className`.
+
+`dismissible` goes on **MINE only** — the same as `closable` in the cold test. Its value is never
+placed in the output; it only decides whether a class is added and whether the button exists.
 
 ### C2
 
@@ -408,6 +431,8 @@ The spec: a `<div className="field">`, plus `field-disabled` when `disabled` is 
 Write the four lines. One prop goes on two lines — name it, and say what you'd have to write in the
 JSX because of that.
 
+**Skipped** — see the note at the end of this section. Answer in the key below.
+
 ### C3
 
 Someone wrote this plan for the call below. It has **four** mistakes. Find them all.
@@ -425,6 +450,24 @@ Someone wrote this plan for the call below. It has **four** mistakes. Find them 
 // SLOTS:    StarIcon, title
 ```
 
+**Skipped** — see the note below. Answer in the key.
+
+### Why Section C was dropped
+
+Partway through C1 I said the four labels confuse me every time and don't help me write the
+components. That's fair: `MINE / FIXED / PASS ON / SLOTS` aren't React concepts, they're a mnemonic
+invented for these exercises — and this section was testing the mnemonic, not React. Same mistake as
+the Dynamic lists exam that tested JavaScript error messages instead of the unit.
+
+The *bugs* the labels were meant to catch were real, though. So they're replaced with three plain
+checks, run **after** writing a component — one for each of my recurring mistakes this unit:
+
+1. **Every prop I named — did I use it?** Named means it won't reach the DOM unless I put it there.
+2. **Is `children` named, and placed between the tags?**
+3. **Every fixed class — is it written in this component, not inside a child like an icon?**
+
+C1 counts as half. C2 and C3 are left out of the score.
+
 ---
 
 ## Section D — Explain it
@@ -436,30 +479,80 @@ Full sentences. The words are what's being tested.
 `children` and a prop called `footer` both hold JSX. What is the **only** difference between them,
 and where does that difference live? (Hint at what it is *not*: it's not what they can hold.)
 
+**My answer:** the location where they're put — `children` goes between the tags, `footer` is written
+inside the component's opening tag. — **✅**
+
+This failed three times before the exam (set 1, set 2, the reps). Inside the component the two are
+identical — both just props.
+
 ### D2
 
 `Icon={StarIcon}` and `heading={<strong>Hi</strong>}`. Inside the component one is written
 `<Icon />` and the other `{heading}`. Explain why, using the words *function* and *element* — and
 say **when** each one's element actually gets built.
 
+**My answer** *(second attempt, after a hint)*: `Icon` gets built later on, because it's a function,
+while `heading` is already built. — **✅**
+
+The first attempt had the timing reversed. The fix was looking only at what's written in `App`:
+`heading={<strong>Hi</strong>}` — the `<strong>` is already written there, so it arrives **finished**
+and `{heading}` just places it. `Icon={StarIcon}` has no angle brackets — nothing has run — so the
+component builds it itself with `<Icon />`.
+
 ### D3
 
 A variable used as a tag must be capitalised. What does the capital letter tell React — and what
 does it **not** tell React?
+
+**My answer:** first *"it tells React it's a component, not whether it exists"*, then *"it's custom
+built, not built in"*. — **✗**
+
+Both are wrong for the same reason: in the cold test's `Title`, the capitalised `Tag` held the
+**string** `"h1"` and React rendered a **built-in** `<h1>`. So a capital can't mean "component" or
+"custom". The capital tells React **"this is a variable — look up what's inside it."** What's inside
+decides the rest: a string gives a built-in element, a function gives a component.
+
+Same gap as A1, from the other direction. My own code always capitalised correctly — the gap is in
+predicting and explaining, not building. See the line to keep, at the top of this file.
 
 ### D4
 
 Two conditions both affect a class list. Ternary, or build the string up? Give the test you use to
 decide, and say what's wrong with deciding by *how many* conditions there are.
 
+**My answer:** how many doesn't decide it — the nature of what we need does. If only one outcome is
+needed among several choices, ternary. Build up when several things can happen without excluding
+each other. — **✅**
+
+In set 2's recall I was still answering by counting. Fixed.
+
 ### D5
 
 `"chip-icon"` only appears on chips that have an icon. Is it FIXED? Why or why not?
+
+*(Reworded during the exam, after the labels were dropped: is that class something the caller
+controls, or is it written into `Chip` itself? Does it matter that it doesn't always appear?)*
+
+**My answer:** it doesn't matter — it's written to appear when `Icon` gets passed. — **✅**
+
+The value is written into `Chip` and the caller can never change it. *When* it appears and *who
+controls the value* are separate questions.
 
 ### D6
 
 Why does naming a prop in the destructuring keep it off the DOM? And what does that cost you when
 the prop is **also** a real HTML attribute?
+
+**My answer:** first *"don't know"* — then, pointed at my own B6 answer: you have to write it in the
+component yourself if you named it; it won't come along by itself. — **✅** *(with a pointer)*
+
+`...rest` only gathers what **wasn't** named, so a named prop never reaches the DOM. If it's also a
+real attribute, put it back by hand: `required={required}`. I'd answered this exact thing correctly
+in B6 and didn't recognise it when asked as a rule.
+
+### Section D total
+
+D1 ✅ · D2 ✅ *(hint)* · D3 ✗ · D4 ✅ · D5 ✅ · D6 ✅ *(pointer)* — **5 of 6**, two needing help.
 
 ---
 
@@ -478,6 +571,10 @@ const { as: Tag = 'div' } = { as: null };
 
 (Pretend each line is in its own file — ignore the redeclaration.)
 
+**My answer:** `nav`, `div`, `div`, `null`. — **✅**
+
+All four, including the two traps: explicit `undefined` triggers the default, `null` doesn't.
+
 ### E2
 
 ```js
@@ -495,6 +592,40 @@ const b = greet();
 
 What is `a`, and what is `b` — say what each **is**, not what it prints. Then: what does `run(a)`
 return, and what happens with `run(b)`?
+
+**My answer:** `a` is the function, `b` is the activated function. `run(a)` returns `'hello'`, `run(b)`
+errors — double calling? — **half**
+
+The two outcomes are right. But `b` isn't an "activated function" — **it isn't a function at all**.
+It's the string `'hello'`, the thing the function returned. That's why `run(b)` fails: `fn()` becomes
+`'hello'()`, and a string can't be called. Not double calling — calling something that isn't a
+function.
+
+---
+
+## Result
+
+| Section | Score |
+| --- | --- |
+| A — Predict | ≈ 3.8 / 7 |
+| B — Spot the bug | 5 / 6 |
+| C — Plan | ½ / 1 *(C2, C3 dropped)* |
+| D — Explain | 5 / 6 *(two with help)* |
+| E — Plain JS | 1.5 / 2 |
+| **Total** | **≈ 16 / 22 — about 72%** |
+
+**Fixed during this unit:** `children` vs a named slot (failed three times, clean in D1), ternary vs
+build-up by *kind* not count (D4), defaults on explicit `undefined` and on `null` (E1), and spotting
+bugs in code I'm shown (Section B).
+
+**The one real gap left:** what the capital letter means — wrong in A1 and D3, from two directions.
+It's a gap in predicting and explaining, not building: every component I wrote capitalised
+correctly. Left as a noted loose end, with the line at the top of this file.
+
+**Points also leaked on completeness** — half of A3 and A7 left out — and on second-guessing a right
+first instinct in A6.
+
+**Verdict: unit done.**
 
 ---
 
