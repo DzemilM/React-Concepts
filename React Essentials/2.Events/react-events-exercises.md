@@ -24,6 +24,26 @@ Write a function called `handleClick` that logs that message, and attach it to t
 
 ```jsx
 // TODO: write handleClick here
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      <button>Click me</button>   {/* TODO: attach the handler */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Check yourself:** click the button five times. The message should appear five times — not once
+when the page loads.
+
+### My solution
+
+```jsx
+// TODO: write handleClick here
 function handleClick(){
   console.log(`Button was clicked!`)
 }
@@ -40,9 +60,6 @@ function App() {
 export default App;
 ```
 
-**Check yourself:** click the button five times. The message should appear five times — not once
-when the page loads.
-
 ---
 
 ## Exercise 2: Inline handlers, and the trap
@@ -51,6 +68,26 @@ when the page loads.
 
 - The **Greet** button logs `Hello!`
 - The **Farewell** button logs `Goodbye!`
+
+```jsx
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      <button onClick={/* TODO */}>Greet</button>
+      <button onClick={/* TODO */}>Farewell</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Then break it on purpose.** Change one of them so the function is *called* instead of passed.
+Reload. What appears in the console before you touch anything, and what happens when you then
+click? Write down what you saw — this is the mistake you'll make in real code.
+
+### My solution
 
 ```jsx
 function App() {
@@ -66,10 +103,6 @@ function App() {
 export default App;
 ```
 
-**Then break it on purpose.** Change one of them so the function is *called* instead of passed.
-Reload. What appears in the console before you touch anything, and what happens when you then
-click? Write down what you saw — this is the mistake you'll make in real code.
-
 ---
 
 ## Exercise 3: Passing an argument to a handler
@@ -77,6 +110,38 @@ click? Write down what you saw — this is the mistake you'll make in real code.
 **Goal:** Three buttons — `Small`, `Medium`, `Large` — all using **one single** handler function.
 
 `chooseSize` takes a `size` parameter and logs `You picked: Small` (or Medium, or Large).
+
+```jsx
+function chooseSize(size) {
+  console.log('You picked: ' + size);
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 3</h1>
+      <button onClick={/* TODO */}>Small</button>
+      <button onClick={/* TODO */}>Medium</button>
+      <button onClick={/* TODO */}>Large</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The whole difficulty of this exercise is in one question:** `onClick` needs a function handed
+to it, but you need to supply an argument. Writing `chooseSize('Small')` calls it immediately —
+you proved that in Exercise 2. So how do you hand over a function that, *when someone later runs
+it*, calls `chooseSize` with the right size?
+
+Shape, if you're stuck:
+
+```jsx
+onClick={() => ______}
+```
+
+### My solution
 
 ```jsx
 function chooseSize(size) {
@@ -97,17 +162,6 @@ function App() {
 export default App;
 ```
 
-**The whole difficulty of this exercise is in one question:** `onClick` needs a function handed
-to it, but you need to supply an argument. Writing `chooseSize('Small')` calls it immediately —
-you proved that in Exercise 2. So how do you hand over a function that, *when someone later runs
-it*, calls `chooseSize` with the right size?
-
-Shape, if you're stuck:
-
-```jsx
-onClick={() => ______}
-```
-
 ---
 
 ## Exercise 4: The event object
@@ -117,6 +171,37 @@ onClick={() => ______}
 - The text input logs whatever is currently typed in it, on every keystroke.
 - The button logs the text of the button itself (`Press me`) — read from the event, not typed in
   by you.
+
+```jsx
+function handleTyping(/* TODO: what does React pass in? */) {
+  // TODO: log the current text of the input
+}
+
+function handleClick(/* TODO */) {
+  // TODO: log the text content of the element that was clicked
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 4</h1>
+      <input type="text" onChange={/* TODO */} />
+      <button onClick={/* TODO */}>Press me</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Hints:** the attribute for "the user typed something" is `onChange`. The parameter is
+conventionally named `event` or `e`. The element the event happened on is `event.target`. An
+input's typed text is on `.value`; an element's text is on `.textContent`.
+
+Before writing anything, do this: log the *whole* `event` object and expand it in the console.
+See what's actually in there.
+
+### My solution
 
 ```jsx
 function handleTyping(event) {
@@ -140,13 +225,6 @@ function App() {
 export default App;
 ```
 
-**Hints:** the attribute for "the user typed something" is `onChange`. The parameter is
-conventionally named `event` or `e`. The element the event happened on is `event.target`. An
-input's typed text is on `.value`; an element's text is on `.textContent`.
-
-Before writing anything, do this: log the *whole* `event` object and expand it in the console.
-See what's actually in there.
-
 ---
 
 ## Exercise 5: Handlers as props
@@ -158,6 +236,34 @@ renders a `<button>` with that label, and when clicked, runs whatever function w
 `onAction`.
 
 `App` renders two of them: one that logs `Saved!` and one that logs `Deleted!`.
+
+```jsx
+function Button(/* TODO */) {
+  return (
+    <button /* TODO */>{/* TODO */}</button>
+  );
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 5</h1>
+      {/* TODO: two Buttons with different labels and different actions */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The thing to notice:** `Button` has no idea what happens when it's clicked. It just calls
+whatever it was given. That's how every real React component works — the child owns the *what
+it looks like*, the parent owns the *what it does*.
+
+**Question to answer in writing:** is `onAction` a special React feature, or just an ordinary
+prop that happens to hold a function? What would break if you renamed it to `bananas`?
+
+### My solution
 
 ```jsx
 function Button({label, onAction}) {
@@ -180,13 +286,6 @@ function App() {
 export default App;
 ```
 
-**The thing to notice:** `Button` has no idea what happens when it's clicked. It just calls
-whatever it was given. That's how every real React component works — the child owns the *what
-it looks like*, the parent owns the *what it does*.
-
-**Question to answer in writing:** is `onAction` a special React feature, or just an ordinary
-prop that happens to hold a function? What would break if you renamed it to `bananas`?
-
 ---
 
 ## Exercise 6: Forms, and stopping the browser
@@ -196,6 +295,37 @@ prop that happens to hold a function? What would break if you renamed it to `ban
 - On submit, log `Form submitted`.
 - The page must **not** reload.
 - Also log `mouse is over the form` when the pointer enters the `<form>` element.
+
+```jsx
+function handleSubmit(/* TODO */) {
+  // TODO: stop the browser's default form behaviour
+  // TODO: log the message
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Exercise 6</h1>
+      <form /* TODO: submit handler */ /* TODO: mouse-enter handler */>
+        <input type="text" />
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Do this first, before writing any code:** run it exactly as given and press Submit. Watch the
+page. Something happens that has nothing to do with React — the browser has its own built-in
+behaviour for forms, and it will wipe out your console. Find out what it is before you stop it.
+
+**Hints:** the event attribute is `onSubmit`, on the `<form>` — not on the button. The method
+that cancels the browser's default behaviour is on the event object, and is called
+`preventDefault()`. The pointer-enters attribute is `onMouseEnter`.
+
+### My solution
 
 ```jsx
 function handleSubmit(event) {
@@ -222,14 +352,6 @@ function App() {
 
 export default App;
 ```
-
-**Do this first, before writing any code:** run it exactly as given and press Submit. Watch the
-page. Something happens that has nothing to do with React — the browser has its own built-in
-behaviour for forms, and it will wipe out your console. Find out what it is before you stop it.
-
-**Hints:** the event attribute is `onSubmit`, on the `<form>` — not on the button. The method
-that cancels the browser's default behaviour is on the event object, and is called
-`preventDefault()`. The pointer-enters attribute is `onMouseEnter`.
 
 ---
 

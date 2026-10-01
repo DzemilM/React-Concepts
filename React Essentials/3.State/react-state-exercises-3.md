@@ -78,6 +78,34 @@ Start with a bill of `0` and 15% selected.
 import { useState } from 'react';
 
 function App() {
+  // TODO
+
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      {/* TODO */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Write your state plan first.** How many things can the user change? Everything else is a `const`.
+
+**Watch for:** the three percentage buttons all do the same job with a different number. You don't
+need three handlers — one handler that takes an argument works, and you know how to pass an
+argument to a handler from the Events unit.
+
+**In writing:** is the tip amount state or derived? What about the selected percentage? They feel
+similar — explain why they're not.
+
+### My solution
+
+```jsx
+import { useState } from 'react';
+
+function App() {
   const [bill, setBill] = useState(0);
   const [tip, setTip] = useState(15);
 
@@ -109,15 +137,6 @@ function App() {
 export default App;
 ```
 
-**Write your state plan first.** How many things can the user change? Everything else is a `const`.
-
-**Watch for:** the three percentage buttons all do the same job with a different number. You don't
-need three handlers — one handler that takes an argument works, and you know how to pass an
-argument to a handler from the Events unit.
-
-**In writing:** is the tip amount state or derived? What about the selected percentage? They feel
-similar — explain why they're not.
-
 ---
 
 ## Exercise 2: Password field
@@ -130,6 +149,35 @@ similar — explain why they're not.
 - Below it: `Password length: 8`
 
 Start hidden, with an empty password.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO
+
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      {/* TODO */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The interesting bit:** the boolean doesn't just decide what *text* to show — it decides an
+**attribute value**. `type={...}` takes a value like anything else, so a ternary works there just
+as well as it does for a label.
+
+**Watch for:** the length is not state.
+
+**In writing:** you have one boolean driving three things (the input's type, the button's label,
+and nothing else — the length comes from elsewhere). What would go wrong if you stored the button
+label in its own `useState` instead of deriving it?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -161,16 +209,6 @@ function App() {
 export default App;
 ```
 
-**The interesting bit:** the boolean doesn't just decide what *text* to show — it decides an
-**attribute value**. `type={...}` takes a value like anything else, so a ternary works there just
-as well as it does for a label.
-
-**Watch for:** the length is not state.
-
-**In writing:** you have one boolean driving three things (the input's type, the button's label,
-and nothing else — the length comes from elsewhere). What would go wrong if you stored the button
-label in its own `useState` instead of deriving it?
-
 ---
 
 ## Exercise 3: Character counter
@@ -181,6 +219,34 @@ label in its own `useState` instead of deriving it?
 - Show `58 characters remaining`
 - When over 100, show a warning line: `Too long!`
 - When over 100, the Submit button is disabled
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO
+
+  return (
+    <div id="app">
+      <h1>Exercise 3</h1>
+      {/* TODO */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**This exercise is the purest test of "don't store what you can calculate."** Four things are on
+screen and **one** of them is state. Work out which before you type.
+
+**Reminders, not answers:** `<textarea>` uses `onChange` and `value` exactly like `<input>`. A
+button is switched off with the `disabled` attribute, which takes `true` or `false`.
+
+**In writing:** you have a count, a remaining count, and an over-limit flag. Explain why none of
+them is state, in one sentence that covers all three.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -212,21 +278,64 @@ const isTooLong= used > 100;
 export default App;
 ```
 
-**This exercise is the purest test of "don't store what you can calculate."** Four things are on
-screen and **one** of them is state. Work out which before you type.
-
-**Reminders, not answers:** `<textarea>` uses `onChange` and `value` exactly like `<input>`. A
-button is switched off with the `disabled` attribute, which takes `true` or `false`.
-
-**In writing:** you have a count, a remaining count, and an over-limit flag. Explain why none of
-them is state, in one sentence that covers all three.
-
 ---
 
 ## Exercise 4: Rapid points
 
 **Goal:** A score, and a `Score a hat-trick` button that adds 3 points — but the adding is done by
 a separate helper function called three times.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  const [score, setScore] = useState(0);
+
+  function addPoint() {
+    // TODO: add exactly one point
+  }
+
+  function handleHatTrick() {
+    addPoint();
+    addPoint();
+    addPoint();
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 4</h1>
+      <p>Score: {score}</p>
+      <button onClick={handleHatTrick}>Score a hat-trick</button>
+      <button onClick={addPoint}>Score once</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Why this version is harder than Set 2's:** you can't cheat with `setScore(score + 3)`, because
+`addPoint` has no idea it's being called three times. It has to work correctly whether it's called
+once or a hundred times.
+
+**Then extend it:** add a `Delayed point` button that adds a point three seconds later.
+
+```jsx
+function handleDelayedPoint() {
+  setTimeout(() => {
+    // TODO: add a point
+  }, 3000);
+}
+```
+
+Click it three times fast. With the wrong form you get **+1**; with the right one you get **+3**.
+Try it both ways — this is the case where `prev` stops being academic and starts being the
+difference between working and broken.
+
+**In writing:** in the delayed version, why does the plain form only add 1? What value did each of
+those three clicks capture, and when?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -265,27 +374,6 @@ function App() {
 export default App;
 ```
 
-**Why this version is harder than Set 2's:** you can't cheat with `setScore(score + 3)`, because
-`addPoint` has no idea it's being called three times. It has to work correctly whether it's called
-once or a hundred times.
-
-**Then extend it:** add a `Delayed point` button that adds a point three seconds later.
-
-```jsx
-function handleDelayedPoint() {
-  setTimeout(() => {
-    // TODO: add a point
-  }, 3000);
-}
-```
-
-Click it three times fast. With the wrong form you get **+1**; with the right one you get **+3**.
-Try it both ways — this is the case where `prev` stops being academic and starts being the
-difference between working and broken.
-
-**In writing:** in the delayed version, why does the plain form only add 1? What value did each of
-those three clicks capture, and when?
-
 ---
 
 ## Exercise 5: Searchable guest list
@@ -296,6 +384,42 @@ those three clicks capture, and when?
 - A second text input filters the list as you type
 - Above the list: `Showing 3 of 12 guests`
 - The filter must not delete anyone — clear the search box and everyone comes back
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO
+
+  return (
+    <div id="app">
+      <h1>Exercise 5</h1>
+      {/* TODO */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The trap, and it's a good one:** the obvious approach is to filter `guests` and store the result.
+Don't. If you overwrite `guests` with the filtered version, the ones that didn't match are gone
+forever.
+
+The filtered list is **derived** — calculate it fresh on every render from the full list plus the
+search text. The full list stays untouched.
+
+**Reminders, not answers:** `.filter()` builds a new array. `.includes(x)` tells you whether a
+string contains `x`. `.toLowerCase()` on both sides makes the search case-insensitive.
+
+**Careful with Remove:** your Remove buttons now sit on the *filtered* list, but you're removing
+from the *full* list. If you remove by index, you'll delete the wrong person as soon as a filter is
+active. Work out why, then fix it — removing by name is the simplest fix here.
+
+**In writing:** why must the filtered list be derived rather than stored? Describe exactly what
+breaks if you store it.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -354,23 +478,6 @@ function handleRemove(name) {
 export default App;
 ```
 
-**The trap, and it's a good one:** the obvious approach is to filter `guests` and store the result.
-Don't. If you overwrite `guests` with the filtered version, the ones that didn't match are gone
-forever.
-
-The filtered list is **derived** — calculate it fresh on every render from the full list plus the
-search text. The full list stays untouched.
-
-**Reminders, not answers:** `.filter()` builds a new array. `.includes(x)` tells you whether a
-string contains `x`. `.toLowerCase()` on both sides makes the search case-insensitive.
-
-**Careful with Remove:** your Remove buttons now sit on the *filtered* list, but you're removing
-from the *full* list. If you remove by index, you'll delete the wrong person as soon as a filter is
-active. Work out why, then fix it — removing by name is the simplest fix here.
-
-**In writing:** why must the filtered list be derived rather than stored? Describe exactly what
-breaks if you store it.
-
 ---
 
 ## Exercise 6: Shopping cart
@@ -385,6 +492,33 @@ breaks if you store it.
 - Free shipping over `40`, otherwise `5.99`
 - An `Empty cart` button that removes everything
 - Adding an empty name does nothing
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO
+
+  return (
+    <div id="app">
+      <h1>Exercise 6</h1>
+      {/* TODO */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Write the state plan before anything else.** There are three pieces of state here and about six
+derived values. If you start typing without the plan, you'll end up where Set 2 Exercise 5 ended
+up.
+
+**Everything in this exercise you've already done** — array state, controlled inputs, derived
+money, a guard clause, `.filter()`, `.map()` with keys, ternaries. Nothing new. It's a test of
+whether you can assemble them without being told which one to reach for.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -452,14 +586,6 @@ function App() {
 
 export default App;
 ```
-
-**Write the state plan before anything else.** There are three pieces of state here and about six
-derived values. If you start typing without the plan, you'll end up where Set 2 Exercise 5 ended
-up.
-
-**Everything in this exercise you've already done** — array state, controlled inputs, derived
-money, a guard clause, `.filter()`, `.map()` with keys, ternaries. Nothing new. It's a test of
-whether you can assemble them without being told which one to reach for.
 
 ---
 

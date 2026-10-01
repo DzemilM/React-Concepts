@@ -97,11 +97,6 @@ const config = {
   type: 'submit',
   disabled: true,
 };
-
-const {variant, ...rest} = config;
-const {id, variant : variable, ... rest2} = config;
-const withSize = {size:'large', ...config};
-const overridden = {...config, disabled:false}
 ```
 
 **Build:**
@@ -121,6 +116,22 @@ one, and what rule decides it?
 
 **Part 2:** In step 1, is `config` itself changed by the destructuring? How would you check
 rather than guess?
+
+### My solution
+
+```js
+const config = {
+  id: 'btn-1',
+  variant: 'primary',
+  type: 'submit',
+  disabled: true,
+};
+
+const {variant, ...rest} = config;
+const {id, variant : variable, ... rest2} = config;
+const withSize = {size:'large', ...config};
+const overridden = {...config, disabled:false}
+```
 
 ### My answer
 
@@ -145,17 +156,9 @@ is free. To keep the key but change the variable name: `{ variant: variant2, ...
 A component that exists in every codebase: a styled button wrapper.
 
 ```jsx
-function Button({ children, ...props }) {
-  return <button className="btn" {...props}>{children}</button>;
+function Button({ children }) {
+  return <button className="btn">{children}</button>;
 }
- export default function App(){
-   return(
-      <>
-        <Button type="submit" disabled>Send</Button>
-        <Button type="button" onClick={() => console.log('hi')}>Log</Button>
-      </>
-   )
- }
 ```
 
 Used like this, in `App`:
@@ -174,6 +177,22 @@ clicked. If both are clickable, nothing is being forwarded.
 **Then answer:** before your fix, what did `props` contain inside `Button`, and where did those
 values go?
 
+### My solution
+
+```jsx
+function Button({ children, ...props }) {
+  return <button className="btn" {...props}>{children}</button>;
+}
+ export default function App(){
+   return(
+      <>
+        <Button type="submit" disabled>Send</Button>
+        <Button type="button" onClick={() => console.log('hi')}>Log</Button>
+      </>
+   )
+ }
+```
+
 ### My answer
 
 **What `props` contained:** nothing — there was no `props` variable before the fix. React always
@@ -188,6 +207,31 @@ something you do, not something React does.
 ---
 
 ## Exercise 3 — Consume one, forward the rest
+
+```jsx
+<Avatar rounded src="https://i.pravatar.cc/80" alt="Tara" width="80" />
+<Avatar src="https://i.pravatar.cc/80" alt="Amar" width="80" />
+```
+
+**Build:** an `Avatar` component that renders an `<img>`.
+
+- When `rounded` is set, the image gets `className="avatar avatar-round"`.
+- When it isn't, it gets `className="avatar"`.
+- `src`, `alt`, `width` — and anything else the caller adds later — must reach the `<img>`.
+- `rounded` must **not** reach the `<img>`.
+
+**Check it:** open the browser devtools, inspect the first image, and read its attributes. If you
+see `rounded` sitting on the `<img>`, or a React warning in the console, your destructuring is
+wrong.
+
+**Then answer (two parts):**
+
+**Part 1:** Which single character in your parameter list is what stops `rounded` reaching the DOM?
+
+**Part 2:** You wrote `<Avatar rounded ... />` with no `=`. What value does `rounded` hold inside
+the component, and what would `rounded="false"` do instead? Be careful with the second one.
+
+### My solution
 
 ```jsx
 
@@ -210,24 +254,6 @@ return(
 }
 
 ```
-
-**Build:** an `Avatar` component that renders an `<img>`.
-
-- When `rounded` is set, the image gets `className="avatar avatar-round"`.
-- When it isn't, it gets `className="avatar"`.
-- `src`, `alt`, `width` — and anything else the caller adds later — must reach the `<img>`.
-- `rounded` must **not** reach the `<img>`.
-
-**Check it:** open the browser devtools, inspect the first image, and read its attributes. If you
-see `rounded` sitting on the `<img>`, or a React warning in the console, your destructuring is
-wrong.
-
-**Then answer (two parts):**
-
-**Part 1:** Which single character in your parameter list is what stops `rounded` reaching the DOM?
-
-**Part 2:** You wrote `<Avatar rounded ... />` with no `=`. What value does `rounded` hold inside
-the component, and what would `rounded="false"` do instead? Be careful with the second one.
 
 ### My answer
 
@@ -260,18 +286,9 @@ string `"80"`, not the number.
 ## Exercise 4 — The collision
 
 ```jsx
-function Card({className, ...props}) {
-  return <div className={`card ${className}`} {...props}></div>;
-}
-
-export default function App() {
-  return (
-    <Card className="highlighted">
-      <p>Standard card</p>
-    </Card>
-  );
-}
-
+<Card className="highlighted">
+  <p>Standard card</p>
+</Card>
 ```
 
 `Card` renders a `<div>` that must **always** carry the class `card`, and must **also** carry
@@ -290,6 +307,23 @@ again.
 **Part 2:** Your working version pulls `className` out of props by name. What happens to a `Card`
 that's used with no `className` at all — what does the `<div>` end up with, exactly? Check it,
 don't assume.
+
+### My solution
+
+```jsx
+function Card({className, ...props}) {
+  return <div className={`card ${className}`} {...props}></div>;
+}
+
+export default function App() {
+  return (
+    <Card className="highlighted">
+      <p>Standard card</p>
+    </Card>
+  );
+}
+
+```
 
 ### My answer
 
@@ -322,6 +356,32 @@ later; this exercise runs into the problem it exists to solve.
 ## Exercise 5 — Three categories at once
 
 ```jsx
+<Section title="Billing" id="billing" data-testid="billing-section">
+  <p>Your next invoice is on 1 October.</p>
+  <p>Card ending 4471.</p>
+</Section>
+```
+
+**Build:** a `Section` component that renders a `<section>` containing an `<h2>` with the title,
+followed by whatever was passed between the tags.
+
+Every prop above falls into exactly one of three categories. Work out which is which **before**
+you write the parameter list:
+
+- consumed by `Section` and never forwarded
+- the content between the tags
+- forwarded untouched to the `<section>` element
+
+**Check it:** the rendered `<section>` must carry `id` and `data-testid`. It must **not** carry
+`title`, and the word "Billing" must appear once, not twice.
+
+**Then answer:** `children` arrives in the props object like everything else. What goes wrong if
+you *don't* name it in the destructuring and just spread everything onto the `<section>`? Predict
+first, then try it.
+
+### My solution
+
+```jsx
 
 function Section({title, children, ...props}){
   return(
@@ -343,23 +403,6 @@ export default function App(){
 
 ```
 
-**Build:** a `Section` component that renders a `<section>` containing an `<h2>` with the title,
-followed by whatever was passed between the tags.
-
-Every prop above falls into exactly one of three categories. Work out which is which **before**
-you write the parameter list:
-
-- consumed by `Section` and never forwarded
-- the content between the tags
-- forwarded untouched to the `<section>` element
-
-**Check it:** the rendered `<section>` must carry `id` and `data-testid`. It must **not** carry
-`title`, and the word "Billing" must appear once, not twice.
-
-**Then answer:** `children` arrives in the props object like everything else. What goes wrong if
-you *don't* name it in the destructuring and just spread everything onto the `<section>`? Predict
-first, then try it.
-
 ### My answer
 
 **The three categories:** `title` is consumed (read into the `<h2>`, never forwarded). `children`
@@ -375,23 +418,7 @@ between the tags wins.** The `<h2>` renders; both `<p>`s disappear.
 ## Exercise 6 — Two levels deep
 
 ```jsx
-
-function Field({ label, ...input }) {
-  return (
-    <div className="field">
-      <label>{label}</label>
-      <input {...input} />
-    </div>
-  );
-}
-
-
-export default function App(){
-  return(
-    <Field label="Email" type="email" placeholder="you@example.com" required />
-  )
-}
-
+<Field label="Email" type="email" placeholder="you@example.com" required />
 ```
 
 **Build:** a `Field` component that renders
@@ -417,6 +444,28 @@ React, or is it you?
 
 **Part 2:** `label` and `placeholder` are both "text shown to the user". One is consumed and one
 is forwarded. Why?
+
+### My solution
+
+```jsx
+
+function Field({ label, ...input }) {
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <input {...input} />
+    </div>
+  );
+}
+
+
+export default function App(){
+  return(
+    <Field label="Email" type="email" placeholder="you@example.com" required />
+  )
+}
+
+```
 
 ### My answer
 

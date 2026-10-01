@@ -98,7 +98,20 @@ Data:
     { description: "Revisions", hours: 3, rate: 80 },
   ],
 }
+```
 
+Build an `InvoiceCard` that takes it as **one prop** and renders:
+- the invoice number
+- the client company and contact
+- one row per line: description, hours, and line amount (`hours × rate`)
+- the **subtotal** across all lines
+- a **`taxRate` prop with a default of `0`** — render the final total as `subtotal × (1 + taxRate)`, formatted to 2 decimals
+
+`App` renders two invoices: one with a tax rate passed in, one relying on the default.
+
+### My solution
+
+```jsx
 export function InvoiceCard({card, taxRate=0}){
   const Sub=card.lines.reduce((runningTotal,line)=>(
     runningTotal + line.hours * line.rate), 0)
@@ -149,15 +162,6 @@ return (
 }
 ```
 
-Build an `InvoiceCard` that takes it as **one prop** and renders:
-- the invoice number
-- the client company and contact
-- one row per line: description, hours, and line amount (`hours × rate`)
-- the **subtotal** across all lines
-- a **`taxRate` prop with a default of `0`** — render the final total as `subtotal × (1 + taxRate)`, formatted to 2 decimals
-
-`App` renders two invoices: one with a tax rate passed in, one relying on the default.
-
 ---
 
 ## Task 3 — CourseBox (adds `children`)
@@ -165,6 +169,29 @@ Build an `InvoiceCard` that takes it as **one prop** and renders:
 Data:
 
 ```js
+{
+  code: "CS-101",
+  teacher: { name: "Rob", dept: "Computer Science" },
+  students: [
+    { name: "Ana", grade: 88 },
+    { name: "Ben", grade: 74 },
+    { name: "Cleo", grade: 95 },
+  ],
+}
+```
+
+Build a `CourseBox` that takes it as **one prop** *and* accepts **`children`**. It renders:
+- the course code, and the teacher's name + dept
+- one row per student: name and grade
+- the **average grade** (rounded)
+- whatever is nested inside the component, below all of the above
+
+`App` renders two courses, each with **different** nested content (e.g. one wraps a `<p>`,
+the other wraps a `<button>` or a small `<ul>`).
+
+### My solution
+
+```jsx
 export function CourseBox({course, children}){
   const totalGrade = course.students.reduce((sum, student) => sum + student.grade, 0);
   return(
@@ -222,15 +249,6 @@ return(
 
 
 ```
-
-Build a `CourseBox` that takes it as **one prop** *and* accepts **`children`**. It renders:
-- the course code, and the teacher's name + dept
-- one row per student: name and grade
-- the **average grade** (rounded)
-- whatever is nested inside the component, below all of the above
-
-`App` renders two courses, each with **different** nested content (e.g. one wraps a `<p>`,
-the other wraps a `<button>` or a small `<ul>`).
 
 ---
 

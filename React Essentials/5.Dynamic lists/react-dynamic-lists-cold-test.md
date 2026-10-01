@@ -34,6 +34,27 @@ const BOOKS = [
   { id: 'b2', title: 'Neuromancer', author: 'Gibson', year: 1984 },
   { id: 'b3', title: 'Snow Crash', author: 'Stephenson', year: 1992 },
 ];
+```
+
+Build it so that:
+
+- An `<h2>` reads `3 books` — with the real number, not a typed `3`
+- Below it, a `<ul>` with one row per book
+- Each row reads `Dune — Herbert (1965)`
+- Each row is its own `BookRow` component, receiving what it needs as props
+- `App` renders the whole thing
+
+**When you're done, ask yourself:** how many separate values does `BookRow` receive, and how many
+attributes did you write on it in `App`? If those two numbers differ, why?
+
+### My solution
+
+```js
+const BOOKS = [
+  { id: 'b1', title: 'Dune', author: 'Herbert', year: 1965 },
+  { id: 'b2', title: 'Neuromancer', author: 'Gibson', year: 1984 },
+  { id: 'b3', title: 'Snow Crash', author: 'Stephenson', year: 1992 },
+];
 
 function BookRow({title, author, year}){
   return(
@@ -59,20 +80,34 @@ function App(){
 export default App
 ```
 
-Build it so that:
-
-- An `<h2>` reads `3 books` — with the real number, not a typed `3`
-- Below it, a `<ul>` with one row per book
-- Each row reads `Dune — Herbert (1965)`
-- Each row is its own `BookRow` component, receiving what it needs as props
-- `App` renders the whole thing
-
-**When you're done, ask yourself:** how many separate values does `BookRow` receive, and how many
-attributes did you write on it in `App`? If those two numbers differ, why?
-
 ---
 
 ## Task 2 — Inbox
+
+```js
+const MESSAGES = [
+  { id: 'm1', from: 'Ana', subject: 'Lunch?', read: false },
+  { id: 'm2', from: 'Bank', subject: 'Statement ready', read: true },
+  { id: 'm3', from: 'Luis', subject: 'Re: tickets', read: false },
+  { id: 'm4', from: 'Newsletter', subject: 'Weekly digest', read: true },
+];
+```
+
+Build it so that:
+
+- Only **unread** messages appear
+- An `<h2>` reads `2 unread`, with the real count
+- Each row reads `Ana — Lunch?`
+- When nothing is unread: a `<p>Inbox zero.</p>` and **no list element at all** on the page
+
+**Then set every message to `read: true` and check the empty case.** An empty `<ul>` looks
+identical to no `<ul>` on screen — the only way to know which you built is to look, so open the
+browser's element inspector or reason it out from your own code.
+
+**When you're done, ask yourself:** where did the count come from? If you called `.filter()` twice,
+say why that's wasteful and what you'd do instead.
+
+### My solution
 
 ```js
 const MESSAGES = [
@@ -103,23 +138,48 @@ function App(){
 export default App;
 ```
 
-Build it so that:
-
-- Only **unread** messages appear
-- An `<h2>` reads `2 unread`, with the real count
-- Each row reads `Ana — Lunch?`
-- When nothing is unread: a `<p>Inbox zero.</p>` and **no list element at all** on the page
-
-**Then set every message to `read: true` and check the empty case.** An empty `<ul>` looks
-identical to no `<ul>` on screen — the only way to know which you built is to look, so open the
-browser's element inspector or reason it out from your own code.
-
-**When you're done, ask yourself:** where did the count come from? If you called `.filter()` twice,
-say why that's wasteful and what you'd do instead.
-
 ---
 
 ## Task 3 — Conference schedule
+
+```js
+const SCHEDULE = [
+  {
+    id: 'day1',
+    day: 'Monday',
+    talks: [
+      { id: 't1', title: 'Intro to Hooks', minutes: 30 },
+      { id: 't2', title: 'Rendering Deep Dive', minutes: 55 },
+      { id: 't3', title: 'Q&A', minutes: 20 },
+    ],
+  },
+  {
+    id: 'day2',
+    day: 'Tuesday',
+    talks: [
+      { id: 't4', title: 'Testing Components', minutes: 45 },
+      { id: 't5', title: 'Performance', minutes: 40 },
+    ],
+  },
+];
+```
+
+Build it so that:
+
+- Each day is a `<section>` with an `<h3>` naming the day
+- Within a day, talks are listed **longest first**
+- Each talk row reads `1. Rendering Deep Dive (55 min)` — numbered **within its own day**, so
+  Tuesday's first talk is also `1.`
+- Below everything, a `<p>` reading `Total: 190 min` across the whole conference
+- `SCHEDULE` must not be modified
+
+The total is the hardest part of this test. It's one number, from data that's two levels deep. No
+hint beyond that.
+
+**When you're done, ask yourself:** how many `key` attributes are in your finished component, and
+what is each one keyed off?
+
+### My solution
 
 ```js
 const SCHEDULE = [
@@ -170,21 +230,6 @@ const totalMinutes = SCHEDULE.reduce((sum, day) => sum + day.talks.reduce(
 
 export default App;
 ```
-
-Build it so that:
-
-- Each day is a `<section>` with an `<h3>` naming the day
-- Within a day, talks are listed **longest first**
-- Each talk row reads `1. Rendering Deep Dive (55 min)` — numbered **within its own day**, so
-  Tuesday's first talk is also `1.`
-- Below everything, a `<p>` reading `Total: 190 min` across the whole conference
-- `SCHEDULE` must not be modified
-
-The total is the hardest part of this test. It's one number, from data that's two levels deep. No
-hint beyond that.
-
-**When you're done, ask yourself:** how many `key` attributes are in your finished component, and
-what is each one keyed off?
 
 ---
 

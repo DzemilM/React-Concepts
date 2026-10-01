@@ -120,9 +120,8 @@ function App() {
   return (
     <div id="app">
       <h2>Shopping list</h2>
-      <ul>
-       {ITEMS.map((item)=><li key={item}>{item}</li>)}
-      </ul>
+      {/* TODO: one <ul>. How many <ul> elements does this page have — one, or four? */}
+      {/* TODO: the .map() goes inside it */}
     </div>
   );
 }
@@ -134,6 +133,25 @@ export default App;
 
 **In writing:** what type of value does `ITEMS.map(…)` evaluate to? Not "the list" — the *type*.
 
+### My solution
+
+```jsx
+const ITEMS = ['Bread', 'Milk', 'Eggs', 'Coffee'];
+
+function App() {
+  return (
+    <div id="app">
+      <h2>Shopping list</h2>
+      <ul>
+       {ITEMS.map((item)=><li key={item}>{item}</li>)}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
 ---
 
 ## Exercise 2: Product list
@@ -142,6 +160,34 @@ export default App;
 
 - Render each product as an `<li>` reading `Name — $Price`, e.g. `Keyboard — $49`
 - Key off the `id` field
+
+```jsx
+const PRODUCTS = [
+  { id: 'p1', name: 'Keyboard', price: 49 },
+  { id: 'p2', name: 'Mouse', price: 25 },
+  { id: 'p3', name: 'Monitor', price: 189 },
+];
+
+function App() {
+  return (
+    <div id="app">
+      <h2>Products</h2>
+      <ul>
+        {/* TODO: map. Each item is now an object, not a string — so what do you display? */}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** two separate values inside one `<li>`. That's two sets of braces, not one.
+
+**In writing:** why is `key={product.id}` better than `key={product.name}` here, given that all
+three names happen to be different?
+
+### My solution
 
 ```jsx
 const PRODUCTS = [
@@ -165,11 +211,6 @@ function App() {
 export default App;
 ```
 
-**Watch for:** two separate values inside one `<li>`. That's two sets of braces, not one.
-
-**In writing:** why is `key={product.id}` better than `key={product.name}` here, given that all
-three names happen to be different?
-
 ---
 
 ## Exercise 3: Extract the child
@@ -178,6 +219,36 @@ three names happen to be different?
 
 - `Product` receives `name` and `price` as props and returns the `<li>`
 - Put `Product` in the same file, above `App`
+
+```jsx
+const PRODUCTS = [
+  { id: 'p1', name: 'Keyboard', price: 49 },
+  { id: 'p2', name: 'Mouse', price: 25 },
+  { id: 'p3', name: 'Monitor', price: 189 },
+];
+
+// TODO: function Product(...) — remember rule #1: React passes exactly one argument.
+
+function App() {
+  return (
+    <div id="app">
+      <h2>Products</h2>
+      <ul>
+        {/* TODO: map to <Product /> elements. Where does the key go now? */}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** `Product` has no children, so it self-closes. And prop names must match on both
+sides exactly.
+
+**In writing:** you wrote `key={product.id}` in `App`. Inside `Product`, what is `props.key`?
+
+### My solution
 
 ```jsx
 const PRODUCTS = [
@@ -206,11 +277,6 @@ function App() {
 export default App;
 ```
 
-**Watch for:** `Product` has no children, so it self-closes. And prop names must match on both
-sides exactly.
-
-**In writing:** you wrote `key={product.id}` in `App`. Inside `Product`, what is `props.key`?
-
 ---
 
 ## Exercise 4: Only what's left to do
@@ -220,6 +286,43 @@ sides exactly.
 - Show only the tasks where `done` is `false`
 - If there are none left, show `<p>All done!</p>` and **no `<ul>` at all**
 - Above the list, an `<h2>` reading `N tasks left` with the real count
+
+```jsx
+const TASKS = [
+  { id: 't1', title: 'Water the plants', done: false },
+  { id: 't2', title: 'Reply to Sam', done: true },
+  { id: 't3', title: 'Book the flight', done: false },
+  { id: 't4', title: 'Renew passport', done: true },
+];
+
+function App() {
+  // TODO: build the filtered array here, above the return. What does .filter() return?
+  // TODO: where does the count come from? It is not a new thing to compute.
+
+  return (
+    <div id="app">
+      {/* TODO: the heading with the count */}
+      {/* TODO: the list — but only when there's something in it */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Constraint:** the `.filter()` must be a named variable above the `return`, not chained inline
+inside the braces. Both work; this one is about the boundary.
+
+**Then flip both remaining tasks to `done: true` and confirm you get the message and no empty
+`<ul>`.**
+
+**Watch for:** the count is *derived* — you already classified this distinction during State. Don't
+compute it twice.
+
+**In writing:** `.filter()` and `.map()` both return a new array. What's the difference between
+what they put *in* it?
+
+### My solution
 
 ```jsx
 const TASKS = [
@@ -246,18 +349,6 @@ function App() {
 export default App;
 ```
 
-**Constraint:** the `.filter()` must be a named variable above the `return`, not chained inline
-inside the braces. Both work; this one is about the boundary.
-
-**Then flip both remaining tasks to `done: true` and confirm you get the message and no empty
-`<ul>`.**
-
-**Watch for:** the count is *derived* — you already classified this distinction during State. Don't
-compute it twice.
-
-**In writing:** `.filter()` and `.map()` both return a new array. What's the difference between
-what they put *in* it?
-
 ---
 
 ## Exercise 5: Leaderboard
@@ -267,6 +358,39 @@ what they put *in* it?
 - Render `<li>` rows reading `1. Ana — 320 pts`, `2. Luis — 295 pts`, …
 - The position number comes from the array order, not from the data
 - Below the list, a `<p>` reading `Total: N pts` across all players
+
+```jsx
+const PLAYERS = [
+  { id: 'u1', name: 'Ana', score: 320 },
+  { id: 'u2', name: 'Luis', score: 295 },
+  { id: 'u3', name: 'Mira', score: 240 },
+];
+
+function App() {
+  // TODO: the total. One value, computed once, from the whole array.
+
+  return (
+    <div id="app">
+      <h2>Leaderboard</h2>
+      <ol>
+        {/* TODO: map — the callback needs its second parameter here */}
+      </ol>
+      {/* TODO: the total paragraph. Inside the <ol> or outside it? */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** `index` starts at `0` and the display starts at `1`. And the total is one thing, so
+it lives outside the loop — the same inside/outside call you made in Exercise 1, now with a
+computed value instead of a tag.
+
+**In writing:** you're using `index` for the position number. Are you also using it as the `key`?
+Say why not, in one sentence.
+
+### My solution
 
 ```jsx
 const PLAYERS = [
@@ -295,13 +419,6 @@ function App() {
 export default App;
 ```
 
-**Watch for:** `index` starts at `0` and the display starts at `1`. And the total is one thing, so
-it lives outside the loop — the same inside/outside call you made in Exercise 1, now with a
-computed value instead of a tag.
-
-**In writing:** you're using `index` for the position number. Are you also using it as the `key`?
-Say why not, in one sentence.
-
 ---
 
 ## Exercise 6: Menu with categories
@@ -311,6 +428,50 @@ Say why not, in one sentence.
 - Each category is a `<section>` with an `<h3>` for its name and a `<ul>` of its dishes
 - Within each category, dishes are listed **cheapest first**
 - `MENU` must not be modified
+
+```jsx
+const MENU = [
+  {
+    id: 'c1',
+    category: 'Starters',
+    dishes: [
+      { id: 'd1', name: 'Soup', price: 6 },
+      { id: 'd2', name: 'Bruschetta', price: 4 },
+    ],
+  },
+  {
+    id: 'c2',
+    category: 'Mains',
+    dishes: [
+      { id: 'd3', name: 'Risotto', price: 14 },
+      { id: 'd4', name: 'Steak', price: 22 },
+      { id: 'd5', name: 'Pasta', price: 11 },
+    ],
+  },
+];
+
+function App() {
+  return (
+    <div id="app">
+      <h2>Menu</h2>
+      {/* TODO: map over the categories.
+                Inside that callback, you'll need a second map over that category's dishes.
+                Two maps means two keys — on which elements? */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** `.sort()` **mutates the array it's called on** and returns that same array. The
+constraint says don't modify `MENU`, so sort a copy. You already know how to copy an array without
+mutating it — it's the same operator you used for spreading props.
+
+**In writing:** the outer map's callback returns a `<section>` containing an `<h3>` and a `<ul>`.
+Does it need a Fragment? Why or why not?
+
+### My solution
 
 ```jsx
 const MENU = [
@@ -359,13 +520,6 @@ function App() {
 
 export default App;
 ```
-
-**Watch for:** `.sort()` **mutates the array it's called on** and returns that same array. The
-constraint says don't modify `MENU`, so sort a copy. You already know how to copy an array without
-mutating it — it's the same operator you used for spreading props.
-
-**In writing:** the outer map's callback returns a `<section>` containing an `<h3>` and a `<ul>`.
-Does it need a Fragment? Why or why not?
 
 ---
 

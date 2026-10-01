@@ -171,6 +171,31 @@ rep on both before the challenge.
 This proves `children` can be *anything*, including a list you built with `.map()`.
 
 ```jsx
+export function Panel(/* TODO: destructure heading + children */) {
+  return (
+    <div className="panel">
+      <h2>{/* TODO: heading */}</h2>
+      {/* TODO: render children */}
+    </div>
+  );
+}
+
+function App() {
+  const groceries = ["Milk", "Eggs", "Bread"];
+
+  return (
+    <div id="app">
+      {/* TODO: first Panel wraps a <p>; second Panel wraps a <ul> built with groceries.map(...) */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
+
+```jsx
 export function Panel({heading, children}) {
   return (
     <div className="panel">
@@ -238,6 +263,43 @@ accepts a single `playlist` prop, an **object** shaped like this:
 
 Reminder of the 5-step model: **data → comes in as a prop → dig with dots → `.map` the array
 (work with the single item!) → `.reduce` for the total.**
+
+```jsx
+export function PlaylistSummary(/* TODO: destructure playlist (+ speed default 1) */) {
+  return (
+    <div className="playlist">
+      {/* TODO: id + owner name & country */}
+      <ul>
+        {/* TODO: map tracks -> li with title, artist, seconds */}
+      </ul>
+      {/* TODO: total duration (bonus: as M:SS, and divided by speed) */}
+    </div>
+  );
+}
+
+function App() {
+  const playlistA = {
+    id: "PL-1",
+    owner: { name: "Mia", country: "Canada" },
+    tracks: [
+      { title: "Song A", artist: "Band X", seconds: 200 },
+      { title: "Song B", artist: "Band Y", seconds: 245 },
+    ],
+  };
+  // TODO: make a second playlist object of your own
+
+  return (
+    <div id="app">
+      <h1>Playlists</h1>
+      {/* TODO: render at least two PlaylistSummary components */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
 
 ```jsx
 export function PlaylistSummary({playlist, speed=1}) {

@@ -46,7 +46,7 @@ function App() {
       </p>
 
       <p id="actions">
-        <button onClick={clicked}>Login</button>
+        <button>Login</button>
       </p>
     </div>
   );

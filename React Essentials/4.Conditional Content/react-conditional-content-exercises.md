@@ -80,6 +80,35 @@ import { useState } from 'react';
 
 function App() {
   // TODO: one boolean state — what's its starting value?
+
+  // TODO: one handler. This is the one case where flipping the current value is right.
+  //       Why is it right here but wrong for the Delete button in the Udemy exercise?
+
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      {/* TODO: the welcome paragraph, using && */}
+      <button>Toggle login</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** the button needs an `onClick`. Pass the handler, don't call it.
+
+**In writing:** `{isLoggedIn && <p>Hi</p>}` — what does this whole expression evaluate to when
+`isLoggedIn` is `false`? Not "nothing appears" — what *value* does it produce? Look at the table
+above for why that value is safe here.
+
+### My solution
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: one boolean state — what's its starting value?
   const [isLogged, setIsLogged] = useState(false);
 
   function handleLogin(){
@@ -101,12 +130,6 @@ function App() {
 export default App;
 ```
 
-**Watch for:** the button needs an `onClick`. Pass the handler, don't call it.
-
-**In writing:** `{isLoggedIn && <p>Hi</p>}` — what does this whole expression evaluate to when
-`isLoggedIn` is `false`? Not "nothing appears" — what *value* does it produce? Look at the table
-above for why that value is safe here.
-
 ---
 
 ## Exercise 2: Follow button
@@ -119,6 +142,40 @@ above for why that value is safe here.
 
 **Constraint:** nothing appears or disappears in this exercise. Everything is always on screen —
 only the *contents* and the *attribute* change.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: state + handler
+
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      <button className={/* TODO */} onClick={/* TODO */}>
+        {/* TODO: "Following" or "Follow" */}
+      </button>
+      <p>{/* TODO: the two sentences */}</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Add this to `src/index.css` so you can see the class working:
+
+```css
+.active { background: #2f6feb; color: white; }
+```
+
+**Watch for:** a ternary works in three different positions here — inside an attribute, as a
+child of an element, and as text. It's the same braces rule every time: an expression goes in.
+
+**In writing:** why can't you write `className="active"` conditionally with an `if` right there in
+the JSX? Answer using the word *expression*.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -144,18 +201,6 @@ function App() {
 export default App;
 ```
 
-Add this to `src/index.css` so you can see the class working:
-
-```css
-.active { background: #2f6feb; color: white; }
-```
-
-**Watch for:** a ternary works in three different positions here — inside an attribute, as a
-child of an element, and as text. It's the same braces rule every time: an expression goes in.
-
-**In writing:** why can't you write `className="active"` conditionally with an `if` right there in
-the JSX? Answer using the word *expression*.
-
 ---
 
 ## Exercise 3: Request status
@@ -172,6 +217,40 @@ Start on idle.
 
 **Constraint:** no ternary anywhere. Build a variable above the `return` with `if` / `else if` /
 `else`, then render that variable.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: state holding one of 'idle' | 'loading' | 'success'
+  //       (a string, not three booleans — three booleans would let you be loading AND successful
+  //        at the same time, which is nonsense)
+
+  // TODO: declare a variable for the content, then if / else if / else to assign JSX to it.
+  //       Think: does it need `let` or `const`? Why?
+
+  return (
+    <div id="app">
+      <h1>Exercise 3</h1>
+      <button onClick={/* TODO */}>Idle</button>
+      <button onClick={/* TODO */}>Loading</button>
+      <button onClick={/* TODO */}>Success</button>
+      {/* TODO: render the variable */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** the success case needs to produce *two* sibling elements as one value. A variable
+holds one value. What do you wrap them in? You have two options — a real element, or the empty
+one you may have seen written `<>...</>`.
+
+**In writing:** you have three buttons doing the same job with a different string. From the Events
+unit — do you need three handlers, or one? Write whichever you like, but say which and why.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -224,13 +303,6 @@ function handleSuccess(){
 export default App;
 ```
 
-**Watch for:** the success case needs to produce *two* sibling elements as one value. A variable
-holds one value. What do you wrap them in? You have two options — a real element, or the empty
-one you may have seen written `<>...</>`.
-
-**In writing:** you have three buttons doing the same job with a different string. From the Events
-unit — do you need three handlers, or one? Write whichever you like, but say which and why.
-
 ---
 
 ## Exercise 4: Shopping list with an empty state
@@ -243,6 +315,44 @@ unit — do you need three handlers, or one? Write whichever you like, but say w
 - A line reading `You have 3 item(s).` that appears **only when there is at least one item**
 
 Start with an empty list and an empty input.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: two pieces of state — the list, and the input's text
+
+  // TODO: handleChange for the input
+
+  // TODO: handleAdd — remember the never-mutate rule, and clear the input afterwards
+
+  return (
+    <div id="app">
+      <h1>Exercise 4</h1>
+      <input value={/* TODO */} onChange={/* TODO */} placeholder="Item" />
+      <button onClick={/* TODO */}>Add</button>
+
+      {/* TODO: the empty message OR the <ul> — never both */}
+
+      {/* TODO: the count line, using && */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for — do this deliberately:** write the count line as `{items.length && <p>...</p>}` first
+and look at the screen while the list is empty. Something shows up that shouldn't. **Work out why
+before you fix it** — the value table at the top of this file has the answer, and this is the
+single most common `&&` bug in React. Then fix it so the condition is a real boolean.
+
+**Watch for:** `<ul>` exists once, `<li>` repeats. Inside vs outside the `.map()`, and every `<li>`
+needs a `key`.
+
+**In writing:** the count `3` — state, derived, or constant? Say why in one sentence.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -283,16 +393,6 @@ function App() {
 export default App;
 ```
 
-**Watch for — do this deliberately:** write the count line as `{items.length && <p>...</p>}` first
-and look at the screen while the list is empty. Something shows up that shouldn't. **Work out why
-before you fix it** — the value table at the top of this file has the answer, and this is the
-single most common `&&` bug in React. Then fix it so the condition is a real boolean.
-
-**Watch for:** `<ul>` exists once, `<li>` repeats. Inside vs outside the `.map()`, and every `<li>`
-needs a `key`.
-
-**In writing:** the count `3` — state, derived, or constant? Say why in one sentence.
-
 ---
 
 ## Exercise 5: Email form
@@ -305,6 +405,49 @@ needs a `key`.
   that isn't valid — it must **not** show while the input is still empty
 - After a successful submit, the **entire form disappears** and is replaced by
   `<p>Thanks, someone@example.com!</p>`
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: two pieces of state — what did they type, and have they submitted?
+
+  // TODO: derived values above the return. Two of them:
+  //       one for "is this a valid email", one for "should the error show".
+  //       They are NOT the same condition — an empty input is invalid but shows no error.
+
+  // TODO: handleChange
+
+  // TODO: handleSubmit — the form's onSubmit. What's the one line you must never forget
+  //       in a submit handler?
+
+  return (
+    <div id="app">
+      <h1>Exercise 5</h1>
+      {/* TODO: if submitted, the thank-you paragraph INSTEAD of everything below */}
+      <form onSubmit={/* TODO */}>
+        <input value={/* TODO */} onChange={/* TODO */} placeholder="Email" />
+        {/* TODO: the error paragraph */}
+        <button disabled={/* TODO */}>Submit</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Watch for:** this exercise has three separate conditionals, and they're three *different* forms —
+one swaps a whole block, one shows-or-nothing, one is an attribute. Pick the right form for each
+instead of using a ternary everywhere.
+
+**Watch for:** the `<h1>` stays on screen in both cases. Only the form/thank-you swaps. Decide what
+is always visible before you write the conditional.
+
+**In writing:** `disabled={...}` takes a boolean. You already computed "is this valid." What's the
+relationship between that variable and what `disabled` needs?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -341,16 +484,6 @@ function App() {
 
 export default App;
 ```
-
-**Watch for:** this exercise has three separate conditionals, and they're three *different* forms —
-one swaps a whole block, one shows-or-nothing, one is an attribute. Pick the right form for each
-instead of using a ternary everywhere.
-
-**Watch for:** the `<h1>` stays on screen in both cases. Only the form/thank-you swaps. Decide what
-is always visible before you write the conditional.
-
-**In writing:** `disabled={...}` takes a boolean. You already computed "is this valid." What's the
-relationship between that variable and what `disabled` needs?
 
 ---
 

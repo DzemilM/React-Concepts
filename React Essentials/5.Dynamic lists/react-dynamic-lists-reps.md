@@ -39,6 +39,14 @@ sitting uncorrected would poison the next rep.
 
 ```js
 const COLORS = ['red', 'green', 'blue'];
+```
+
+A `<ul>` with one `<li>` per colour.
+
+### My solution
+
+```js
+const COLORS = ['red', 'green', 'blue'];
 
 function App(){
   return(
@@ -50,9 +58,18 @@ function App(){
 export default App
 ```
 
-A `<ul>` with one `<li>` per colour.
-
 ## Rep 2
+
+```js
+const CITIES = [
+  { id: 'c1', name: 'Oslo', country: 'Norway' },
+  { id: 'c2', name: 'Lima', country: 'Peru' },
+];
+```
+
+A `<ul>` where each row reads `Oslo, Norway`.
+
+### My solution
 
 ```js
 const CITIES = [
@@ -71,9 +88,19 @@ function App(){
 export default App
 ```
 
-A `<ul>` where each row reads `Oslo, Norway`.
-
 ## Rep 3
+
+```js
+const PLANTS = [
+  { id: 'p1', name: 'Fern', height: 30 },
+  { id: 'p2', name: 'Cactus', height: 45 },
+  { id: 'p3', name: 'Ivy', height: 12 },
+];
+```
+
+The list, plus an `<h2>` above it reading `3 plants` — the number coming from the data.
+
+### My solution
 
 ```js
 const PLANTS = [
@@ -96,12 +123,12 @@ function App(){
 export default App
 ```
 
-The list, plus an `<h2>` above it reading `3 plants` — the number coming from the data.
-
 ## Rep 4
 
 Same `PLANTS` data. Each row is its own `PlantRow` component that receives `name` and `height` and
 renders `Fern — 30cm`.
+
+### My solution
 
 ```js
 const PLANTS = [
@@ -137,6 +164,18 @@ const STUDENTS = [
   { id: 's2', name: 'Bo', passed: false },
   { id: 's3', name: 'Cy', passed: true },
 ];
+```
+
+Only the students who passed.
+
+### My solution
+
+```js
+const STUDENTS = [
+  { id: 's1', name: 'Ana', passed: true },
+  { id: 's2', name: 'Bo', passed: false },
+  { id: 's3', name: 'Cy', passed: true },
+];
 
 
 function App(){
@@ -151,14 +190,14 @@ return(
 export default App
 ```
 
-Only the students who passed.
-
 ## Rep 6
 
 Same `STUDENTS` data. Only those who **failed**, and if nobody failed, a `<p>Everyone passed.</p>`
 with no list element on the page at all.
 
 Then flip `Bo` to `passed: true` and confirm.
+
+### My solution
 
 ```js
 const STUDENTS = [
@@ -192,6 +231,18 @@ const TRACKS = [
   { id: 't2', title: 'Verse', seconds: 140 },
   { id: 't3', title: 'Outro', seconds: 60 },
 ];
+```
+
+Rows reading `1. Intro (95s)`, numbered from the array order.
+
+### My solution
+
+```js
+const TRACKS = [
+  { id: 't1', title: 'Intro', seconds: 95 },
+  { id: 't2', title: 'Verse', seconds: 140 },
+  { id: 't3', title: 'Outro', seconds: 60 },
+];
 
 function App(){
   return(
@@ -206,11 +257,11 @@ function App(){
 export default App
 ```
 
-Rows reading `1. Intro (95s)`, numbered from the array order.
-
 ## Rep 8
 
 Same `TRACKS` data. The list, plus a `<p>` below it reading `Total: 295s`.
+
+### My solution
 
 ```js
 const TRACKS = [
@@ -241,6 +292,8 @@ export default App
 ## Rep 9
 
 Same `TRACKS` data. The list, **longest first**, without modifying `TRACKS`.
+
+### My solution
 
 ```js
 const TRACKS = [
@@ -287,6 +340,29 @@ const TEAMS = [
     players: [{ id: 'x3', name: 'Cy', goals: 5 }],
   },
 ];
+```
+
+Each group as a `<section>` with an `<h3>` and a `<ul>` of its players, each row reading
+`Ana — 3 goals`.
+
+### My solution
+
+```js
+const TEAMS = [
+  {
+    id: 'g1',
+    group: 'Group A',
+    players: [
+      { id: 'x1', name: 'Ana', goals: 3 },
+      { id: 'x2', name: 'Bo', goals: 1 },
+    ],
+  },
+  {
+    id: 'g2',
+    group: 'Group B',
+    players: [{ id: 'x3', name: 'Cy', goals: 5 }],
+  },
+];
 
 function App(){
   return(
@@ -307,9 +383,6 @@ function App(){
 
 export default App
 ```
-
-Each group as a `<section>` with an `<h3>` and a `<ul>` of its players, each row reading
-`Ana — 3 goals`.
 
 ---
 

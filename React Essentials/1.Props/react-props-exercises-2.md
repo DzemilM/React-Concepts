@@ -91,6 +91,24 @@ parameter list** (not `props.xxx`) and give `color` a **default value** of `"gra
   at all** (must fall back to `"gray"`).
 
 ```jsx
+export function Badge(/* TODO: destructure text + color with a default */) {
+  return <span className={/* TODO */}>{/* TODO */}</span>;
+}
+
+function App() {
+  return (
+    <div id="app">
+      {/* TODO: green, red, and one with no color prop */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
+
+```jsx
 export function Badge({text, color="gray"}) {
   return <span className={color}>{text}</span>;
 }
@@ -119,6 +137,35 @@ by hand** — use the spread operator (`{...employee}`), and build the list with
 - `EmployeeRow` accepts `name`, `role`, and `salary` and renders them.
 - Format `salary` with a `$` and thousands separators if you can (hint:
   `salary.toLocaleString()`), otherwise just render the number.
+
+```jsx
+const EMPLOYEES = [
+  { id: "e1", name: "Nadia", role: "Designer", salary: 62000 },
+  { id: "e2", name: "Omar", role: "Engineer", salary: 88000 },
+  { id: "e3", name: "Lena", role: "PM", salary: 75000 },
+];
+
+export function EmployeeRow(/* TODO: destructure name, role, salary */) {
+  return (
+    <div className="row">
+      {/* TODO: render name, role, formatted salary */}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div id="app">
+      <h1>Team</h1>
+      {/* TODO: map over EMPLOYEES, spread each one, remember key */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
 
 ```jsx
 const EMPLOYEES = [
@@ -163,6 +210,29 @@ placed between its tags shows up inside it. Then use it to wrap other content.
 - `App` must use `Card` **at least twice**, and the children must be **different each time**
   (e.g. one wraps a paragraph, another wraps a `<ul>` or a `<button>`). This proves the
   children slot is truly generic.
+
+```jsx
+export function Card(/* TODO: destructure title + children */) {
+  return (
+    <div className="card">
+      <h2>{/* TODO: title */}</h2>
+      {/* TODO: render children */}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div id="app">
+      {/* TODO: at least two Cards with DIFFERENT children inside each */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
 
 ```jsx
 export function Card({title, children}) {
@@ -216,6 +286,43 @@ like this:
   loop — your call.)
 - `App` must render **at least two** orders. Bonus: pass a `discount` prop (a number like
   `0.1` for 10%) with a **default of `0`**, and apply it to the grand total.
+
+```jsx
+export function OrderSummary(/* TODO: destructure order (+ optional discount default 0) */) {
+  return (
+    <div className="order">
+      {/* TODO: id + customer name & city */}
+      <ul>
+        {/* TODO: map items -> li with name, qty, line total */}
+      </ul>
+      {/* TODO: grand total (with discount applied if you did the bonus) */}
+    </div>
+  );
+}
+
+function App() {
+  const orderA = {
+    id: "A-100",
+    customer: { name: "Priya", city: "Boston" },
+    items: [
+      { name: "Keyboard", qty: 1, price: 45 },
+      { name: "Mouse", qty: 2, price: 20 },
+    ],
+  };
+  // TODO: make a second order object of your own
+
+  return (
+    <div id="app">
+      <h1>Orders</h1>
+      {/* TODO: render at least two OrderSummary components */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### My solution
 
 ```jsx
 export function OrderSummary({ order, discount=0}) {

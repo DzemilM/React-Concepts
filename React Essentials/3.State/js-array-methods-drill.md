@@ -71,10 +71,6 @@ Use this array for exercises 1–4:
 
 ```js
 const numbers = [1, 2, 3, 4, 5];
-console.log(numbers.map((number)=> number * 2));
-console.log(numbers.map((number)=> number + "!"));
-console.log(numbers.map((number,index)=>number * index));
-console.log(numbers)
 ```
 
 **1.** Produce `[2, 4, 6, 8, 10]` — every number doubled.
@@ -85,7 +81,27 @@ console.log(numbers)
 
 **4.** After all three, `console.log(numbers)`. What is it now? Why?
 
+### My solution
+
+```js
+const numbers = [1, 2, 3, 4, 5];
+console.log(numbers.map((number)=> number * 2));
+console.log(numbers.map((number)=> number + "!"));
+console.log(numbers.map((number,index)=>number * index));
+console.log(numbers)
+```
+
 Now use this one:
+
+```js
+const names = ["alice", "bob", "carl"];
+```
+
+**5.** Produce `["ALICE", "BOB", "CARL"]`. (`.toUpperCase()`)
+
+**6.** Produce `["1. alice", "2. bob", "3. carl"]` — numbered from 1, not 0.
+
+### My solution
 
 ```js
 const names = ["alice", "bob", "carl"];
@@ -93,20 +109,12 @@ console.log(names.map((name)=>name.toUpperCase()));
 console.log(names.map((name,index)=>`${index+1}. ${name}`))
 ```
 
-**5.** Produce `["ALICE", "BOB", "CARL"]`. (`.toUpperCase()`)
-
-**6.** Produce `["1. alice", "2. bob", "3. carl"]` — numbered from 1, not 0.
-
 ---
 
 ## Part 2 — `.filter()`
 
 ```js
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-console.log(numbers.filter((number)=> number > 5));
-console.log(numbers.filter((number)=> number % 2 === 0));
-console.log(numbers.filter((number)=>number !== 7));
-console.log(numbers.filter((number, index)=>index !== 3))
 ```
 
 **7.** Keep only the numbers above 5.
@@ -117,10 +125,18 @@ console.log(numbers.filter((number, index)=>index !== 3))
 
 **10.** Remove whatever is at index 3. (Not the value 3 — the item in position 3.)
 
+### My solution
+
+```js
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+console.log(numbers.filter((number)=> number > 5));
+console.log(numbers.filter((number)=> number % 2 === 0));
+console.log(numbers.filter((number)=>number !== 7));
+console.log(numbers.filter((number, index)=>index !== 3))
+```
+
 ```js
 const guests = ["Alice", "Bob", "Carl", "Anna"];
-console.log(guests.filter((guest)=>guest.toLowerCase().includes('a')));
-console.log(guests.filter((guest)=>guest !== "Bob"))
 ```
 
 **11.** Keep only the names containing the letter `a` — **case-insensitively**, so all four match.
@@ -128,9 +144,27 @@ console.log(guests.filter((guest)=>guest !== "Bob"))
 
 **12.** Remove `"Bob"` by name.
 
+### My solution
+
+```js
+const guests = ["Alice", "Bob", "Carl", "Anna"];
+console.log(guests.filter((guest)=>guest.toLowerCase().includes('a')));
+console.log(guests.filter((guest)=>guest !== "Bob"))
+```
+
 ---
 
 ## Part 3 — Spread, and the React patterns
+
+```js
+const items = ["apple", "bread"];
+```
+
+**13.** Produce a new array with `"milk"` added on the end — **without** using `.push()`.
+
+**14.** Produce a new array with `"milk"` at the **start**.
+
+### My solution
 
 ```js
 const items = ["apple", "bread"];
@@ -140,10 +174,6 @@ console.log(items);
 console.log(added);
 console.log(start)
 ```
-
-**13.** Produce a new array with `"milk"` added on the end — **without** using `.push()`.
-
-**14.** Produce a new array with `"milk"` at the **start**.
 
 **15.** Now do it the wrong way on purpose:
 
@@ -167,12 +197,6 @@ what you see. This is exactly what React sees when you mutate state.
 ```js
 const guests = ["Alice", "Bob", "Carl", "Anna", "Dave"];
 const query = "a";
-const hasQuery = guests.filter((guest)=>guest.toLowerCase().includes(query.toLowerCase()));
-console.log(hasQuery);
-console.log(hasQuery.map((guest)=>guest.toUpperCase()));
-console.log(hasQuery.length);
-const index = 2;
-const noCarl = guests.filter((guest, i)=> i !== index)
 ```
 
 **17.** In one expression: keep the names containing `query` (case-insensitive), then uppercase
@@ -184,13 +208,24 @@ property.)
 **19.** Given `const index = 2`, produce a new array with `"Carl"` removed, using the index rather
 than the name.
 
+### My solution
+
+```js
+const guests = ["Alice", "Bob", "Carl", "Anna", "Dave"];
+const query = "a";
+const hasQuery = guests.filter((guest)=>guest.toLowerCase().includes(query.toLowerCase()));
+console.log(hasQuery);
+console.log(hasQuery.map((guest)=>guest.toUpperCase()));
+console.log(hasQuery.length);
+const index = 2;
+const noCarl = guests.filter((guest, i)=> i !== index)
+```
+
 **20.** The trap from Set 3, in plain JS. You have:
 
 ```js
 const guests   = ["Alice", "Bob", "Carl"];
 const visible  = guests.filter((g) => g.toLowerCase().includes("c"));   // ["Carl"]
-console.log(guests);
-console.log(visible)
 ```
 
 The user clicks Remove on the **first item of `visible`** — index `0`.
@@ -199,6 +234,15 @@ Now write `guests.filter((guest, index) => index !== 0)` and log it.
 
 **Who got removed?** Explain in one sentence why removing by index is a bug once a filter is
 involved, and what you should use instead.
+
+### My solution
+
+```js
+const guests   = ["Alice", "Bob", "Carl"];
+const visible  = guests.filter((g) => g.toLowerCase().includes("c"));   // ["Carl"]
+console.log(guests);
+console.log(visible)
+```
 
 ---
 

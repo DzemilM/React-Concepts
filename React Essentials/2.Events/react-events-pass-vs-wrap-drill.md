@@ -33,25 +33,55 @@ For each, decide what goes in the blank. Write the whole `onClick={...}` (or `on
 
 **A1.** A handler `save` that logs `"saved"`. No argument needed.
 ```jsx
+<button onClick={______}>Save</button>
+```
+
+### My solution
+
+```jsx
 <button onClick={save}>Save</button>
 ```
 
 **A2.** A handler `remove(id)` that deletes item `42`.
+```jsx
+<button onClick={______}>Delete</button>
+```
+
+### My solution
+
 ```jsx
 <button onClick={()=>remove(42)>}>Delete</button>
 ```
 
 **A3.** A typing handler `search(event)` that reads `event.target.value`.
 ```jsx
+<input onChange={______} />
+```
+
+### My solution
+
+```jsx
 <input onChange={search} />
 ```
 
 **A4.** A handler `pick(colour)` for a red button.
 ```jsx
+<button onClick={______}>Red</button>
+```
+
+### My solution
+
+```jsx
 <button onClick={()=>pick("red")}>Red</button>
 ```
 
 **A5.** A submit handler `submit(event)` that calls `event.preventDefault()`.
+```jsx
+<form onSubmit={______}>
+```
+
+### My solution
+
 ```jsx
 <form onSubmit={submit}>
 ```
@@ -59,15 +89,33 @@ For each, decide what goes in the blank. Write the whole `onClick={...}` (or `on
 **A6.** A component `Row` that received an `onDelete` prop and wants to forward it straight to a
 real button (no argument added here).
 ```jsx
+<button onClick={______}>x</button>
+```
+
+### My solution
+
+```jsx
 <button onClick={onDelete}>x</button>
 ```
 
 **A7.** A handler `greet(name)` for a button that should greet `"Sam"`.
 ```jsx
+<button onClick={______}>Greet Sam</button>
+```
+
+### My solution
+
+```jsx
 <button onClick={()=>greet("Sam")}>Greet Sam</button>
 ```
 
 **A8.** A handler `logClick(event)` that logs which element was clicked (`event.target`).
+```jsx
+<button onClick={______}>Where?</button>
+```
+
+### My solution
+
 ```jsx
 <button onClick={logClick}>Where?</button>
 ```
@@ -75,11 +123,23 @@ real button (no argument added here).
 **A9.** Inside a `StarButton({ value, onRate })`, the button must call `onRate` with its own
 `value`.
 ```jsx
+<button onClick={______}>{value}</button>
+```
+
+### My solution
+
+```jsx
 <button onClick={()=>onRate(value)}>{value}</button>
 ```
 
 **A10.** Inside `App`, you hand `handleRate` down to `StarButton` as its `onRate` prop (you are
 *giving* the function, not calling it here).
+```jsx
+<StarButton value={3} onRate={______} />
+```
+
+### My solution
+
 ```jsx
 <StarButton value={3} onRate={handleRate} />
 ```

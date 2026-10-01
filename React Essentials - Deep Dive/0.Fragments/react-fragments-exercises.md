@@ -111,28 +111,6 @@ It's a wrapper, not a parent element.
 
 ```js
 const PERSON = { name: 'Grace', role: 'Engineer', city: 'New York' };
-
-function Cells({person}){
-  return(
-        <>
-          <td>{person.name}</td>
-          <td>{person.role}</td>
-          <td>{person.city}</td>
-        </>  
-  )
-}
-
-export default function App(){
-  return(
-    <table>
-      <tbody>
-        <tr>
-          <Cells person={PERSON} />
-        </tr>
-      </tbody>
-    </table>
-  )
-}
 ```
 
 **Build:**
@@ -158,6 +136,34 @@ export default function App(){
 **Then answer:** in one sentence, what was actually wrong with the `<div>` version? "It's
 unnecessary" is not the answer.
 
+### My solution
+
+```js
+const PERSON = { name: 'Grace', role: 'Engineer', city: 'New York' };
+
+function Cells({person}){
+  return(
+        <>
+          <td>{person.name}</td>
+          <td>{person.role}</td>
+          <td>{person.city}</td>
+        </>  
+  )
+}
+
+export default function App(){
+  return(
+    <table>
+      <tbody>
+        <tr>
+          <Cells person={PERSON} />
+        </tr>
+      </tbody>
+    </table>
+  )
+}
+```
+
 ### My answer
 
 **Warning:** *"`<td>` cannot appear as a child of `<div>`."* In Elements, a `<div>` sat between the
@@ -174,26 +180,11 @@ cells, so nothing can sit between them. The Fragment fixes it because it adds no
 ## Exercise 3 — Fragments inside a `.map()`
 
 ```js
-import { Fragment } from 'react';
-
 const GLOSSARY = [
   { id: 'g1', term: 'Prop', definition: 'Data passed from parent to child.' },
   { id: 'g2', term: 'State', definition: 'Data a component remembers between renders.' },
   { id: 'g3', term: 'Key', definition: "An item's identity inside a list." },
 ];
-
-export default function App(){
-  return(
-    <dl>
-      {GLOSSARY.map((glos)=>
-        <Fragment key={glos.id}>
-        <dt>{glos.term}</dt>
-        <dd>{glos.definition}</dd>
-        </Fragment>
-      )}
-    </dl>
-  )
-}
 ```
 
 **Build:** an `App` that renders one `<dl>`. For **each** glossary entry, the `<dl>` gets a `<dt>`
@@ -230,6 +221,31 @@ what does the callback return here, and can that thing take attributes in the fo
 
 **Then answer (two parts):** why does `<>` fail here, **and** what does the `key` end up attached
 to in the real DOM?
+
+### My solution
+
+```js
+import { Fragment } from 'react';
+
+const GLOSSARY = [
+  { id: 'g1', term: 'Prop', definition: 'Data passed from parent to child.' },
+  { id: 'g2', term: 'State', definition: 'Data a component remembers between renders.' },
+  { id: 'g3', term: 'Key', definition: "An item's identity inside a list." },
+];
+
+export default function App(){
+  return(
+    <dl>
+      {GLOSSARY.map((glos)=>
+        <Fragment key={glos.id}>
+        <dt>{glos.term}</dt>
+        <dd>{glos.definition}</dd>
+        </Fragment>
+      )}
+    </dl>
+  )
+}
+```
 
 ### My answer
 

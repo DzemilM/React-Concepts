@@ -41,6 +41,47 @@ console.
 import { useState } from 'react';
 
 function App() {
+  // TODO: declare the volume state
+
+  function handleUp() {
+    // TODO
+  }
+
+  function handleDown() {
+    // TODO
+  }
+
+  function handleMute() {
+    // TODO
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      <p>Volume: {/* TODO: display it */}</p>
+      <button onClick={handleUp}>+10</button>
+      <button onClick={handleDown}>-10</button>
+      <button onClick={handleMute}>Mute</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Trap check:** two of these three handlers need the current volume inside the expression. One
+doesn't. Work out which before you type — that's mistake #1, and it cost you the most last round.
+
+**In writing:** why does `handleMute` not need to read the current volume, when the other two do?
+
+**Then extend it:** stop it going above 100 or below 0.
+
+### My solution
+
+```jsx
+import { useState } from 'react';
+
+function App() {
   const [volume, setVolume] = useState(50)
 
   function handleUp() {
@@ -73,13 +114,6 @@ function App() {
 export default App;
 ```
 
-**Trap check:** two of these three handlers need the current volume inside the expression. One
-doesn't. Work out which before you type — that's mistake #1, and it cost you the most last round.
-
-**In writing:** why does `handleMute` not need to read the current volume, when the other two do?
-
-**Then extend it:** stop it going above 100 or below 0.
-
 ---
 
 ## Exercise 2: Status badge
@@ -91,6 +125,41 @@ Three things change together on each click:
 - a paragraph reads `Status: online` or `Status: offline`
 - the button reads `Go offline` or `Go online`
 - `Welcome back!` appears **only** when online
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: declare the state — think about how many pieces you need
+
+  function handleToggle() {
+    // TODO: flip it
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      <p>Status: {/* TODO */}</p>
+      <button onClick={handleToggle}>{/* TODO: the label */}</button>
+      {/* TODO: show this only when online */}
+      <p>Welcome back!</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The trap:** three things change on screen. If your instinct is three `useState` calls, re-read
+mistake #4. All three answer the *same* question, and that question has a yes/no answer.
+
+**Reminders, not answers:** `!` flips a boolean. A ternary (`condition ? a : b`) picks between two
+values. `&&` renders something only when the condition is true.
+
+**In writing:** why is the button's label `Go offline` when the status is `online`? What is a
+button label describing — what's currently true, or what clicking will do?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -115,21 +184,67 @@ function App() {
 export default App;
 ```
 
-**The trap:** three things change on screen. If your instinct is three `useState` calls, re-read
-mistake #4. All three answer the *same* question, and that question has a yes/no answer.
-
-**Reminders, not answers:** `!` flips a boolean. A ternary (`condition ? a : b`) picks between two
-values. `&&` renders something only when the condition is true.
-
-**In writing:** why is the button's label `Go offline` when the status is `online`? What is a
-button label describing — what's currently true, or what clicking will do?
-
 ---
 
 ## Exercise 3: Live full name
 
 **Goal:** Two text inputs — first name and last name. A paragraph below shows the full name as
 you type. Before anything is typed it must read `Full name: ` — not `undefined`, not `0`.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: state for the first name
+  // TODO: state for the last name
+
+  function handleFirstChange(event) {
+    // TODO
+  }
+
+  function handleLastChange(event) {
+    // TODO
+  }
+
+  function handleClear() {
+    // TODO: empty both
+  }
+
+  // TODO: build the full name here
+
+  return (
+    <div id="app">
+      <h1>Exercise 3</h1>
+      <input type="text" placeholder="First name" onChange={handleFirstChange} />
+      <input type="text" placeholder="Last name" onChange={handleLastChange} />
+      <p>Full name: {/* TODO */}</p>
+      <button onClick={handleClear}>Clear</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Reminders, not answers:** React hands your handler the event. The typed text is at
+`event.target.value`. The full name is built from two values you already have.
+
+**Then run Clear.** The state empties but the boxes still show the old text. That's the thing you
+never reached in Set 1.
+
+**The fix — controlled inputs.** Right now the input owns its own text and you only *listen* to
+it. To take control, you must also *tell* it what to display:
+
+```jsx
+<input type="text" value={____} onChange={____} />
+```
+
+With `value` wired to state, state becomes the single source of truth — change the state, the box
+changes. Add it to both inputs and try Clear again.
+
+**In writing:** should `fullName` be its own `useState`? Give the reason, not just yes or no.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -167,24 +282,6 @@ function App() {
 export default App;
 ```
 
-**Reminders, not answers:** React hands your handler the event. The typed text is at
-`event.target.value`. The full name is built from two values you already have.
-
-**Then run Clear.** The state empties but the boxes still show the old text. That's the thing you
-never reached in Set 1.
-
-**The fix — controlled inputs.** Right now the input owns its own text and you only *listen* to
-it. To take control, you must also *tell* it what to display:
-
-```jsx
-<input type="text" value={____} onChange={____} />
-```
-
-With `value` wired to state, state becomes the single source of truth — change the state, the box
-changes. Add it to both inputs and try Clear again.
-
-**In writing:** should `fullName` be its own `useState`? Give the reason, not just yes or no.
-
 ---
 
 ## Exercise 4: The bonus button
@@ -193,6 +290,46 @@ changes. Add it to both inputs and try Clear again.
 
 **Predict in writing before you run it:** you click `Broken bonus` once, with the score at 0.
 What number appears?
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  const [score, setScore] = useState(0);
+
+  function handleBrokenBonus() {
+    setScore(score + 1);
+    setScore(score + 1);
+    setScore(score + 1);
+  }
+
+  function handleRealBonus() {
+    // TODO: same job, but it must actually add 3
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 4</h1>
+      <p>Score: {score}</p>
+      <button onClick={handleBrokenBonus}>Broken bonus</button>
+      <button onClick={handleRealBonus}>Real bonus</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Reminder, not an answer:** the setter accepts a *function* as well as a value. Hand it
+`(prev) => ...` and React calls that function for you, passing in the latest value.
+
+**In writing, two questions — answer both:**
+
+1. In the broken version, why does the third line compute the same number as the first? What is
+   `score` during that function run, and can `setScore` change it?
+2. In the fixed version, who calls your arrow function, and where does its argument come from?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -225,15 +362,6 @@ function App() {
 export default App;
 ```
 
-**Reminder, not an answer:** the setter accepts a *function* as well as a value. Hand it
-`(prev) => ...` and React calls that function for you, passing in the latest value.
-
-**In writing, two questions — answer both:**
-
-1. In the broken version, why does the third line compute the same number as the first? What is
-   `score` during that function run, and can `setScore` change it?
-2. In the fixed version, who calls your arrow function, and where does its argument come from?
-
 ---
 
 ## Exercise 5: Order summary
@@ -246,6 +374,51 @@ export default App;
 - Total = subtotal + shipping
 
 Money shows to two decimals.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: how many pieces of state does this actually need?
+
+  function handleQuantityChange(event) {
+    // TODO
+  }
+
+  // TODO: the calculations go here
+  // unitPrice, subtotal, shipping, total
+
+  return (
+    <div id="app">
+      <h1>Exercise 5</h1>
+      <input type="number" onChange={handleQuantityChange} />
+      <p>Quantity: {/* TODO */}</p>
+      <p>Subtotal: ${/* TODO */}</p>
+      <p>Shipping: ${/* TODO */}</p>
+      <p>Total: ${/* TODO */}</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The whole exercise is one decision:** how many `useState` calls? Count how many things the
+*user* can change. That's your answer — everything else is a `const`.
+
+**Two things that bit you last round:**
+
+- `event.target.value` is a **string**, even from `type="number"`. Convert it with `Number(...)`.
+- The `$` is display text and lives in the JSX, outside the braces. State holds `12.5`, never
+  `"$12.50"`.
+
+**Reminder for shipping:** it's one value or another depending on a condition. Same tool as the
+button label in Exercise 2 — it works for numbers as well as strings.
+
+**Reminder for the decimals:** `.toFixed(2)` turns `49.9` into `"49.90"`. Apply it at display
+time, not in the state.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -277,21 +450,6 @@ function App() {
 export default App;
 ```
 
-**The whole exercise is one decision:** how many `useState` calls? Count how many things the
-*user* can change. That's your answer — everything else is a `const`.
-
-**Two things that bit you last round:**
-
-- `event.target.value` is a **string**, even from `type="number"`. Convert it with `Number(...)`.
-- The `$` is display text and lives in the JSX, outside the braces. State holds `12.5`, never
-  `"$12.50"`.
-
-**Reminder for shipping:** it's one value or another depending on a condition. Same tool as the
-button label in Exercise 2 — it works for numbers as well as strings.
-
-**Reminder for the decimals:** `.toFixed(2)` turns `49.9` into `"49.90"`. Apply it at display
-time, not in the state.
-
 ---
 
 ## Exercise 6: Guest list
@@ -303,6 +461,75 @@ time, not in the state.
 - Each guest has a `Remove` button beside them
 - Above the list: `3 guests attending`
 - Adding clears the input box
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: state for the guests
+  // TODO: state for the input text
+
+  function handleNameChange(event) {
+    // TODO
+  }
+
+  function handleAdd() {
+    // TODO: add the current name to the list
+    // TODO: then clear the input
+  }
+
+  function handleRemove(indexToRemove) {
+    // TODO: remove that one guest
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 6</h1>
+      <p>{/* TODO */} guests attending</p>
+      <input type="text" onChange={handleNameChange} />
+      <button onClick={handleAdd}>Add guest</button>
+      <ul>
+        {/* TODO: one <li> per guest, each with a Remove button */}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The rule that decides whether this works — never mutate state.**
+
+```js
+guests.push(name);            // ✗ same array, React sees no change, no re-render
+setGuests([...guests, name]); // ✓ a new array
+```
+
+React compares the new value to the old. `push` changes the contents but hands back *the same
+array*, so React concludes nothing happened. You must produce a **new** array.
+
+Same reason `.splice()` is the wrong tool for Remove and `.filter()` is the right one — `filter`
+returns a new array, `splice` edits the existing one.
+
+**Three things to get right:**
+
+1. The count is **not** state. Derive it.
+2. Each `<li>` needs a `key`.
+3. Each Remove button must know *which* guest it belongs to. That's the arrow wrapper from the
+   Events unit — `onClick={() => ...}` lets you pass an argument without calling the function
+   during render.
+
+**Then extend it, in this order:**
+
+- Wrap the input and button in a `<form>` so Enter works. Remember what a form does by default,
+  and the method that stops it.
+- Make the input controlled with `value` so it actually clears.
+- Refuse to add an empty guest — clicking Add with an empty box should do nothing.
+
+**In writing:** why does `guests.push(name)` fail to update the screen, even though the array
+really does get longer?
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -348,37 +575,6 @@ function App() {
 
 export default App;
 ```
-
-**The rule that decides whether this works — never mutate state.**
-
-```js
-guests.push(name);            // ✗ same array, React sees no change, no re-render
-setGuests([...guests, name]); // ✓ a new array
-```
-
-React compares the new value to the old. `push` changes the contents but hands back *the same
-array*, so React concludes nothing happened. You must produce a **new** array.
-
-Same reason `.splice()` is the wrong tool for Remove and `.filter()` is the right one — `filter`
-returns a new array, `splice` edits the existing one.
-
-**Three things to get right:**
-
-1. The count is **not** state. Derive it.
-2. Each `<li>` needs a `key`.
-3. Each Remove button must know *which* guest it belongs to. That's the arrow wrapper from the
-   Events unit — `onClick={() => ...}` lets you pass an argument without calling the function
-   during render.
-
-**Then extend it, in this order:**
-
-- Wrap the input and button in a `<form>` so Enter works. Remember what a form does by default,
-  and the method that stops it.
-- Make the input controlled with `value` so it actually clears.
-- Refuse to add an empty guest — clicking Add with an empty box should do nothing.
-
-**In writing:** why does `guests.push(name)` fail to update the screen, even though the array
-really does get longer?
 
 ---
 

@@ -75,6 +75,42 @@ Then call `useState(...)` directly — no `React.` prefix.
 import { useState } from 'react';
 
 function App() {
+  // TODO: declare the state value here
+
+  function handleIncrement() {
+    // TODO: increase the count by 1
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      <p>Count: {/* TODO: display the count */}</p>
+      <button onClick={handleIncrement}>+1</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Two things to be careful about:**
+
+- To increase the count you need to know what it currently is. You already have a variable
+  holding that. What do you pass to the setter?
+- `onClick={handleIncrement}` — passed, not called. Same rule as Events.
+
+**Then extend it:** add a `-1` button and a `Reset` button. Reset puts it back to 0. Three
+buttons, three handlers, one piece of state.
+
+**Check yourself:** the number on screen must actually change. If it doesn't move, you assigned
+instead of calling the setter.
+
+### My solution
+
+```jsx
+import { useState } from 'react';
+
+function App() {
   const [value, setValue] = useState(0)
 
   function handleIncrement() {
@@ -105,18 +141,6 @@ function App() {
 export default App;
 ```
 
-**Two things to be careful about:**
-
-- To increase the count you need to know what it currently is. You already have a variable
-  holding that. What do you pass to the setter?
-- `onClick={handleIncrement}` — passed, not called. Same rule as Events.
-
-**Then extend it:** add a `-1` button and a `Reset` button. Reset puts it back to 0. Three
-buttons, three handlers, one piece of state.
-
-**Check yourself:** the number on screen must actually change. If it doesn't move, you assigned
-instead of calling the setter.
-
 ---
 
 ## Exercise 2: Prove why state exists
@@ -126,6 +150,50 @@ whole concept exists, so don't skip it.
 
 Two counters side by side. One uses a plain `let` variable, one uses state. Both buttons run
 the same kind of code.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  let plainCount = 0;
+  // TODO: declare a state count as well
+
+  function bumpPlain() {
+    plainCount = plainCount + 1;
+    console.log('plainCount is now:', plainCount);
+  }
+
+  function bumpState() {
+    // TODO: increase the state count by 1
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      <p>Plain variable: {plainCount}</p>
+      <button onClick={bumpPlain}>Bump plain</button>
+
+      <p>State: {/* TODO: display the state count */}</p>
+      <button onClick={bumpState}>Bump state</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Do this with the console open.** Click "Bump plain" five times.
+
+**Write down answers to these before moving on:**
+
+1. What does the console say `plainCount` is after five clicks?
+2. What does the *screen* say?
+3. Those two disagree. Explain why in one sentence — what is React not doing?
+4. Now click "Bump state" once. Watch the plain counter's number on screen at that exact moment.
+   What happens to it, and why? (This one is the interesting question — think about what a
+   re-render does to `let plainCount = 0;`.)
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -159,17 +227,6 @@ function App() {
 export default App;
 ```
 
-**Do this with the console open.** Click "Bump plain" five times.
-
-**Write down answers to these before moving on:**
-
-1. What does the console say `plainCount` is after five clicks?
-2. What does the *screen* say?
-3. Those two disagree. Explain why in one sentence — what is React not doing?
-4. Now click "Bump state" once. Watch the plain counter's number on screen at that exact moment.
-   What happens to it, and why? (This one is the interesting question — think about what a
-   re-render does to `let plainCount = 0;`.)
-
 ---
 
 ## Exercise 3: Boolean state and conditional output
@@ -178,6 +235,44 @@ export default App;
 
 - Start hidden.
 - The button's own label changes too: `Show details` when hidden, `Hide details` when shown.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: declare a boolean state value
+
+  function handleToggle() {
+    // TODO: flip it
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 3</h1>
+      <button onClick={handleToggle}>{/* TODO: the label */}</button>
+      {/* TODO: show this paragraph only when the state is true */}
+      <p>Here are the secret details.</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**Hints:**
+
+- To flip a boolean you don't need an `if`. There's a single JS operator that turns `true` into
+  `false` and vice versa. What do you pass to the setter?
+- For the label, a **ternary** is the tool: `condition ? valueIfTrue : valueIfFalse`. It's an
+  expression, so it works inside JSX braces.
+- For showing/hiding, `&&` works: `{condition && <p>...</p>}`. If the condition is false, React
+  renders nothing.
+
+**The rule this is testing:** *compute above the `return`, display inside it.* You can absolutely
+work out the label as a plain variable above the `return` and then just drop `{buttonLabel}` in
+the JSX. Try it both ways and decide which you find more readable.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -201,19 +296,6 @@ function App() {
 
 export default App;
 ```
-
-**Hints:**
-
-- To flip a boolean you don't need an `if`. There's a single JS operator that turns `true` into
-  `false` and vice versa. What do you pass to the setter?
-- For the label, a **ternary** is the tool: `condition ? valueIfTrue : valueIfFalse`. It's an
-  expression, so it works inside JSX braces.
-- For showing/hiding, `&&` works: `{condition && <p>...</p>}`. If the condition is false, React
-  renders nothing.
-
-**The rule this is testing:** *compute above the `return`, display inside it.* You can absolutely
-work out the label as a plain variable above the `return` and then just drop `{buttonLabel}` in
-the JSX. Try it both ways and decide which you find more readable.
 
 ---
 
@@ -268,6 +350,57 @@ Then add a second input for a number, and show a computed result.
 import { useState } from 'react';
 
 function App() {
+  // TODO: state for the name text
+  // TODO: state for the quantity number
+
+  function handleNameChange(event) {
+    // TODO
+  }
+
+  function handleQuantityChange(event) {
+    // TODO
+  }
+
+  // TODO: compute the total here — quantity * 9.99, rounded to 2 decimals
+
+  return (
+    <div id="app">
+      <h1>Exercise 5</h1>
+      <input type="text" onChange={handleNameChange} />
+      <input type="number" onChange={handleQuantityChange} />
+
+      <p>Hello, {/* TODO */}!</p>
+      <p>You ordered {/* TODO */} items.</p>
+      <p>Total: ${/* TODO */}</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**This is where Events and State meet.** React passes the event to your handler; the typed text
+is at `event.target.value`; you feed that to the setter; the setter re-renders; the paragraph
+shows the new value.
+
+**Watch out for two things:**
+
+1. **The `$` belongs in the JSX as literal text, next to the braces — never inside the
+   JavaScript.** State holds data (`9.99`), not display strings (`"$9.99"`).
+2. `event.target.value` from an input is **always a string**, even from `type="number"`. `"3" * 9.99`
+   happens to work because JS coerces it, but `"3" + 1` gives `"31"`. Convert it with `Number(...)`
+   when you store it and you'll never think about this again.
+
+**Then answer:** the total is *derived* from the quantity — it's just `quantity * 9.99`. Should
+`total` be its own `useState`? Why or why not? (This is a real design question people get wrong
+constantly. Think about what happens to a stored `total` if `quantity` changes.)
+
+### My solution
+
+```jsx
+import { useState } from 'react';
+
+function App() {
   const [ name, setName ] = useState("")
   const [ quant, setQuant] = useState(0)
 
@@ -297,27 +430,65 @@ function App() {
 export default App;
 ```
 
-**This is where Events and State meet.** React passes the event to your handler; the typed text
-is at `event.target.value`; you feed that to the setter; the setter re-renders; the paragraph
-shows the new value.
-
-**Watch out for two things:**
-
-1. **The `$` belongs in the JSX as literal text, next to the braces — never inside the
-   JavaScript.** State holds data (`9.99`), not display strings (`"$9.99"`).
-2. `event.target.value` from an input is **always a string**, even from `type="number"`. `"3" * 9.99`
-   happens to work because JS coerces it, but `"3" + 1` gives `"31"`. Convert it with `Number(...)`
-   when you store it and you'll never think about this again.
-
-**Then answer:** the total is *derived* from the quantity — it's just `quantity * 9.99`. Should
-`total` be its own `useState`? Why or why not? (This is a real design question people get wrong
-constantly. Think about what happens to a stored `total` if `quantity` changes.)
-
 ---
 
 ## Exercise 6: State that holds a list
 
 **Goal:** A to-do list. One input, one Add button, and a `<ul>` of everything added so far.
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  // TODO: state for the list of items (what should it start as?)
+  // TODO: state for the current input text
+
+  function handleAdd() {
+    // TODO: add the current text to the list
+    // TODO: then clear the input text
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 6</h1>
+      <input type="text" onChange={/* TODO */} />
+      <button onClick={handleAdd}>Add</button>
+      <ul>
+        {/* TODO: render one <li> per item */}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+**The new rule, and it's the one that bites everyone:**
+
+**Never mutate state. Create a new value and pass that to the setter.**
+
+```js
+items.push(newItem);     // ✗ mutates the existing array — React sees the same array, no re-render
+setItems([...items, newItem]);   // ✓ a brand-new array
+```
+
+React decides whether to re-render by asking "is this a different value than before?" `push`
+changes the array's *contents* but it's still the same array — so React sees no change and does
+nothing. Spread it into a new array instead.
+
+**Also:** you're back in `.map()` territory from Props. Each `<li>` needs a `key`.
+
+**Then extend it, in this order:**
+
+1. Wrap it in a `<form>` so Enter works, and stop the page reloading. (Events, exercise 6.)
+2. Show the count above the list: `3 items`. Does that need its own state?
+3. Add a Delete button to each `<li>`. You'll need `.filter()` — and a way for each button to know
+   *which* item it belongs to. That's the arrow-wrapper trick from Events.
+4. Notice the input doesn't visually clear when you add an item, even though you reset the state.
+   That's because the input isn't *controlled* yet — you're reading from it but never telling it
+   what to show. Look up the `value` prop on `<input>` and wire it up.
+
+### My solution
 
 ```jsx
 import { useState } from 'react';
@@ -352,31 +523,6 @@ function App() {
 
 export default App;
 ```
-
-**The new rule, and it's the one that bites everyone:**
-
-**Never mutate state. Create a new value and pass that to the setter.**
-
-```js
-items.push(newItem);     // ✗ mutates the existing array — React sees the same array, no re-render
-setItems([...items, newItem]);   // ✓ a brand-new array
-```
-
-React decides whether to re-render by asking "is this a different value than before?" `push`
-changes the array's *contents* but it's still the same array — so React sees no change and does
-nothing. Spread it into a new array instead.
-
-**Also:** you're back in `.map()` territory from Props. Each `<li>` needs a `key`.
-
-**Then extend it, in this order:**
-
-1. Wrap it in a `<form>` so Enter works, and stop the page reloading. (Events, exercise 6.)
-2. Show the count above the list: `3 items`. Does that need its own state?
-3. Add a Delete button to each `<li>`. You'll need `.filter()` — and a way for each button to know
-   *which* item it belongs to. That's the arrow-wrapper trick from Events.
-4. Notice the input doesn't visually clear when you add an item, even though you reset the state.
-   That's because the input isn't *controlled* yet — you're reading from it but never telling it
-   what to show. Look up the `value` prop on `<input>` and wire it up.
 
 ---
 

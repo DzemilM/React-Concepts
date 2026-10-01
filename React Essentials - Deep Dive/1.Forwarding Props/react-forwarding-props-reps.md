@@ -33,6 +33,14 @@ the sentence describing where you stalled.
 ## Rep 1
 
 ```jsx
+<Tag label="React" id="tag-react" onClick={() => console.log('tag')} />
+```
+
+Renders a `<span>` with class `tag` and the text `React` inside it. Clicking it logs.
+
+### My solution
+
+```jsx
 function Tag({label, ...passed}){
   return(
     <span className="tag" {...passed}>{label}</span>
@@ -46,8 +54,6 @@ export default function App(){
 }
 
 ```
-
-Renders a `<span>` with class `tag` and the text `React` inside it. Clicking it logs.
 
 ### My answer
 
@@ -66,6 +72,15 @@ the caller, including `onClick`.
 ## Rep 2
 
 ```jsx
+<SearchBox buttonText="Go" placeholder="Search..." name="q" />
+```
+
+Renders a `<div>` with class `search`, containing an `<input>` and a `<button>` that says `Go`. The
+`<div>` carries no extra attributes.
+
+### My solution
+
+```jsx
 function SearchBox({ buttonText, ...other }) {
   return (
     <div className="search">
@@ -81,9 +96,6 @@ export default function App() {
 
 ```
 
-Renders a `<div>` with class `search`, containing an `<input>` and a `<button>` that says `Go`. The
-`<div>` carries no extra attributes.
-
 ### My answer
 
 ```js
@@ -98,6 +110,17 @@ attributes, so they go on the `<input>`, even though the component returns the `
 ---
 
 ## Rep 3
+
+```jsx
+<Alert kind="error" id="payment-alert" role="alert">
+  Payment failed.
+</Alert>
+```
+
+Renders a `<div>` with class `alert alert-error`. For `kind="success"` it would be
+`alert alert-success`. The text between the tags shows inside it.
+
+### My solution
 
 ```jsx
 function Alert({kind, children, ...other}){
@@ -118,9 +141,6 @@ export default function App(){
 
 ```
 
-Renders a `<div>` with class `alert alert-error`. For `kind="success"` it would be
-`alert alert-success`. The text between the tags shows inside it.
-
 ### My answer
 
 ```js
@@ -137,6 +157,16 @@ accident inside the spread. The rest bucket `...other` must come **last** in the
 ---
 
 ## Rep 4
+
+```jsx
+<LinkButton primary href="/signup" target="_blank">Sign up</LinkButton>
+<LinkButton href="/login">Log in</LinkButton>
+```
+
+Renders an `<a>`. Class is `btn btn-primary` when `primary` is set, just `btn` when it isn't.
+`primary` must not appear on the `<a>` in devtools.
+
+### My solution
 
 ```jsx
 function LinkButton({ primary, children, ...other }) {
@@ -161,9 +191,6 @@ export default function App() {
 }
 
 ```
-
-Renders an `<a>`. Class is `btn btn-primary` when `primary` is set, just `btn` when it isn't.
-`primary` must not appear on the `<a>` in devtools.
 
 ### My answer
 
