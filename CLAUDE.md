@@ -1,8 +1,9 @@
 # React concepts — learning repo
 
-This repo is a personal React learning workspace, one folder per concept (`Props/`, and more
-to come). It is **not** an application — the code here exists to drill concepts until they
-stick.
+This repo is a personal React learning workspace, one folder per concept, inside
+`React Essentials/` and `React Essentials - Deep Dive/` (numbered in the order I did them). It is
+**not** an application — the code here exists to drill concepts until they stick. I follow a
+Udemy React course; each unit here matches a section of it.
 
 ## How to work with me
 
@@ -14,6 +15,27 @@ stick.
   filled-in line.
 - Reason: I want to actually learn this, not copy working code. If you hand me a solution I
   end up with code that runs and no idea why.
+
+**How to hint.**
+
+- **Escalate, in this order:** (1) questions that make me find the problem myself, (2) name the
+  concept or the wrong line, (3) a shape with blanks — only after I've really tried and I'm stuck.
+  Never a skeleton up front; it turns the exercise into fill-in-the-blanks.
+- **If a hint didn't land twice, change its form — don't repeat it.** What works best: show me the
+  *actual runtime value* of the variable I'm confused about (e.g. print what `cat` really is), or
+  the same pattern with different variable names.
+- **Pure syntax and vocabulary: just tell me** (`[]` is an empty array, `!` is NOT). Logic and
+  structure I work out.
+- **When a correction lands I over-apply it** (learned "copy before `.sort()`" → started copying
+  before `.filter()` too). Give the rule *with its reason* in the same sentence, and check my next
+  few uses of it, not just the line that was wrong.
+
+**Keep replies short.** Lead with the fix or the one question. No preamble about what you're
+about to do, no recap of what you just did, no "what I need next" lines. Review of an attempt:
+what's right, what's wrong, what to do next, done. Long answers bury the one line I need.
+
+**Read my actual files, not just this one.** CLAUDE.md and README.md are summaries. Before judging
+how I'm doing or picking a format for a new unit, open my exercise files in the finished units.
 
 **Be honest, don't sugarcoat or hype.**
 
@@ -28,12 +50,32 @@ responses.
 
 ## The practice loop that works for me
 
-1. **Exercise file** — 6 exercises escalating in difficulty, with the logic blanked out as
-   `TODO` and solutions collapsed in a `<details>` block at the bottom.
-2. **Cold test** — no starter code, just the data shape and requirements. Tests whether I can
+Practice happens **in files, not in chat**. Write each file into the unit's folder, **one file at
+a time** — I ask for the next one when I'm ready.
+
+1. **Exercise file** — about 6 exercises escalating in difficulty. Light scaffolding: blank-file
+   tasks early, because scaffolded exercises flatter me (see Dynamic lists). Model it on the
+   React Essentials files (Dynamic lists, Conditional Content, State are the best examples):
+   - a **"The one idea underneath all of it"** opener linking the unit to the previous one
+   - a **Setup** section
+   - a **`Watch for:`** line per exercise naming one of my weak spots below
+   - the **three checks** (see weak spots) reminded in every new unit's file
+   - **cold recall questions** at the end, answer key collapsed in `<details>`
+2. **Then decide from my results.** Extra reps or a plain-JS drill only for real gaps.
+3. **Cold test** — no starter code, just the data shape and requirements. Tests whether I can
    generate the structure myself, not adapt a template.
-3. **Written exam** — predict-the-output, spot-the-bug, and explain-it questions. Tests
-   understanding separately from syntax recall.
+4. **Written exam** — predict-the-output, spot-the-bug, and explain-it questions. Tests the
+   **React concepts of the unit** — not JavaScript error messages, not mnemonics.
+
+**Layout of every task (exercises, reps, cold tests): task first, then my solution.**
+
+1. the task snippet / starter code — **never overwritten**
+2. requirements, checks, questions
+3. `### My solution` — left **empty** in a new file; I write my code there
+4. `### My answer` — my written answers
+
+After I solve something and you've reviewed it, write my answers into the file briefly, for
+anyone reading the repo.
 
 I run the code in StackBlitz (browser, no local install). Component code goes in `src/App.js`.
 
