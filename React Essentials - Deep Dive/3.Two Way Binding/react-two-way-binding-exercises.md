@@ -72,8 +72,34 @@ export default App;
 
 ### My solution
 
+```jsx
+import { useState } from 'react';
+
+function App() {
+  
+  const [name, setName] = useState("");
+
+  function handleName(event){
+    setName(event.target.value);
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 1</h1>
+      <input type="text" value={name} onChange={handleName} />
+      <p>Name: {name}</p>
+    </div>
+  );
+}
+
+export default App;
+```
 
 ### My answer
+
+`value` displays the current state value inside the input. `onChange` runs when
+the user edits the input and updates state with the new value. The state update
+then re-renders the input with that value.
 
 
 ## Exercise 2: Feedback textarea
@@ -111,8 +137,35 @@ export default App;
 
 ### My solution
 
+```jsx
+import { useState } from 'react';
+
+function App() {
+  
+  const [ feedback, setFeedback ] = useState("");
+
+  function handleFeedback(event){
+    setFeedback(event.target.value);
+  }
+
+  return (
+    <div id="app">
+      <h1>Exercise 2</h1>
+      <textarea value={feedback} onChange={handleFeedback} />
+      <p>Message: {feedback}</p>
+      <p>Character count:{feedback.length}</p>
+    </div>
+  );
+}
+
+export default App;
+```
 
 ### My answer
+
+The character count is derived from the current `feedback` value, so it should
+not be separate state. Storing both would duplicate information and could let
+the text and count get out of sync.
 
 
 ## Exercise 3: Search preview
@@ -140,6 +193,9 @@ that change?
 
 ### My solution
 
+```jsx
+
+```
 
 ### My answer
 
@@ -167,6 +223,9 @@ trying to clear the DOM inputs directly?
 
 ### My solution
 
+```jsx
+
+```
 
 ### My answer
 
@@ -196,6 +255,9 @@ value to determine the displayed shipping price?
 
 ### My solution
 
+```jsx
+
+```
 
 ### My answer
 
@@ -239,6 +301,9 @@ its own separate state?
 
 ### My solution
 
+```jsx
+
+```
 
 ### My answer
 
