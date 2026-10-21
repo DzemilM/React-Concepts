@@ -195,9 +195,46 @@ that change?
 
 ```jsx
 
+import { useState } from 'react';
+
+const BOOKS = ['Dune', 'Emma', 'The Hobbit', 'Beloved'];
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const matchingBooks = BOOKS.filter((book) =>
+    book.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  function handleSearch(event) {
+    setSearchTerm(event.target.value);
+  }
+
+  return (
+    <>
+      <input type="text" value={searchTerm} onChange={handleSearch} />
+      {matchingBooks.length === 0 ? (
+        <p>No matches</p>
+      ) : (
+        <ul>
+          {matchingBooks.map((book) => {
+            return <li key={book}>{book}</li>;
+          })}
+        </ul>
+      )}
+    </>
+  );
+}
+
+export default App;
+
 ```
 
 ### My answer
+
+When the user types, `searchTerm` state changes. React re-renders, and
+`matchingBooks` is recalculated by filtering `BOOKS` against the new search
+term. The filtered list is derived data, not separate state.
 
 
 ## Exercise 4: Profile form
@@ -224,10 +261,46 @@ trying to clear the DOM inputs directly?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function App() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+
+  function handleFirstName(event) {setFirstName(event.target.value);}
+
+  function handleLastName(event) {setLastName(event.target.value);}
+
+  function handleEmail(event) {setEmail(event.target.value);}
+
+  function reset() {
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+  }
+
+  return (
+    <>
+      <input type="text" value={firstName} onChange={handleFirstName} />
+      <p>First name: {firstName}</p>
+      <input type="text" value={lastName} onChange={handleLastName} />
+      <p>Last name: {lastName}</p>
+      <input type="text" value={email} onChange={handleEmail} />
+      <p>Email: {email}</p>
+      <button onClick={reset}>Clear</button>
+    </>
+  );
+}
+
+export default App;
 ```
 
 ### My answer
+
+`Clear` updates all three state values because the inputs are controlled by
+state. React then re-renders them with empty strings. Changing the DOM directly
+would bypass the state that React uses as the source of truth.
 
 
 ## Exercise 5: Shipping estimate
