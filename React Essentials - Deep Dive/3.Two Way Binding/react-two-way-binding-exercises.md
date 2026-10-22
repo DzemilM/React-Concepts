@@ -329,10 +329,51 @@ value to determine the displayed shipping price?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+export default function App(){
+
+const [ city, setCity ] = useState('');
+const [ shippingMethod, setShippingMethod ] = useState('standard');
+
+let price;
+
+if(shippingMethod === 'standard'){
+  price = 5;
+} else if(shippingMethod === 'express'){
+  price = 15;
+} else if(shippingMethod === 'overnight'){
+  price = 30;
+}
+
+function handleCity(event){
+  setCity(event.target.value);
+}
+
+function handleChange(event){
+  setShippingMethod(event.target.value);
+}
+
+  return(
+    <>
+     <input type="text" value={city} onChange={handleCity} />
+     <select onChange={handleChange} value={shippingMethod}>
+      <option value='standard'>Standard</option>
+      <option value='express'>Express</option>
+      <option value='overnight'>Overnight</option>
+     </select>
+     <p>{city ? `Shipping to: ${city}` : 'Enter a city'}</p>
+     <p>{`${shippingMethod}, ${price}$`}</p>
+    </>
+  );
+}
 ```
 
 ### My answer
+
+The `<select>` stores the selected option's `value`—`'standard'`,
+`'express'`, or `'overnight'`—in `shippingMethod`. The price is derived from
+that selected method rather than stored separately.
 
 
 ## Exercise 6: Comment form and preview component
@@ -375,10 +416,47 @@ its own separate state?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function CommentPreview({ comment, author }) {
+  return (
+    <figure>
+      <blockquote>
+        <p>{comment}</p>
+      </blockquote>
+      <figcaption>{author}</figcaption>
+    </figure>
+  );
+}
+
+export default function App(){
+
+  const [ comment, setComment ] = useState("");
+  const [ author, setAuthor ] = useState("");
+
+  function handleComment(event){
+    setComment(event.target.value);
+  }
+
+  function handleAuthor(event){
+    setAuthor(event.target.value);
+  }
+  
+  return(
+    <>
+      <textarea value={comment} onChange={handleComment} />
+      <input type="text" value={author} onChange={handleAuthor} />
+      <CommentPreview comment={comment} author={author} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+`App` owns the state because it owns the inputs and needs the current values to
+pass them to `CommentPreview` as props. `CommentPreview` only displays those
+props; it does not edit them.
 
 
 ## Cold recall
