@@ -40,7 +40,42 @@ are derived?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function ContactCard(){
+
+   const [ name, setName ] = useState("");
+   const [ email, setEmail ] = useState("");
+
+   function handleName(event){
+      setName(event.target.value);
+   }
+
+   function handleEmail(event){
+      setEmail(event.target.value);
+   }
+
+   function reset(){
+      setName("");
+      setEmail("");
+   }
+
+   return(
+      <>
+      <input type="text" value={name} onChange={handleName} />
+      <input type="email" value={email} onChange={handleEmail} />
+      <p>Name:{name}</p>
+      <p>Email:{email}</p>
+      <button onClick={reset}>Clear</button>
+      </>
+   )
+}
+
+export default function App(){
+   return(
+      <ContactCard />
+   )
+}
 ```
 
 ### My answer
@@ -48,6 +83,10 @@ are derived?
 1. Why must the `Clear` button update state instead of changing the input DOM
    values directly?
 2. What are the two halves that make each input controlled?
+
+`Clear` updates state because state is React's source of truth for the inputs.
+The state update causes React to re-render the DOM with empty values. `value`
+and `onChange` together make an input controlled.
 
 ---
 
