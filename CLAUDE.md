@@ -173,6 +173,25 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   *after* writing (see weak spots). Exams test React, not mnemonics.
   **Loose end:** what the capital letter on a tag means — wrong in prediction and explanation (exam
   A1 and D3), never in my own code. Rule 3 below.
+- **Two-Way Binding — done** (2026-10-26, worked through with Copilot). Controlled `<input>`,
+  `<textarea>` and `<select>`: `value` shows state, `onChange` writes `event.target.value` back
+  through the setter, and the re-render shows the stored value — data flows both ways. A textarea
+  takes its text through `value`, not as children; a select stores the chosen option's `value`
+  string. Resetting a form means setting state to `''`, never touching the DOM. Derived values stay
+  derived even when they come from input state: a character count, a filtered list (two conditions
+  combined, case-insensitive, from an unchanged fixed array), a price picked by `if`/`else if` above
+  the `return`. The component that owns the inputs owns the state and passes the current values to
+  a display-only child as props. Confirmed via the Udemy feedback/`Review` exercise, six exercises
+  and a three-task cold test. **No exam was written.** This was the first unit done with Copilot, so
+  the files don't show what was first-try versus helped.
+  A four-task spot-the-bug round with Claude afterwards covered what the exercises never hit. I
+  found the bug line in all four. Fixes for `value` without `onChange` and for the textarea (`value`,
+  not children) were unaided. Two facts I didn't know: `event.target.value` is **always a string**
+  (so `+ 1` joins), fixed with `Number()`; and a checkbox uses `checked` / `event.target.checked`,
+  since its `value` is always `'on'` (truthy). On the checkbox I first moved the handler onto the
+  button. I explain things **only half the time unprompted**: the "why" answers needed a
+  question or two every time, and once I said "`note` doesn't update" when I meant the textarea
+  doesn't. Keep state and screen separate in my wording.
 
 ## My known weak spots
 

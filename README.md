@@ -27,15 +27,16 @@ up) and holding objects or arrays of objects in state are still to come.
 | [`0.Fragments/`](React%20Essentials%20-%20Deep%20Dive/0.Fragments/) | Returning several elements without adding a wrapper to the DOM | Done (short: 3 exercises) |
 | [`1.Forwarding Props/`](React%20Essentials%20-%20Deep%20Dive/1.Forwarding%20Props/) | A wrapper component using its own props and passing the rest on to the element inside | Done (6 exercises + 4 reps) |
 | [`2.Creating flexible components/`](React%20Essentials%20-%20Deep%20Dive/2.Creating%20flexible%20components/) | Components that take JSX in several slots, choose their tag from a prop, and default their props | Done (2 exercise sets, 4 reps, cold test, exam) |
+| [`3.Two Way Binding/`](React%20Essentials%20-%20Deep%20Dive/3.Two%20Way%20Binding/) | Inputs, textareas and selects whose value comes from state and whose changes write back to it | Done (Udemy exercise, 6 exercises, cold test, 4 spot-the-bug tasks; no exam) |
 
 ## How each concept gets drilled
 
 Three passes, in order. Each one tests something the previous one doesn't:
 
-1. **Exercise file** — six exercises escalating in difficulty, with the logic blanked out as
-   `TODO` and solutions collapsed at the bottom. Tests recall with scaffolding. Repeated as
-   numbered sets (`-2`, `-3`) with fresh problems until I can do a set without help, thinning
-   the starter code each round.
+1. **Exercise file** — about six exercises escalating in difficulty, with light scaffolding:
+   blank-file tasks early. Each task sits at the top and stays untouched; my code goes under
+   `### My solution` and my written answers under `### My answer`. Repeated as numbered sets
+   (`-2`, `-3`) with fresh problems only when there's a real gap.
 2. **Cold test** — no starter code. Just a data shape and a list of requirements. Tests
    whether I can generate the structure myself instead of adapting a template.
 3. **Written exam** — predict-the-output, spot-the-bug, and explain-it questions. Tests
