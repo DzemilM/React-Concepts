@@ -118,7 +118,57 @@ values can be recalculated from them?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function ProductFinder() {
+  const [searchText, setSearchText] = useState('');
+  const [selected, setSelected] = useState('all');
+
+  function handleSearch(event) {
+    setSearchText(event.target.value);
+  }
+
+  function handleSelect(event) {
+    setSelected(event.target.value);
+  }
+
+  const visibleProducts = PRODUCTS.filter((product) => {
+    const nameMatches = product.name
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+
+    const categoryMatches = selected === 'all' || product.category === selected;
+
+    return nameMatches && categoryMatches;
+  });
+
+  return (
+    <>
+      <input type="search" onChange={handleSearch} value={searchText} />
+      <select value={selected} onChange={handleSelect}>
+        <option value="all">all</option>
+        <option value="office">office</option>
+        <option value="school">school</option>
+      </select>
+      {visibleProducts.length === 0 ? (
+        <p>No products found</p>
+      ) : (
+        <>
+          <p>Showing {visibleProducts.length} of 4 products</p>
+          <ol>
+            {visibleProducts.map((product) => (
+              <li key={product.id}>{product.name}</li>
+            ))}
+          </ol>
+        </>
+      )}
+    </>
+  );
+}
+
+export default function App() {
+  return <ProductFinder />;
+}
 ```
 
 ### My answer
@@ -128,6 +178,12 @@ values can be recalculated from them?
    value?
 3. If the search is cleared, why should products return instead of being
    permanently removed?
+
+The `<select>` stores the option's value, so choosing the office option stores
+`'office'` in `selected`. The matching product list is derived from the fixed
+`PRODUCTS` array, `searchText`, and `selected`, so it should not be duplicated
+in state. Clearing the search changes `searchText`; React then recalculates the
+visible list from the unchanged original array, so the products return.
 
 ---
 
@@ -152,7 +208,47 @@ Before you code, decide which component owns the changing data and why.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function DraftForm() {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+
+  function handleTitle(event) {
+    setTitle(event.target.value);
+  }
+
+  function handleBody(event) {
+    setBody(event.target.value);
+  }
+
+  function reset() {
+    setTitle('');
+    setBody('');
+  }
+
+  return (
+    <>
+      <input type="text" value={title} onChange={handleTitle} />
+      <textarea value={body} onChange={handleBody} />
+      <DraftPreview title={title} body={body} />
+      <button onClick={reset}>Clear draft</button>
+    </>
+  );
+}
+
+function DraftPreview({ title, body }) {
+  return (
+    <>
+      <p>Title: {title}</p>
+      <p>Body: {body}</p>
+    </>
+  );
+}
+
+export default function App() {
+  return <DraftForm />;
+}
 ```
 
 ### My answer
@@ -161,6 +257,13 @@ Before you code, decide which component owns the changing data and why.
 2. Trace the update after the user types one character into the body:
    name the event value, the state update, the prop update, and what the child
    displays.
+
+`DraftForm` owns the state because it owns the inputs and needs their current
+values both to control those inputs and to pass them to `DraftPreview`.
+`DraftPreview` only displays the props and does not edit the values. When the
+user types, the event contains the new body text; `handleBody` stores it in
+`body`; `DraftForm` re-renders and passes the new `body` as a prop; then
+`DraftPreview` displays the updated body.
 
 ---
 
@@ -172,6 +275,15 @@ Before you code, decide which component owns the changing data and why.
    same in concept?
 4. Did you ever call a handler during render instead of passing it?
 5. Did any value get duplicated in state even though it could be calculated?
+
+Task 2 took the most planning time because it combined two filtering conditions.
+Task 1 used `name` and `email` as state, with no derived value. Task 2 used
+`searchText` and `selected` as state, with `visibleProducts` as derived data.
+Task 3 used `title` and `body` as state, with no separate derived value. The
+`select` was different in syntax but used the same controlled-element concept
+as a text input: `value` displays state and `onChange` updates it. I passed the
+handlers rather than calling them during render. I did not duplicate any value
+in state when it could be calculated.
 
 <details>
 <summary><strong>Answer key</strong> — open only after all three tasks are done</summary>
