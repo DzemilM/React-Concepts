@@ -305,10 +305,53 @@ Say what happens to each one when you click `Reviews`.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function TabButtons({ activeTab, setTab }) {
+  return (
+    <menu>
+      <button
+        className={activeTab === 'info' ? 'active' : ''}
+        onClick={() => setTab('info')}
+      >
+        Info
+      </button>
+      <button
+        className={activeTab === 'reviews' ? 'active' : ''}
+        onClick={() => setTab('reviews')}
+      >
+        Reviews
+      </button>
+    </menu>
+  );
+}
+
+function TabContent({ activeTab }) {
+  return (
+    <section>
+      {activeTab === 'info' ? <p>Product details.</p> : <p>No reviews yet.</p>}
+    </section>
+  );
+}
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('info');
+
+  return (
+    <>
+      <TabButtons activeTab={activeTab} setTab={setActiveTab} />
+      <TabContent activeTab={activeTab} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+In the broken code each child had its own `useState`, so there were two separate `activeTab`
+values, not one. Clicking `Reviews` changed `TabButtons`' copy to `'reviews'`, so the highlight
+moved. `TabContent`'s copy stayed `'info'`, because nothing told it. Lifting the state into `App`
+leaves one value that both children receive as a prop, so they always agree.
 
 ---
 
