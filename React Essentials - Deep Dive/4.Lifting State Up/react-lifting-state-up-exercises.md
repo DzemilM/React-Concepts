@@ -122,10 +122,48 @@ that function call, what value arrives in `App`, and what does `SizeLabel` show?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function SizePicker({ pickSize }) {
+  return (
+    <>
+      <button onClick={() => pickSize('S')}>S</button>
+      <button onClick={() => pickSize('M')}>M</button>
+      <button onClick={() => pickSize('L')}>L</button>
+    </>
+  );
+}
+
+function SizeLabel({ selectedSize }) {
+  return (
+    <p>
+      {selectedSize ? `Selected size: ${selectedSize}` : 'No size selected'}
+    </p>
+  );
+}
+
+export default function App() {
+  const [size, setSize] = useState('');
+
+  function handleSize(newSize) {
+    setSize(newSize);
+  }
+
+  return (
+    <>
+      <SizePicker pickSize={handleSize} />
+      <SizeLabel selectedSize={size} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+React calls the button's arrow function, which calls `pickSize("M")`. `pickSize` is `handleSize`
+under another name: the same function, passed down from `App`. So `"M"` arrives in `App` as the
+parameter, and `setSize` stores it. `App` re-renders and passes `'M'` down, so `SizeLabel` shows
+`Selected size: M`.
 
 ---
 
