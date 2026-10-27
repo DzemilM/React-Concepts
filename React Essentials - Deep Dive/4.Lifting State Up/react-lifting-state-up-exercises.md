@@ -191,10 +191,56 @@ would it also work in the other one? Why?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+const CITIES = ['Sarajevo', 'Mostar', 'Split', 'Zagreb', 'Ljubljana', 'Skopje'];
+
+function SearchBar({ val, handleVal }) {
+  return <input type="text" value={val} onChange={handleVal} />;
+}
+
+function CityList({ cities }) {
+  return (
+    <div>
+      {cities.length > 0 ? (
+        <ol>
+          {cities.map((city) => {
+            return <li key={city}>{city}</li>;
+          })}
+        </ol>
+      ) : (
+        'No cities found'
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  const [searchText, setSearchText] = useState('');
+  function handleSearch(event) {
+    setSearchText(event.target.value);
+  }
+
+  const filteredCities = CITIES.filter((city) => {
+    return city.toLowerCase().includes(searchText.toLowerCase());
+  });
+
+  return (
+    <>
+      <SearchBar val={searchText} handleVal={handleSearch} />
+      <CityList cities={filteredCities} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+I filtered in `App`, because `App` already has both ingredients: `CITIES` and `searchText`. It
+would also work inside `CityList`, as long as `App` passed `searchText` down as a prop. The
+**state** has to stay in `App`, because `SearchBar` changes it and `CityList` reads it. The
+**derived** list can be computed in either component, as long as that component receives what it
+needs.
 
 ---
 
