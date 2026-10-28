@@ -496,41 +496,55 @@ const PLAYERS = [
   { id: 'u3', name: 'Mira', team: 'Red' },
 ];
 
-function PlayerRow({ playerName, playerId, select }){
+function PlayerRow({ playerName, playerId, select, selected }) {
+  return (
+    <li>
+      {playerName}
+      {selected ? '(selected)' : ''}
+      <button onClick={() => select(playerId)}>Select</button>
+    </li>
+  );
+}
+
+function PlayerInfo({ selectedP }){
   return(
-      <li>
-        {playerName}
-        <button onClick={() => select(playerId)}>Select</button>
-      </li>
+    <p>{selectedP ? `${selectedP.name} - ${selectedP.team}` : "Pick a player"}</p>
   )
 }
 
-export default function App(){
+export default function App() {
+  const [selectedPlayerId, setSelectedPlayerId] = useState('');
+  const selectedPlayer = PLAYERS.find((p) => p.id === selectedPlayerId);
 
-  const [ selectedPlayerId, setSelectedPlayerId ] = useState("");
-
-  function handleSelect(param){
-    setSelectedPlayerId(param)
+  function handleSelect(param) {
+    setSelectedPlayerId(param);
   }
-  return(
+  return (
     <>
-     <ul>
-      {PLAYERS.map((player) => {
-        return(
-          <PlayerRow 
-          key={player.id}  
-          playerName={player.name} 
-          playerId={player.id}
-          select={handleSelect} />
-        )
-      })}
-     </ul>
+      <ul>
+        {PLAYERS.map((player) => {
+          return (
+            <PlayerRow
+              key={player.id}
+              playerName={player.name}
+              playerId={player.id}
+              selected={player.id === selectedPlayerId}
+              select={handleSelect}
+            />
+          );
+        })}
+      </ul>
+      <PlayerInfo selectedP={selectedPlayer} />
     </>
-  )
+  );
 }
 ```
 
 ### My answer
+
+The players' names and teams already live in `PLAYERS`, so the state only needs enough to point at
+one of them: the `id`. Everything else is derived from it. `selectedPlayer` is found with
+`PLAYERS.find(...)`, and each row's `selected` is `player.id === selectedPlayerId`.
 
 ---
 
@@ -541,6 +555,17 @@ export default function App(){
 3. When the child calls that function, whose state changes, and which components re-render?
 4. Why not just put every piece of state in `App`?
 5. Props flow down only. So how does a value the user picked in a child get up to the parent?
+
+### My answer
+
+1. In the closest component above both of them.
+2. A function.
+3. The parent's state changes. The parent re-renders, and so do its children.
+4. State goes no higher than it needs to. Higher up, components in between pass props they never
+   use, and components that don't care (`Header` in Ex 5) re-render on every change. (Needed a
+   prompt.)
+5. As an argument: the child calls the parent's function with the value. Props go down, arguments
+   go up. (Needed the word "argument".)
 
 <details>
 <summary>Answer key</summary>
