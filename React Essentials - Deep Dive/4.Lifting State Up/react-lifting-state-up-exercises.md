@@ -530,34 +530,6 @@ export default function App(){
 }
 ```
 
-### Where I stopped (2026-10-28)
-
-**What I built so far, and why:**
-
-- **`App` owns the state** `selectedPlayerId`. It starts as `""`, meaning nothing is selected
-  yet. After a click it holds an id like `'u1'`: just the id, not the whole player.
-- **`handleSelect(param)`** lives in `App`, so it can call `App`'s setter. Whatever arrives as
-  `param` gets stored.
-- **The map** runs once per player. Each time, `player` is **one object**
-  (`{ id: 'u1', name: 'Ana', ... }`). `PLAYERS` is the whole array, so `PLAYERS.id` is
-  `undefined`. Use `player.id`, not `PLAYERS.id`.
-- **`App` passes `handleSelect` down bare**, with no brackets. With brackets, `handleSelect(...)`
-  would run during render and pass down `undefined`.
-- **`PlayerRow` wraps it**: `() => select(playerId)`. The child adds its own id, so `App` learns
-  *which* row was clicked. That's why `App` must also pass `playerId={player.id}`, or the button
-  sends up `undefined`.
-- The **key** goes on `<PlayerRow>` in `App`, because that's what the map returns.
-
-**A click on Ana, end to end:** button → `select('u1')` → that's `handleSelect('u1')` →
-`setSelectedPlayerId('u1')` → `App` runs again with `selectedPlayerId = 'u1'`.
-
-**Slips I made on the way:** `PLAYERS.id` instead of `player.id` (array vs item), the same comma
-missing twice in the parameter list, and the `playerId` prop forgotten on the `App` side.
-
-**Next step:** `(selected)` after the selected name. `PlayerRow` has to know whether it's the
-selected one, but `selectedPlayerId` lives in `App`. What can `App` work out for each row, and how
-does it reach `PlayerRow`? After that: `PlayerInfo`, then the written answer.
-
 ### My answer
 
 ---
