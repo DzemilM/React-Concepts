@@ -391,10 +391,71 @@ if it went in `App`?
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+const PRODUCTS = [
+  { id: 'p1', name: 'Lamp', onSale: true },
+  { id: 'p2', name: 'Chair', onSale: false },
+  { id: 'p3', name: 'Rug', onSale: true },
+];
+
+function Header() {
+  return <h1>Some shop name</h1>;
+}
+
+function Shop() {
+  const [filter, setFilter] = useState('all');
+
+  const onSale = PRODUCTS.filter((product) => product.onSale);
+
+  function handleProds(param) {
+    setFilter(param);
+  }
+
+  return (
+    <>
+      <Filters handleFilter={handleProds} />
+      <ProductList prodList={filter === 'sale' ? onSale : PRODUCTS} />
+    </>
+  );
+}
+
+function Filters({ handleFilter }) {
+  return (
+    <>
+      <button onClick={() => handleFilter('all')}>All</button>
+      <button onClick={() => handleFilter('sale')}>On sale</button>
+    </>
+  );
+}
+
+function ProductList({ prodList }) {
+  return (
+    <ul>
+      {prodList.map((prod) => {
+        return <li key={prod.id}>{prod.name}</li>;
+      })}
+    </ul>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Header />
+      <Shop />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+State goes in the closest parent of every component that reads or changes it. `Filters` changes
+the filter and `ProductList` reads it, so that's `Shop`. `App` would be higher than needed: it would
+have to pass the state and the handler through `Shop`, which only forwards them, and every click
+would re-render `Header` for nothing. `Header` itself wouldn't have to do anything, because it
+never uses the filter.
 
 ---
 
@@ -427,8 +488,75 @@ derived from it.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+const PLAYERS = [
+  { id: 'u1', name: 'Ana', team: 'Red' },
+  { id: 'u2', name: 'Luis', team: 'Blue' },
+  { id: 'u3', name: 'Mira', team: 'Red' },
+];
+
+function PlayerRow({ playerName, playerId, select }){
+  return(
+      <li>
+        {playerName}
+        <button onClick={() => select(playerId)}>Select</button>
+      </li>
+  )
+}
+
+export default function App(){
+
+  const [ selectedPlayerId, setSelectedPlayerId ] = useState("");
+
+  function handleSelect(param){
+    setSelectedPlayerId(param)
+  }
+  return(
+    <>
+     <ul>
+      {PLAYERS.map((player) => {
+        return(
+          <PlayerRow 
+          key={player.id}  
+          playerName={player.name} 
+          playerId={player.id}
+          select={handleSelect} />
+        )
+      })}
+     </ul>
+    </>
+  )
+}
 ```
+
+### Where I stopped (2026-10-28)
+
+**What I built so far, and why:**
+
+- **`App` owns the state** `selectedPlayerId`. It starts as `""`, meaning nothing is selected
+  yet. After a click it holds an id like `'u1'`: just the id, not the whole player.
+- **`handleSelect(param)`** lives in `App`, so it can call `App`'s setter. Whatever arrives as
+  `param` gets stored.
+- **The map** runs once per player. Each time, `player` is **one object**
+  (`{ id: 'u1', name: 'Ana', ... }`). `PLAYERS` is the whole array, so `PLAYERS.id` is
+  `undefined`. Use `player.id`, not `PLAYERS.id`.
+- **`App` passes `handleSelect` down bare**, with no brackets. With brackets, `handleSelect(...)`
+  would run during render and pass down `undefined`.
+- **`PlayerRow` wraps it**: `() => select(playerId)`. The child adds its own id, so `App` learns
+  *which* row was clicked. That's why `App` must also pass `playerId={player.id}`, or the button
+  sends up `undefined`.
+- The **key** goes on `<PlayerRow>` in `App`, because that's what the map returns.
+
+**A click on Ana, end to end:** button → `select('u1')` → that's `handleSelect('u1')` →
+`setSelectedPlayerId('u1')` → `App` runs again with `selectedPlayerId = 'u1'`.
+
+**Slips I made on the way:** `PLAYERS.id` instead of `player.id` (array vs item), the same comma
+missing twice in the parameter list, and the `playerId` prop forgotten on the `App` side.
+
+**Next step:** `(selected)` after the selected name. `PlayerRow` has to know whether it's the
+selected one, but `selectedPlayerId` lives in `App`. What can `App` work out for each row, and how
+does it reach `PlayerRow`? After that: `PlayerInfo`, then the written answer.
 
 ### My answer
 
