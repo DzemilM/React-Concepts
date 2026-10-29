@@ -562,10 +562,9 @@ one of them: the `id`. Everything else is derived from it. `selectedPlayer` is f
 2. A function.
 3. The parent's state changes. The parent re-renders, and so do its children.
 4. State goes no higher than it needs to. Higher up, components in between pass props they never
-   use, and components that don't care (`Header` in Ex 5) re-render on every change. (Needed a
-   prompt.)
+   use, and components that don't care (`Header` in Ex 5) re-render on every change.
 5. As an argument: the child calls the parent's function with the value. Props go down, arguments
-   go up. (Needed the word "argument".)
+   go up.
 
 <details>
 <summary>Answer key</summary>

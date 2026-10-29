@@ -82,10 +82,45 @@ get to `App`? (Two parts.)
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function Stars({ pickStar }) {
+  return (
+    <>
+      <button onClick={() => pickStar(1)}>1</button>
+      <button onClick={() => pickStar(2)}>2</button>
+      <button onClick={() => pickStar(3)}>3</button>
+      <button onClick={() => pickStar(4)}>4</button>
+      <button onClick={() => pickStar(5)}>5</button>
+    </>
+  );
+}
+
+function RatingText({ pickedStars }) {
+  return <p>{pickedStars ? `You rated ${pickedStars}/5` : 'Not rated yet'}</p>;
+}
+
+export default function App() {
+  const [stars, setStars] = useState(0);
+
+  function handleStar(picked) {
+    setStars(picked);
+  }
+
+  return (
+    <>
+      <Stars pickStar={handleStar} />
+      <RatingText pickedStars={stars} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+`Stars` knows the `4` first: the button's arrow function calls `pickStar(4)`. The `4` goes up as an
+**argument** to `App`'s function (`pickStar` is `handleStar`), arrives as the parameter `picked`, and
+`setStars` stores it.
 
 ---
 
@@ -141,10 +176,48 @@ why does a colour show up before any click? (Two parts.)
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function ColorButtons({ onPick }) {
+
+  return (
+    <div>
+      <button onClick={() => onPick('red')}>Red</button>
+      <button onClick={() => onPick('green')}>Green</button>
+      <button onClick={() => onPick('blue')}>Blue</button>
+    </div>
+  );
+}
+
+function Swatch({ color }) {
+  return <p>{color ? `Colour: ${color}` : 'Pick a colour'}</p>;
+}
+
+export default function App() {
+  const [color, setColor] = useState('');
+
+  function handlePick(newColor) {
+    setColor(newColor);
+  }
+
+  return (
+    <>
+      <ColorButtons onPick={handlePick} />
+      <Swatch color={color} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+Fixes: wrapped each button in an arrow function, and deleted the unused `useState` in
+`ColorButtons`.
+
+`onClick={onPick('red')}` **calls** `onPick` while React draws the button, so `onClick` receives
+its return value, `undefined`, and clicking does nothing. That call is `handlePick('red')`, which
+runs `setColor` straight away. All three buttons do it during render, so the last one wins and
+`Colour: blue` shows before any click.
 
 ---
 
@@ -175,10 +248,59 @@ whole array, and `FAQS.answer` is `undefined`.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+const FAQS = [
+  {
+    id: 'q1',
+    question: 'Do you ship abroad?',
+    answer: 'Yes, to most of Europe.',
+  },
+  { id: 'q2', question: 'Can I return items?', answer: 'Within 30 days.' },
+  { id: 'q3', question: 'Do you have a shop?', answer: 'Only online.' },
+];
+
+function Panel({ question, answer, isOpen, clickQuestion }) {
+  return (
+    <>
+      <button onClick={() => clickQuestion(question)}>{question}</button>
+      {isOpen && <p>{answer}</p>}
+    </>
+  );
+}
+
+export default function App() {
+  const [ openQuestion, setOpenQuestion] = useState('');
+
+  function handleQuestion(par) {
+    setOpenQuestion(par);
+  }
+
+  return (
+    <ul>
+      {FAQS.map((q) => {
+        return (
+          <li key={q.id}>
+            <Panel
+              question={q.question}
+              clickQuestion={handleQuestion}
+              answer={q.answer}
+              isOpen={q.question === openQuestion}
+            />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 ```
 
 ### My answer
+
+`App` holds **one** value, `openQuestion`, and every panel's `isOpen` is a comparison against it.
+One value can only match one question, so only one panel can be open. If each `Panel` had its own
+state, there would be three separate values that can't see each other, so opening one couldn't close
+the others.
 
 ---
 
@@ -239,10 +361,52 @@ the names it no longer receives.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
+function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function handleToggle() {
+    setMenuOpen((prev) => !prev);
+  }
+
+  return (
+    <nav>
+      <button onClick={handleToggle}>{menuOpen ? 'Close' : 'Menu'}</button>
+      {menuOpen && (
+        <ul>
+          <li>Home</li>
+          <li>About</li>
+        </ul>
+      )}
+    </nav>
+  );
+}
+
+function Layout({ children }) {
+  return (
+    <div className="layout">
+      <Navbar />
+      <main>{children}</main>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Layout>
+      <h1>Welcome</h1>
+    </Layout>
+  );
+}
 ```
 
 ### My answer
+
+`Navbar` reads `menuOpen` (the button label and the menu) and `Navbar`'s button changes it. Only one
+component uses it, so the state goes in `Navbar` itself. Lifting is for when several components
+share a value. `Layout` no longer has to receive `menuOpen` and `onToggle` and pass them on to
+`Navbar` without using them.
 
 ---
 
@@ -266,6 +430,7 @@ items. Ask the question for **each one separately**: who reads it, and who chang
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
 ```
 
@@ -301,6 +466,7 @@ one separately.
 ### My solution
 
 ```jsx
+import { useState } from 'react';
 
 ```
 
