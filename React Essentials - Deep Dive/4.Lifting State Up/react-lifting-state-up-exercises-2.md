@@ -432,9 +432,66 @@ items. Ask the question for **each one separately**: who reads it, and who chang
 ```jsx
 import { useState } from 'react';
 
+function AddItemForm({ submitAdd }) {
+  const [item, setItem] = useState('');
+
+  function handleItem(event) {
+    setItem(event.target.value);
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    submitAdd(item);
+    setItem('');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={item} onChange={handleItem} />
+      <button>Add</button>
+    </form>
+  );
+}
+
+function ItemList({ listItems }) {
+  return (
+    <div>
+      {listItems.length ? (
+        <ul>
+          {listItems.map((item) => {
+            return <li key={item}>{item}</li>;
+          })}
+        </ul>
+      ) : (
+        'Nothing on the list'
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  const [groceries, setGroceries] = useState([]);
+
+  function handleAdd(newItem) {
+    setGroceries([...groceries, newItem]);
+  }
+
+  return (
+    <>
+      <AddItemForm submitAdd={handleAdd} />
+      <ItemList listItems={groceries} />
+    </>
+  );
+}
+
 ```
 
 ### My answer
+
+The typed text (`item`) stays in `AddItemForm`, because only the form reads and changes it. The
+list (`groceries`) goes up to `App`, because `AddItemForm` changes it (through `submitAdd`) and
+`ItemList` reads it, and `App` is their closest common parent. Each piece of state goes in the
+closest component that contains everyone using that piece.
 
 ---
 
@@ -468,9 +525,72 @@ one separately.
 ```jsx
 import { useState } from 'react';
 
+const MOVIES = [
+  { id: 'm1', title: 'Arrival', year: 2016 },
+  { id: 'm2', title: 'Heat', year: 1995 },
+  { id: 'm3', title: 'Up', year: 2009 },
+];
+
+function MovieRow({ title, titleId, clickShow, isActive }) {
+  return (
+    <li className={isActive ? 'active' : ''}>
+      {title}
+      <button onClick={() => clickShow(titleId)}>Show</button>
+    </li>
+  );
+}
+
+export default function App() {
+  const [shownId, setShownId] = useState(null);
+  const shownMovie = MOVIES.find((m) => m.id === shownId);
+
+  function handleShow(par) {
+    setShownId(par);
+  }
+
+  function handleClear() {
+    setShownId(null);
+  }
+
+  return (
+    <>
+      <ul>
+        {MOVIES.map((movie) => {
+          return (
+            <MovieRow
+              title={movie.title}
+              key={movie.id}
+              titleId={movie.id}
+              clickShow={handleShow}
+              isActive={movie.id === shownId}
+            />
+          );
+        })}
+      </ul>
+      <MovieDetails shownMovie={shownMovie} clickClear={handleClear} />
+    </>
+  );
+}
+
+function MovieDetails({ shownMovie, clickClear }) {
+  return (
+    <>
+      <p>
+        {shownMovie
+          ? `${shownMovie.title} (${shownMovie.year})`
+          : 'Choose a movie'}
+      </p>
+      {shownMovie ? <button onClick={clickClear}>Clear</button> : null}
+    </>
+  );
+}
 ```
 
 ### My answer
+
+`MovieRow` wraps because it has to send a value up as an argument: the movie's id
+(`clickShow(titleId)`). `Clear` doesn't send anything. `App` already knows what to do (set the id
+back to `null`), so `MovieDetails` can pass the function bare and React calls it on click.
 
 ---
 
