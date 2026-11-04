@@ -104,9 +104,27 @@ does `VolumeButtons` get the `5` from to work it out?
 ```jsx
 import { useState } from 'react';
 
+function VolumeButtons({ current, onChange }) {
+  return(
+    <>
+      <button onClick={() => onChange(current + 1)}>+</button>
+      <button onClick={() => onChange(current - 1)}>-</button>
+    </>
+  )
+}
+
+function VolumeLabel({ level }){
+  return(
+     <p>Volume: {level}</p>
+  )
+}
 ```
 
 ### My answer
+
+`6` goes up: `onChange(current + 1)` is `onChange(5 + 1)`, and the `6` arrives in `App` as the
+parameter `newVolume`. `VolumeButtons` gets the `5` from its `current` prop, which `App` fills from
+the `volume` state.
 
 ---
 
@@ -156,9 +174,40 @@ from?
 ```jsx
 import { useState } from 'react';
 
+export default function App(){
+
+const [ selectedId, setSelectedId ] = useState("");
+const pickedSeat = SEATS.find((s) => s.id === selectedId);
+
+function handlePick(id) {
+  setSelectedId(id);
+}
+
+  return(
+    <> 
+     <div>
+      {SEATS.map((seat) => {
+        return(
+          <Seat 
+          key={seat.id} 
+          label={seat.label} 
+          seatId={seat.id} 
+          isPicked={seat.id === selectedId}
+          onPick={handlePick} />
+        )
+      })}
+     </div>
+
+     <Summary seat={pickedSeat} />
+    </>
+  )
+}
 ```
 
 ### My answer
+
+From a comparison in `App`. On every render, inside the `.map()`, `App` checks whether this seat's
+id equals `selectedId` (`seat.id === selectedId`) and sends the result down as `isPicked`.
 
 ---
 
@@ -232,9 +281,59 @@ are the two values being compared on the first render?
 ```jsx
 import { useState } from 'react';
 
+const TABS = [
+  { id: 't1', label: 'Home' },
+  { id: 't2', label: 'Profile' },
+  { id: 't3', label: 'Settings' },
+];
+
+function Tab({ label, tabId, isActive, onSelect }) {
+  return (
+    <button className={isActive ? 'active' : ''} onClick={() => onSelect(tabId)}>
+      {label}
+    </button>
+  );
+}
+
+function TabTitle({ tab }) {
+  return <h2>{tab ? tab.label : 'No tab'}</h2>;
+}
+
+export default function App() {
+  const [activeId, setActiveId] = useState('t1');
+  const activeTab = TABS.find((t) => t.id === activeId);
+
+  function handleSelect(id) {
+    setActiveId(id);
+  }
+
+  return (
+    <>
+      <menu>
+        {TABS.map((tab) => {
+          return (
+            <Tab
+              key={tab.id}
+              label={tab.label}
+              tabId={tab.id}
+              isActive={tab.id === activeId}
+              onSelect={handleSelect}
+            />
+          );
+        })}
+      </menu>
+      <TabTitle tab={activeTab} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+The fourth bug is `isActive={tab.id === activeTab}`. All the names match, so the side-by-side check
+can't catch it. On the first render, for the Home tab, it compares the string `'t1'` with the whole
+object `{ id: 't1', label: 'Home' }`. A string never equals an object, so `isActive` is always
+`false` and no tab is highlighted. The fix is to compare id with id: `tab.id === activeId`.
 
 ---
 
@@ -259,9 +358,50 @@ what to do?
 ```jsx
 import { useState } from 'react';
 
+function ModeToggle({ mode, switchMode }) {
+  return(
+     <button onClick={switchMode}>
+       {`Switch to ${mode === "light" ? "dark" : "light"}`}
+     </button>
+  )
+}
+
+function Box({ mode }) {
+  return(
+    <div className={mode}>
+     <p>
+      {mode === "light" ? "Light mode" : "Dark mode"}
+     </p>
+    </div>
+  )
+}
+
+export default function App() {
+
+ const [ selectedMode, setSelectedMode ] = useState("light");
+
+ function handleMode() {
+  setSelectedMode(selectedMode === "light" ? "dark" : "light");
+ }
+
+  return(
+    <> 
+     <ModeToggle mode={selectedMode} switchMode={handleMode} />
+     <Box mode={selectedMode} />
+    </>
+  )
+}
 ```
 
 ### My answer
+
+```
+ModeToggle expects:   mode   switchMode
+App passes:           mode   switchMode
+
+Box expects:          mode
+App passes:           mode
+```
 
 ---
 
