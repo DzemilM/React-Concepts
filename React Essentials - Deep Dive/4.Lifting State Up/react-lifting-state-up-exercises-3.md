@@ -438,6 +438,78 @@ and inside the `.map()` the parameter is **one option**, a plain string.
 ```jsx
 import { useState } from 'react';
 
+const QUESTION = {
+  text: 'What does useState return?',
+  options: ['A number', 'An array with a value and a setter', 'A component'],
+  correct: 'An array with a value and a setter',
+};
+
+function Question({ text }) {
+  return <h2>{text}</h2>;
+}
+
+function AnswerButton({ option, isPicked, clickOption }) {
+  return (
+    <button
+      className={isPicked ? 'picked' : ''}
+      onClick={() => clickOption(option)}
+    >
+      {option}
+    </button>
+  );
+}
+
+function Result({ pickedOption, isCorrect, retry }) {
+  let message;
+
+  if (!pickedOption) {
+    message = 'Pick an answer';
+  } else if (isCorrect) {
+    message = 'Correct!';
+  } else {
+    message = `Wrong. The answer is: ${QUESTION.correct}`;
+  }
+
+  return (
+    <>
+      <p>{message}</p>
+      {pickedOption && <button onClick={retry}>Try again</button>}
+    </>
+  );
+}
+
+export default function App() {
+  const [pickedOption, setPickedOption] = useState('');
+
+  function handleOption(option) {
+    setPickedOption(option);
+  }
+
+  function reset() {
+    setPickedOption('');
+  }
+
+  return (
+    <>
+      <Question text={QUESTION.text} />
+      {QUESTION.options.map((option) => {
+        return (
+          <AnswerButton
+            key={option}
+            option={option}
+            isPicked={option === pickedOption}
+            clickOption={handleOption}
+          />
+        );
+      })}
+      <Result
+        pickedOption={pickedOption}
+        isCorrect={pickedOption === QUESTION.correct}
+        retry={reset}
+      />
+    </>
+  );
+}
 ```
 
 ### My answer
