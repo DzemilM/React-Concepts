@@ -514,6 +514,10 @@ export default function App() {
 
 ### My answer
 
+State stores only `pickedOption`, the text of the chosen option. Two things are derived from it:
+each button's `isPicked` (`option === pickedOption`) and `isCorrect`
+(`pickedOption === QUESTION.correct`).
+
 ---
 
 ## Exercise 6: Recipe browser
@@ -550,9 +554,100 @@ different arrays: the `.map()` uses the filtered one, but `.find()` can search a
 ```jsx
 import { useState } from 'react';
 
+const RECIPES = [
+  { id: 'r1', name: 'Lentil soup', type: 'veg', minutes: 40 },
+  { id: 'r2', name: 'Chicken wrap', type: 'meat', minutes: 15 },
+  { id: 'r3', name: 'Mushroom risotto', type: 'veg', minutes: 35 },
+  { id: 'r4', name: 'Beef stew', type: 'meat', minutes: 90 },
+];
+
+function TypeFilter({ pickFilter }) {
+  return (
+    <>
+      <button onClick={() => pickFilter('all')}>All</button>
+      <button onClick={() => pickFilter('veg')}>Veg</button>
+      <button onClick={() => pickFilter('meat')}>Meat</button>
+    </>
+  );
+}
+
+function RecipeRow({ recipeName, recipeId, clickView, isViewed }) {
+  return (
+    <>
+      <li className={isViewed ? 'active' : ''}>
+        {recipeName}
+        <button onClick={() => clickView(recipeId)}>View</button>
+      </li>
+    </>
+  );
+}
+
+function RecipeCard({ viewedRecipe, closeRecipe }) {
+  return (
+    <>
+      {viewedRecipe ? (
+        <>
+          <p>
+            {viewedRecipe.name} — {viewedRecipe.minutes} min
+          </p>
+          <button onClick={closeRecipe}>Close</button>
+        </>
+      ) : (
+        <p>Pick a recipe</p>
+      )}
+    </>
+  );
+}
+
+export default function App() {
+  const [filter, setFilter] = useState('all');
+  const [viewedRecipeId, setViewedRecipeId] = useState('');
+
+  const viewedRecipe = RECIPES.find((r) => r.id === viewedRecipeId);
+  const visibleRecipes =
+    filter === 'all' ? RECIPES : RECIPES.filter((r) => r.type === filter);
+
+  function handleFilter(f) {
+    setFilter(f);
+  }
+
+  function handleView(v) {
+    setViewedRecipeId(v);
+  }
+
+  function handleClose() {
+    setViewedRecipeId('');
+  }
+
+  return (
+    <>
+      <TypeFilter pickFilter={handleFilter} />
+      <ul>
+        {visibleRecipes.map((recipe) => {
+          return (
+            <RecipeRow
+              key={recipe.id}
+              recipeName={recipe.name}
+              recipeId={recipe.id}
+              clickView={handleView}
+              isViewed={recipe.id === viewedRecipeId}
+            />
+          );
+        })}
+      </ul>
+      <RecipeCard viewedRecipe={viewedRecipe} closeRecipe={handleClose} />
+    </>
+  );
+}
 ```
 
 ### My answer
+
+`TypeFilter` changes the filter, but the filter is read in `App`, in `visibleRecipes`, and that
+decides which `RecipeRow`s get drawn. If `TypeFilter` held the state, `App` could never see it,
+because props only go down. The viewed id is the same: `RecipeRow` sets it, `RecipeCard` clears it,
+and `App` uses it for `isViewed` and `viewedRecipe`. `App` is the closest component containing all
+of them.
 
 ---
 
@@ -564,6 +659,15 @@ import { useState } from 'react';
    reach the row?
 4. Inside `App`'s JSX, is anything going up?
 5. You pass `key={item.id}`. Can the child read the id from `key`? What do you do if it needs it?
+
+### My answer
+
+1. In `App`'s tag and in the child's `{ }`.
+2. `undefined`.
+3. In `App`, by comparing the row's id with the state. The `true`/`false` goes down as a prop.
+4. No. Everything in `App`'s JSX goes down, including functions. A value only goes up as an
+   argument, when the child calls the function.
+5. No. React keeps `key` for itself. If the child needs the id, pass it again as a separate prop.
 
 <details>
 <summary>Answer key</summary>
