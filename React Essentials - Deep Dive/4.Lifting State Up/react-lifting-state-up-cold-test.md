@@ -36,12 +36,73 @@ const TIPS = [10, 15, 20];
 ```jsx
 import { useState } from 'react';
 
+const TIPS = [10, 15, 20];
+
+function BillInput({ val, handleValue }) {
+  return <input type="number" value={val} onChange={handleValue} />;
+}
+
+function TipPicker({ pickTip, chosenTip }) {
+  return (
+    <>
+      {TIPS.map((tip) => {
+        return (
+          <button
+            key={tip}
+            onClick={() => pickTip(tip)}
+            className={chosenTip === tip ? 'active' : ''}
+          >
+            {tip}%
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
+function Total({ bill, tip }) {
+  const total = bill + (bill * tip) / 100;
+
+  return (
+    <>
+      <p>Total: {total}</p>
+    </>
+  );
+}
+
+export default function App() {
+  const [value, setValue] = useState('');
+  const [tip, setTip] = useState(10);
+
+  function handleVal(event) {
+    setValue(Number(event.target.value));
+  }
+
+  function handleTip(t) {
+    setTip(t);
+  }
+
+  return (
+    <>
+      <BillInput val={value} handleValue={handleVal} />
+      <TipPicker pickTip={handleTip} chosenTip={tip} />
+      <Total tip={tip} bill={value} />
+    </>
+  );
+}
 ```
 
 ### My answer
 
 1. The bill and the tip are state. Is the total? Why or why not?
 2. What does `TipPicker` send up when `15%` is clicked, and how does it get there?
+
+**Answers:**
+
+1. No. The total is derived from the bill and the tip, so it's worked out on every render instead
+   of being stored.
+2. `15`, the `tip` from `TipPicker`'s `.map()` over `TIPS`. The button calls `pickTip(15)`, and
+   `pickTip` is `App`'s `handleTip`, so `15` arrives there as an argument and gets stored.
 
 ---
 
