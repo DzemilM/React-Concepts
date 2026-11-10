@@ -130,12 +130,82 @@ const ROOMS = [
 ```jsx
 import { useState } from 'react';
 
+const ROOMS = [
+  { id: 'r1', name: 'Garden Room', beds: 2, price: 80 },
+  { id: 'r2', name: 'Attic Room', beds: 1, price: 55 },
+  { id: 'r3', name: 'Family Suite', beds: 4, price: 140 },
+];
+
+function RoomRow({ room, bookIt, bookedRoom }) {
+  return (
+    <li className={bookedRoom ? 'booked' : ''}>
+      {room}
+      <button onClick={bookIt}>{bookedRoom ? 'Booked' : 'Book'}</button>
+    </li>
+  );
+}
+
+function BookingSummary({ room, clickCancel }) {
+  return (
+    <>
+      {room ? (
+        <>
+          <p>
+            {room.name}: {room.beds} beds, {room.price} per night
+          </p>
+          <button onClick={clickCancel}>Cancel</button>
+        </>
+      ) : (
+        <p>No room booked</p>
+      )}
+    </>
+  );
+}
+
+export default function App() {
+  const [bookedRoomId, setBookedRoomId] = useState('');
+
+  let bookedRoom = ROOMS.find((r) => r.id == bookedRoomId);
+
+  function handleBook(p) {
+    setBookedRoomId(p);
+  }
+
+  function handleCancel() {
+    setBookedRoomId('');
+  }
+
+  return (
+    <>
+      <ul>
+        {ROOMS.map((room) => {
+          return (
+            <RoomRow
+              key={room.id}
+              room={room.name}
+              bookIt={() => handleBook(room.id)}
+              bookedRoom={bookedRoomId === room.id}
+            />
+          );
+        })}
+      </ul>
+      <BookingSummary clickCancel={handleCancel} room={bookedRoom} />
+    </>
+  );
+}
 ```
 
 ### My answer
 
 1. `RoomRow` needs the room's id. Why can't it read it from `key`?
 2. Does `Book` wrap its function? Does `Cancel`? Why is the answer different?
+
+**Answers:**
+
+1. React keeps `key` for itself and doesn't pass it to the component, so inside `RoomRow` it's
+   `undefined`. If the child needs the id, it has to be passed again as a separate prop.
+2. `Book` wraps, because it has to send the room's id up as an argument (here the wrap is in `App`:
+   `bookIt={() => handleBook(room.id)}`). `Cancel` sends nothing, so `handleCancel` is passed bare.
 
 ---
 
