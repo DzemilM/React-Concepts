@@ -36,7 +36,7 @@ export default function App() {
 
 The user clicks the **first** button twice. What does each button show?
 
-**My answer:**
+**My answer:** Both show `2`. There's one `count`, in `App`, and both buttons display it.
 
 ### A2
 
@@ -59,7 +59,7 @@ export default function App() {
 The user clicks the **first** button twice. What does each button show? And why is it different from
 A1?
 
-**My answer:**
+**My answer:** The first shows `2`, the second `0`. Each `Counter` has its own `useState`, so each has its own count.
 
 ### A3
 
@@ -99,7 +99,7 @@ export default function App() {
 1. On the first render, which `<li>` has the class `chosen`?
 2. The user clicks `Blue`. What is `chosenId` now, and which `<li>` has the class?
 
-**My answer:**
+**My answer:** 1: Green, because the state starts as `'c2'`. 2: `chosenId` is `'c3'`, and only Blue's `<li>` has `chosen`.
 
 ### A4
 
@@ -125,7 +125,7 @@ export default function App() {
 2. Someone changes the last line to `<Details name={selected.name} />` (and `Details` to read
    `name`). What happens on the first render?
 
-**My answer:**
+**My answer:** 1: `selected` is `undefined`, because no id matches `''`, so `Details` shows `Nothing selected`. 2: It crashes, because `selected.name` reads a field of `undefined` while `App` builds the props.
 
 ### A5
 
@@ -139,7 +139,7 @@ function Row({ key, label }) {
 
 What does the `<li>` show? Why?
 
-**My answer:**
+**My answer:** `First ()`. `key` isn't a prop. React keeps it, so it's `undefined` inside `Row`, and `undefined` draws nothing.
 
 ---
 
@@ -158,7 +158,7 @@ function Item({ id, label, onPick }) {
 <Item key={item.id} id={item.id} label={item.label} onPick={handlePick(item.id)} />
 ```
 
-**My answer:**
+**My answer:** `handlePick(item.id)` runs during render, so the setter runs while rendering and React re-renders endlessly. `onPick` would be `undefined` anyway. Fix: `onPick={handlePick}`, since the child already wraps.
 
 ### B2
 
@@ -185,7 +185,7 @@ export default function App() {
 }
 ```
 
-**My answer:**
+**My answer:** After any click every card is selected, because one `true`/`false` can't say which. Fix: store the selected card's id and compare `card.id === selectedId`.
 
 ### B3
 
@@ -205,7 +205,7 @@ export default function App() {
 }
 ```
 
-**My answer:**
+**My answer:** `App` passes `onToggle` but `Switch` reads `toggle`, which is `undefined`. The button has no handler, so clicking does nothing and it stays `Off`. Fix: name it `onToggle` in `Switch`.
 
 ### B4
 
@@ -220,7 +220,7 @@ function Row({ label }) {
 
 The comparison is right, but the open row never gets the class.
 
-**My answer:**
+**My answer:** `className` on a component tag is only a prop, and `Row` never uses it. Fix: `Row` receives it (or `isOpen`) and puts the class on its `<li>`.
 
 ### B5
 
@@ -242,7 +242,7 @@ export default function App() {
 }
 ```
 
-**My answer:**
+**My answer:** `Display` copies the prop into its own state, and `useState` uses the starting value only once, so it stays `0`. Fix: no state in `Display`, just show the prop.
 
 ---
 
@@ -262,7 +262,7 @@ App
         └── Article       (uses dark mode for its class)
 ```
 
-**My answer:**
+**My answer:** `Page`. `ThemeButton` changes it and `Article` reads it, and `Page` is the closest component containing both.
 
 ### C2
 
@@ -274,13 +274,13 @@ App
 
 Any number of answers can be open at once.
 
-**My answer:**
+**My answer:** In each `FaqItem`. Each item is the only one that reads and changes its own open/closed value, so nothing needs sharing.
 
 ### C3
 
 The same tree as C2, but now **only one answer can be open at a time.** Opening one closes the others.
 
-**My answer:**
+**My answer:** `FaqList`. Opening one has to close the others, so they share one value, which goes in their closest parent.
 
 ### C4
 
@@ -295,7 +295,7 @@ App
 1. Where does the typed name live?
 2. Is the letter count state? Why or why not?
 
-**My answer:**
+**My answer:** 1: `Signup`, because `NameInput` changes it and its sibling `Preview` reads it. 2: No, the letter count is derived from the name.
 
 ### C5
 
@@ -311,7 +311,7 @@ The quantity picker's number only matters on its own card until **Add to cart** 
 1. Where does each card's chosen quantity live?
 2. Where does the cart live?
 
-**My answer:**
+**My answer:** 1: In each `ProductCard`, because nobody else needs it until Add is clicked. 2: In `App`, because the cards change the cart and `CartSummary` reads it.
 
 ---
 
@@ -322,34 +322,34 @@ The quantity picker's number only matters on its own card until **Add to cart** 
 Props only flow down. So how does a child change state that lives in its parent? Use the words
 **prop** and **argument**.
 
-**My answer:**
+**My answer:** The parent passes a function down as a prop. The child calls it with the value as an argument. The function runs in the parent and calls its setter.
 
 ### D2
 
 A row needs to know whether it's the selected one. Why store the selected item's **id**, and not a
 `true`/`false`? And why not the whole object? One problem for each.
 
-**My answer:**
+**My answer:** The id is compared per row, so only the matching row is selected. A single `true`/`false` would be the same value for every row.
 
 ### D3
 
 Why isn't "put all state in `App`" a good default? Two costs.
 
-**My answer:**
+**My answer:** Everything re-renders on every change, even components that don't need it, and values have to travel through components that don't use them.
 
 ### D4
 
 C2 and C3 have the same components, but the state goes in a different place. What changed, and why
 does that move the state?
 
-**My answer:**
+**My answer:** In C2 the items are independent, so each keeps its own state. With "only one open", opening one has to affect the others, so they share one value in their closest parent.
 
 ### D5
 
 When does a child wrap the function it gets (`() => onPick(id)`), and when can it pass it bare
 (`onClick={onClear}`)? Give the rule and the reason behind it.
 
-**My answer:**
+**My answer:** Wrap when the child has a value to send up as an argument (`Play` sends the song's id). Pass it bare when there's nothing to send (`Stop`). Calling it with brackets directly would run it during render.
 
 ---
 
