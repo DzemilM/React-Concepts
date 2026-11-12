@@ -247,6 +247,128 @@ App
 ```jsx
 import { useState } from 'react';
 
+const SONGS = [
+  { id: 's1', title: 'Blue Train', genre: 'jazz' },
+  { id: 's2', title: 'So What', genre: 'jazz' },
+  { id: 's3', title: 'Paranoid', genre: 'rock' },
+  { id: 's4', title: 'Black Dog', genre: 'rock' },
+  { id: 's5', title: 'Teardrop', genre: 'other' },
+];
+
+function Header() {
+  return <h1>3rd Task</h1>;
+}
+function SongRow({ songId, title, clickPlay, isPlaying }) {
+  return (
+    <li className={isPlaying ? 'playing' : ''}>
+      {title}
+      <button onClick={() => clickPlay(songId)}>Play</button>
+    </li>
+  );
+}
+function SearchBar({ value, valueHandler }) {
+  return <input type="text" value={value} onChange={valueHandler} />;
+}
+function GenreButtons({ genre, clickGenre }) {
+  return (
+    <>
+      <button onClick={() => clickGenre('all')}>All</button>
+      <button onClick={() => clickGenre('jazz')}>Jazz</button>
+      <button onClick={() => clickGenre('rock')}>Rock</button>
+      <button onClick={() => clickGenre('other')}>Other</button>
+    </>
+  );
+}
+function NowPlaying({ song, clickStop }) {
+  return song ? (
+    <>
+      <p>Now playing: {song.title}</p>
+      <button onClick={clickStop}>Stop</button>
+    </>
+  ) : (
+    <p>Nothing playing</p>
+  );
+}
+function HelpTip() {
+  const [help, setHelp] = useState(false);
+
+  function handleHelp() {
+    setHelp(!help);
+  }
+
+  return (
+    <>
+      {help && <p>Click play on any song</p>}
+      <button onClick={handleHelp}>Help</button>
+    </>
+  );
+}
+
+function Library() {
+  const [playingId, setPlayingId] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [genre, setGenre] = useState('all');
+
+  const filteredSongs = SONGS.filter((song) => {
+    return (
+      song.title.toLowerCase().includes(searchText.toLowerCase()) &&
+      (genre === 'all' || song.genre === genre)
+    );
+  });
+
+  const playingSong = SONGS.find((song) => song.id === playingId);
+
+  function playHandler(p) {
+    setPlayingId(p);
+  }
+
+  function handleValue(event) {
+    setSearchText(event.target.value);
+  }
+
+  function handleGenre(p) {
+    setGenre(p);
+  }
+
+  function handleStop() {
+    setPlayingId('');
+  }
+
+  return (
+    <>
+      <SearchBar value={searchText} valueHandler={handleValue} />
+      <GenreButtons genre={genre} clickGenre={handleGenre} />
+      {filteredSongs.length ? (
+        <ul>
+          {filteredSongs.map((song) => {
+            return (
+              <SongRow
+                key={song.id}
+                title={song.title}
+                songId={song.id}
+                clickPlay={playHandler}
+                isPlaying={playingId === song.id}
+              />
+            );
+          })}
+        </ul>
+      ) : (
+        <p>No songs found</p>
+      )}
+      <NowPlaying clickStop={handleStop} song={playingSong} />
+      <HelpTip />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Header />
+      <Library />
+    </>
+  );
+}
 ```
 
 ### My answer
@@ -255,3 +377,15 @@ import { useState } from 'react';
    changes it.
 2. Why isn't any of this state in `App`?
 3. If the playing song gets filtered out of the list, does `NowPlaying` still show it? Why?
+
+**Answers:**
+
+1. - `searchText`, in `Library`: `SearchBar` changes it, `Library` reads it to filter the list.
+   - `genre`, in `Library`: `GenreButtons` changes it, `Library` reads it to filter the list.
+   - `playingId`, in `Library`: `SongRow` (`Play`) and `NowPlaying` (`Stop`) change it; `Library`
+     reads it for each row's `isPlaying` and to find `playingSong`.
+   - `help`, in `HelpTip`: only `HelpTip` reads and changes it, so it stays there.
+2. `Library` is the closest parent of every component that uses this state. `App` only renders
+   `Header` and `Library`, and neither needs it from `App`.
+3. Yes. `playingSong` is found in all of `SONGS`, not in `filteredSongs`, so filtering the list
+   doesn't stop the song or hide it from `NowPlaying`.
