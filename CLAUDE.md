@@ -34,6 +34,13 @@ Udemy React course; each unit here matches a section of it.
 about to do, no recap of what you just did, no "what I need next" lines. Review of an attempt:
 what's right, what's wrong, what to do next, done. Long answers bury the one line I need.
 
+- **When pointing me at my earlier code, paste it into the reply.** Don't make me scroll back to
+  find it.
+- **One gap at a time when I'm stuck.** A five-point list loses me; one point with the real values
+  doesn't. Don't offer alternative designs unless I ask, and no optional style tips mid-exercise.
+- **Ratings and exams score the unit's concepts, not syntax.** Written questions should ask me to
+  predict or explain, never to read my own code back.
+
 **Read my actual files, not just this one.** CLAUDE.md and README.md are summaries. Before judging
 how I'm doing or picking a format for a new unit, open my exercise files in the finished units.
 
@@ -97,8 +104,8 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   telling **state** from **derived** from **constant**. Confirmed via three exercise sets, a
   plain-JS array-methods drill, a three-task cold test, and a 20-question exam (5/5 on the
   classify section, which was the weakest thing at the start).
-  **Not yet covered:** state shared between components (lifting state up), and objects / arrays of
-  objects in state. Waiting for the Udemy course's deep-dive section rather than pre-drilling them.
+  **Not yet covered:** objects / arrays of objects in state. (State shared between components was
+  covered later, in Lifting State Up.)
 - **Conditional content — done** (2026-08-22). The four forms and when each fits:
   `{cond ? <A/> : <B/>}`, `{cond ? <A/> : null}`, `{cond && <A/>}`, and a variable built with
   `if`/`else if`/`else` above the `return` for three or more outcomes. The idea underneath all of
@@ -192,6 +199,27 @@ I run the code in StackBlitz (browser, no local install). Component code goes in
   button. I explain things **only half the time unprompted**: the "why" answers needed a
   question or two every time, and once I said "`note` doesn't update" when I meant the textarea
   doesn't. Keep state and screen separate in my wording.
+- **Lifting State Up — done** (2026-11-12). State that several components use goes in the
+  **closest component that contains everyone who reads or changes it**, and it **stays put** when
+  only one component uses it (a menu's open/closed, a help tip, each card's own picker). The child
+  can't change the parent's state, so the parent passes a **function down as a prop**; the child
+  calls it and the value goes **up as an argument**. Nothing in a parent's JSX goes up. The parent
+  passes the function bare; the child wraps it when it has a value to add (`() => onPick(id)`) and
+  passes it bare when it doesn't (`Clear`, `Stop`). Every prop has **two ends**, the name left of
+  `=` in the parent's tag and the name in the child's `{ }`, and when wiring stalls, writing the two
+  side by side shows the gap. State stores the **smallest thing**: an id, not a `true`/`false` (which
+  can't say *which* row) and not the whole object. Everything else is derived: each row's
+  `isPicked={item.id === pickedId}`, worked out in the parent's `.map()` and sent down, and the whole
+  item from `.find()`, which gives `undefined` when nothing matches. Also: `className` on a component
+  tag is only a prop; copying a prop into a child's `useState` freezes it, because the initial value
+  is used once. Confirmed via three six-exercise sets, a three-task cold test, a 20-question exam
+  (15/20, explain-it section 4½/5) and a 10-question drill (6/6 on stay-or-go-up, unaided).
+  **What took the most reps:** connecting a parent to its children. The per-row comparison needed
+  blanks all through set 2 and was right first try by the cold test. And the one-component case:
+  "closest parent" had turned into "always a parent" until the drill.
+  **Loose end:** reading fields off a `.find()` result separately (`name={selected.name}`) instead of
+  passing the whole object and checking it in the child. I know it can be `undefined`; the fix
+  pattern still came from Claude.
 
 ## My known weak spots
 
@@ -220,6 +248,11 @@ These are **not** conceptual — they're mechanical, and they cause most of my b
   my single biggest time cost — given four numbered fixes I'd apply two or three and paste back.
   One typo survived three rounds that way. **Habit: reply against the numbers and tick each one
   off.**
+- **Fixing one line breaks its neighbour.** In Lifting State Up I broke a correct comparison twice
+  while fixing other lines, dropped a prop when I moved the `key`, and changed a correct `.find()`
+  because a question mentioned it. **Habit: change only the line the fix is about.**
+- **`.find()` can come back `undefined`.** Before typing a `.` after its result, ask "what if it
+  found nothing?" Pass the whole object down and check it in the child.
 - **Renames leave orphans.** Every rename during State left the old name somewhere — `celsius`
   after switching to `temp`, `playList` vs `playlist` vs `setPlaylist`. **Habit: after renaming
   anything, search the file for the old name.**

@@ -17,8 +17,8 @@ The folders follow the two parts of the Udemy course I'm working through.
 | [`4.Conditional Content/`](React%20Essentials/4.Conditional%20Content/) | Showing different JSX depending on a condition | Done |
 | [`5.Dynamic lists/`](React%20Essentials/5.Dynamic%20lists/) | Turning arrays of data into arrays of JSX with `.map()` and keys | Done |
 
-`3.State/` covers state inside one component. Sharing state between components (lifting state
-up) and holding objects or arrays of objects in state are still to come.
+`3.State/` covers state inside one component. Sharing state between components is covered in
+`4.Lifting State Up/` (Deep Dive). Holding objects or arrays of objects in state is still to come.
 
 ### React Essentials — Deep Dive
 
@@ -28,6 +28,7 @@ up) and holding objects or arrays of objects in state are still to come.
 | [`1.Forwarding Props/`](React%20Essentials%20-%20Deep%20Dive/1.Forwarding%20Props/) | A wrapper component using its own props and passing the rest on to the element inside | Done (6 exercises + 4 reps) |
 | [`2.Creating flexible components/`](React%20Essentials%20-%20Deep%20Dive/2.Creating%20flexible%20components/) | Components that take JSX in several slots, choose their tag from a prop, and default their props | Done (2 exercise sets, 4 reps, cold test, exam) |
 | [`3.Two Way Binding/`](React%20Essentials%20-%20Deep%20Dive/3.Two%20Way%20Binding/) | Inputs, textareas and selects whose value comes from state and whose changes write back to it | Done (Udemy exercise, 6 exercises, cold test, 4 spot-the-bug tasks; no exam) |
+| [`4.Lifting State Up/`](React%20Essentials%20-%20Deep%20Dive/4.Lifting%20State%20Up/) | Sharing state between components: the parent owns it, passes values and functions down, and children send choices up as arguments | Done (3 exercise sets, cold test, exam, drill) |
 
 ## How each concept gets drilled
 

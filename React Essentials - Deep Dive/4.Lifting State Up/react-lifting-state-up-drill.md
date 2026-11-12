@@ -25,13 +25,13 @@ App
 
 Nothing else on the page shows likes.
 
-**My answer:**
+**My answer:** Each `Photo`. A photo doesn't need to know about the others' hearts.
 
 ### 2
 
 The same tree, but now `Gallery` has a heading that says `3 liked`.
 
-**My answer:**
+**My answer:** `Gallery`. The heading needs every photo's like to count them, so it goes up to their closest parent.
 
 ### 3
 
@@ -42,7 +42,7 @@ App
     └── SaveButton
 ```
 
-**My answer:**
+**My answer:** `PasswordField`. Show/Hide only affects its own input.
 
 ### 4
 
@@ -53,7 +53,7 @@ App
     └── Speaker        (shows the volume as a number)
 ```
 
-**My answer:**
+**My answer:** `Player`. `VolumeSlider` changes the volume and `Speaker` reads it, so it goes to their closest parent.
 
 ### 5
 
@@ -64,7 +64,7 @@ App
 └── Main
 ```
 
-**My answer:**
+**My answer:** `MenuButton`. Nobody else cares whether its list is open.
 
 ### 6
 
@@ -75,7 +75,7 @@ App
 └── Modal            (shows itself only when open, has a Close button)
 ```
 
-**My answer:**
+**My answer:** `App`. `OpenButton` changes it and `Modal` reads it, and `App` is their closest parent.
 
 ---
 
@@ -96,7 +96,7 @@ const found = USERS.find((u) => u.id === 'u9');
 
 What is `found`? And what happens if the next line is `<p>{found.name}</p>`?
 
-**My answer:**
+**My answer:** `found` is `undefined`, because nothing matches `'u9'`. `found.name` crashes.
 
 ### 8
 
@@ -107,7 +107,7 @@ const b = USERS.find((u) => u.id === 'u9');
 
 What is `a`, and what is `b`? Which one is safe to `.map()` over?
 
-**My answer:**
+**My answer:** `a` is `[]`, an empty array, and `b` is `undefined`. `filter` is safe to `.map()` over: it just makes nothing.
 
 ### 9
 
@@ -126,7 +126,7 @@ export default function App() {
 
 What goes wrong on the first render, and how do you fix it?
 
-**My answer:**
+**My answer:** `user` is `undefined` on the first render, so `user.name` crashes in `App` while building the props. Fix: pass the whole `user` as one prop and check it inside `Profile`. (`filter` doesn't fix it: it gives an array, which has no `.name`.)
 
 ### 10
 
@@ -136,8 +136,12 @@ Write `Profile` so it receives the whole user (or `undefined`) as **one** prop, 
 ### My solution
 
 ```jsx
-import { useState } from 'react';
+function Profile({ user }) {
+  return <p>{user ? `${user.name}, ${user.age}` : 'No user picked'}</p>;
+}
 
+// in App:
+<Profile user={user} />
 ```
 
 ---
